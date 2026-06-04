@@ -575,7 +575,7 @@
       </div>
       <div class="divider"></div>
       <div class="info-box">
-        El webhook GET debe devolver un array JSON de leads con el formato exacto de n8n. Los campos clave son <code>lead_id</code>, <code>lead_name</code>, <code>pipeline_id</code>, <code>pipeline_nombre</code>, <code>valor_lead</code>, <code>lead_score</code>, <code>lead_categoria</code> (HOT/WARM/COLD) y <code>lead_score_detalle</code> (array de strings). La fuente se lee de <code>"etiqueta fuente"</code> (con espacio) y por defecto es <strong>Facebook Ads</strong>.
+        El webhook GET debe devolver un array JSON con la estructura exacta. Los campos requeridos son <code>Lead_id</code>, <code>Lead_name</code>, <code>Telefono</code>, <code>Pipeline_id</code>, <code>Pipeline_nombre</code>, <code>Valor_lead</code>, <code>Lead_score</code>, <code>Lead_categoria</code> (HOT/WARM/COLD), <code>id</code>, <code>createdAt</code> y <code>updatedAt</code>. La fuente por defecto es <strong>Facebook Ads</strong>.
       </div>
     </div>
   </div>
@@ -725,22 +725,17 @@
         <label class="field-label">RESPUESTA DEL WEBHOOK GET (array de leads)</label>
         <div class="code-block">[
   {
-    "lead_id": 21637253,
-    "lead_name": "Pedro Arias",
-    "telefono": "+59170883977",
-    "pipeline_id": 13852180,
-    "pipeline_nombre": "LEAD CAMPAÑAS",
-    "valor_lead": "75000",
-    "lead_score": 100,
-    "lead_categoria": "HOT",           // HOT | WARM | COLD
-    "etiqueta fuente": "Facebook Ads", // o "etiqueta_fuente"
-    "lead_score_detalle": [
-      "Rango presupuesto +5",
-      "Zona definida +5",
-      "Califica crédito +20",
-      "Visita agendada +15"
-      // ...más criterios
-    ]
+    "Lead_id": 21637253,
+    "Lead_name": "Pedro Arias",
+    "Telefono": "+59170883977",
+    "Pipeline_id": 13852180,
+    "Pipeline_nombre": "LEAD CAMPAÑAS",
+    "Valor_lead": "75000",
+    "Lead_score": 100,
+    "Lead_categoria": "HOT",
+    "id": 1,
+    "createdAt": "2026-06-03T00:26:42.834Z",
+    "updatedAt": "2026-06-03T00:26:42.834Z"
   }
 ]</div>
       </div>
@@ -769,10 +764,10 @@
       <button class="modal-close" onclick="closeModal()">✕</button>
     </div>
     <div class="form-grid">
-      <div class="field-group"><label class="field-label">NOMBRE (lead_name)</label><input type="text" id="f-name"></div>
-      <div class="field-group"><label class="field-label">TELÉFONO</label><input type="text" id="f-telefono" placeholder="+59170012345"></div>
-      <div class="field-group"><label class="field-label">PIPELINE ID (número)</label><input type="number" id="f-pipeline-id" min="1" placeholder="ej. 13852180"></div>
-      <div class="field-group"><label class="field-label">PIPELINE NOMBRE</label><input type="text" id="f-pipeline-nombre" placeholder="ej. LEAD CAMPAÑAS"></div>
+      <div class="field-group"><label class="field-label">Lead_name</label><input type="text" id="f-name"></div>
+      <div class="field-group"><label class="field-label">Telefono</label><input type="text" id="f-telefono" placeholder="+59170012345"></div>
+      <div class="field-group"><label class="field-label">Pipeline_id</label><input type="number" id="f-pipeline-id" min="1" placeholder="ej. 13852180"></div>
+      <div class="field-group"><label class="field-label">Pipeline_nombre</label><input type="text" id="f-pipeline-nombre" placeholder="ej. LEAD CAMPAÑAS"></div>
       <div class="field-group"><label class="field-label">SCORE (0-100)</label><input type="number" id="f-score" min="0" max="100"></div>
       <div class="field-group"><label class="field-label">VALOR ESTIMADO ($)</label><input type="number" id="f-value" min="0"></div>
       <div class="field-group">
@@ -803,14 +798,14 @@
 <script>
 // ── STATE ──────────────────────────────────────────────────────────────────
 let leads = [
-  {id:'21637253',name:'Pedro Arias',   pipeline_id:13852180,pipeline_nombre:'LEAD CAMPAÑAS',  telefono:'+59170883977',score:100,lead_categoria:'HOT', etiqueta_fuente:'Facebook Ads',value:75000,stage:'propuesta',   lead_score_detalle:['Rango presupuesto +5','Zona definida +5','Tipo inmueble +5','Dormitorios definidos +5','Forma de pago definida +10','Compra 1-3 meses +15','Califica crédito +20','Visita agendada +15','Visita realizada +20','2da visita agendada +10','2da visita realizada +25','Sin respuesta 15 días -25'],updatedAt:new Date().toISOString()},
-  {id:'21637254',name:'Ana García',    pipeline_id:13852180,pipeline_nombre:'LEAD CAMPAÑAS',  telefono:'+59170011001',score:85, lead_categoria:'HOT', etiqueta_fuente:'Facebook Ads',value:48000,stage:'interesado', lead_score_detalle:['Rango presupuesto +5','Zona definida +5','Forma de pago definida +10','Compra 1-3 meses +15','Califica crédito +20','Visita agendada +15','Visita realizada +20'],updatedAt:new Date().toISOString()},
-  {id:'21637255',name:'Luis Mendoza',  pipeline_id:13852181,pipeline_nombre:'LEAD REFERIDOS', telefono:'+59170022002',score:65, lead_categoria:'WARM',etiqueta_fuente:'Facebook Ads',value:32000,stage:'contactado', lead_score_detalle:['Rango presupuesto +5','Zona definida +5','Tipo inmueble +5','Compra 1-3 meses +15','Califica crédito +20'],updatedAt:new Date().toISOString()},
-  {id:'21637256',name:'Carla Rojas',   pipeline_id:13852181,pipeline_nombre:'LEAD REFERIDOS', telefono:'+59170033003',score:55, lead_categoria:'WARM',etiqueta_fuente:'Facebook Ads',value:61000,stage:'prospecto',  lead_score_detalle:['Rango presupuesto +5','Zona definida +5','Tipo inmueble +5','Dormitorios definidos +5','Forma de pago definida +10'],updatedAt:new Date().toISOString()},
-  {id:'21637257',name:'Sofía Herrera', pipeline_id:13852182,pipeline_nombre:'LEAD ORGÁNICO',  telefono:'+59170055005',score:40, lead_categoria:'COLD',etiqueta_fuente:'Facebook Ads',value:19000,stage:'prospecto',  lead_score_detalle:['Rango presupuesto +5','Zona definida +5','Tipo inmueble +5'],updatedAt:new Date().toISOString()},
-  {id:'21637258',name:'Marcos Díaz',   pipeline_id:13852180,pipeline_nombre:'LEAD CAMPAÑAS',  telefono:'+59170066006',score:90, lead_categoria:'HOT', etiqueta_fuente:'Facebook Ads',value:14000,stage:'cierre',     lead_score_detalle:['Rango presupuesto +5','Zona definida +5','Tipo inmueble +5','Forma de pago definida +10','Compra 1-3 meses +15','Califica crédito +20','Visita agendada +15','Visita realizada +20'],updatedAt:new Date().toISOString()},
-  {id:'21637259',name:'Elena Torres',  pipeline_id:13852182,pipeline_nombre:'LEAD ORGÁNICO',  telefono:'+59170088008',score:30, lead_categoria:'COLD',etiqueta_fuente:'Facebook Ads',value:55000,stage:'prospecto',  lead_score_detalle:['Rango presupuesto +5','Zona definida +5'],updatedAt:new Date().toISOString()},
-  {id:'21637260',name:'Isabel Campos', pipeline_id:13852180,pipeline_nombre:'LEAD CAMPAÑAS',  telefono:'+59170099009',score:75, lead_categoria:'WARM',etiqueta_fuente:'Facebook Ads',value:72000,stage:'interesado', lead_score_detalle:['Rango presupuesto +5','Zona definida +5','Tipo inmueble +5','Dormitorios definidos +5','Forma de pago definida +10','Compra 1-3 meses +15'],updatedAt:new Date().toISOString()},
+  {id:1, Lead_id:21637253, name:'Pedro Arias',   Pipeline_id:13852180, Pipeline_nombre:'LEAD CAMPAÑAS',  Telefono:'+59170883977', Lead_score:100, Lead_categoria:'HOT',  etiqueta_fuente:'Facebook Ads', value:75000, Valor_lead:'75000', stage:'propuesta',  createdAt:'2026-06-03T00:26:42.834Z', updatedAt:'2026-06-03T00:26:42.834Z'},
+  {id:2, Lead_id:21637254, name:'Ana García',    Pipeline_id:13852180, Pipeline_nombre:'LEAD CAMPAÑAS',  Telefono:'+59170011001', Lead_score:85,  Lead_categoria:'HOT',  etiqueta_fuente:'Facebook Ads', value:48000, Valor_lead:'48000', stage:'interesado', createdAt:'2026-06-03T01:00:00.000Z', updatedAt:'2026-06-03T01:00:00.000Z'},
+  {id:3, Lead_id:21637255, name:'Luis Mendoza',  Pipeline_id:13852181, Pipeline_nombre:'LEAD REFERIDOS', Telefono:'+59170022002', Lead_score:65,  Lead_categoria:'WARM', etiqueta_fuente:'Facebook Ads', value:32000, Valor_lead:'32000', stage:'contactado', createdAt:'2026-06-03T02:00:00.000Z', updatedAt:'2026-06-03T02:00:00.000Z'},
+  {id:4, Lead_id:21637256, name:'Carla Rojas',   Pipeline_id:13852181, Pipeline_nombre:'LEAD REFERIDOS', Telefono:'+59170033003', Lead_score:55,  Lead_categoria:'WARM', etiqueta_fuente:'Facebook Ads', value:61000, Valor_lead:'61000', stage:'prospecto',  createdAt:'2026-06-03T03:00:00.000Z', updatedAt:'2026-06-03T03:00:00.000Z'},
+  {id:5, Lead_id:21637257, name:'Sofía Herrera', Pipeline_id:13852182, Pipeline_nombre:'LEAD ORGÁNICO',  Telefono:'+59170055005', Lead_score:40,  Lead_categoria:'COLD', etiqueta_fuente:'Facebook Ads', value:19000, Valor_lead:'19000', stage:'prospecto',  createdAt:'2026-06-03T04:00:00.000Z', updatedAt:'2026-06-03T04:00:00.000Z'},
+  {id:6, Lead_id:21637258, name:'Marcos Díaz',   Pipeline_id:13852180, Pipeline_nombre:'LEAD CAMPAÑAS',  Telefono:'+59170066006', Lead_score:90,  Lead_categoria:'HOT',  etiqueta_fuente:'Facebook Ads', value:14000, Valor_lead:'14000', stage:'cierre',     createdAt:'2026-06-03T05:00:00.000Z', updatedAt:'2026-06-03T05:00:00.000Z'},
+  {id:7, Lead_id:21637259, name:'Elena Torres',  Pipeline_id:13852182, Pipeline_nombre:'LEAD ORGÁNICO',  Telefono:'+59170088008', Lead_score:30,  Lead_categoria:'COLD', etiqueta_fuente:'Facebook Ads', value:55000, Valor_lead:'55000', stage:'prospecto',  createdAt:'2026-06-03T06:00:00.000Z', updatedAt:'2026-06-03T06:00:00.000Z'},
+  {id:8, Lead_id:21637260, name:'Isabel Campos', Pipeline_id:13852180, Pipeline_nombre:'LEAD CAMPAÑAS',  Telefono:'+59170099009', Lead_score:75,  Lead_categoria:'WARM', etiqueta_fuente:'Facebook Ads', value:72000, Valor_lead:'72000', stage:'interesado', createdAt:'2026-06-03T07:00:00.000Z', updatedAt:'2026-06-03T07:00:00.000Z'},
 ];
 
 let cfg = { getUrl:'', postUrl:'', authType:'none', apiKey:'', authHeader:'X-API-Key', interval:0, method:'GET', timeout:10000, extra:'' };
@@ -830,7 +825,6 @@ function switchTab(name) {
 
 // ── HELPERS ────────────────────────────────────────────────────────────────
 function getTemp(score, categoria) {
-  // Use lead_categoria from n8n if present, else derive from score
   if (categoria) {
     const c = String(categoria).toUpperCase();
     if (c === 'HOT')  return 'hot';
@@ -858,7 +852,7 @@ function getFiltered() {
   const fs = document.getElementById('f-src').value;
   return leads.filter(l => {
     if (q && !l.name.toLowerCase().includes(q) && !(l.telefono||'').toLowerCase().includes(q) && !(l.email||'').toLowerCase().includes(q) && !String(l.pipeline||'').includes(q)) return false;
-    if (ft && getTemp(l.score, l.lead_categoria) !== ft) return false;
+    if (ft && getTemp(l.Lead_score, l.Lead_categoria) !== ft) return false;
     if (fs && l.etiqueta_fuente !== fs) return false;
     return true;
   }).sort((a,b) => {
@@ -879,18 +873,20 @@ function renderTable() {
   } else {
     tbody.innerHTML = data.map(l => {
       const t = getTemp(l.score), c = scoreColor(l.score);
-      const detalle = (l.lead_score_detalle||[]).join('\n');
-      const pipeLabel = l.pipeline_nombre ? `${l.pipeline_nombre}` : `#${l.pipeline_id||'—'}`;
+      const pipeLabel = l.Pipeline_nombre ? `${l.Pipeline_nombre}` : `#${l.Pipeline_id||'—'}`;
+      const scoreVal = l.Lead_score !== undefined ? l.Lead_score : l.score || 0;
+      const cScore = scoreColor(scoreVal);
+      const tCat = getTemp(scoreVal, l.Lead_categoria);
       return `<tr onclick="openModal('edit','${l.id}')">
-        <td><div class="td-name">${esc(l.name)}</div><div class="td-email">${esc(l.telefono||'')}</div></td>
-        <td><span style="font-family:var(--mono);font-size:11px;color:var(--accent2);background:rgba(0,200,255,0.08);border:1px solid rgba(0,200,255,0.2);border-radius:5px;padding:2px 8px;white-space:nowrap" title="ID: ${l.pipeline_id||''}">${esc(pipeLabel)}</span></td>
-        <td><div class="score-wrap" title="${esc(detalle)}"><div class="score-bar"><div class="score-fill" style="width:${l.score}%;background:${c}"></div></div><span class="score-num" style="color:${c};cursor:help" onclick="event.stopPropagation();showDetalle('${l.id}')">${l.score} ℹ</span></div></td>
-        <td><span class="badge badge-${t}">${tempLabel[t]||t}</span></td>
+        <td><div class="td-name">${esc(l.name)}</div><div class="td-email">${esc(l.Telefono||'')}</div></td>
+        <td><span style="font-family:var(--mono);font-size:11px;color:var(--accent2);background:rgba(0,200,255,0.08);border:1px solid rgba(0,200,255,0.2);border-radius:5px;padding:2px 8px;white-space:nowrap" title="Lead_id: ${l.Lead_id||''} | Pipeline_id: ${l.Pipeline_id||''}">${esc(pipeLabel)}</span></td>
+        <td><div class="score-wrap"><div class="score-bar"><div class="score-fill" style="width:${scoreVal}%;background:${cScore}"></div></div><span class="score-num" style="color:${cScore}">${scoreVal}</span></div></td>
+        <td><span class="badge badge-${tCat}">${tempLabel[tCat]||tCat}</span></td>
         <td style="font-size:11px;color:var(--muted)">${esc(l.etiqueta_fuente||'—')}</td>
-        <td style="font-family:var(--mono);font-size:12px">$${Number(l.value||0).toLocaleString()}</td>
+        <td style="font-family:var(--mono);font-size:12px">$${Number(l.Valor_lead||l.value||0).toLocaleString()}</td>
         <td onclick="event.stopPropagation()">
-          <button class="btn btn-sm" onclick="pushToN8N(leads.find(x=>x.id==='${l.id}'))">↑</button>
-          <button class="btn btn-sm btn-danger" onclick="deleteLead('${l.id}')">✕</button>
+          <button class="btn btn-sm" onclick="pushToN8N(leads.find(x=>x.id===${l.id}))">↑</button>
+          <button class="btn btn-sm btn-danger" onclick="deleteLead(${l.id})">✕</button>
         </td>
       </tr>`;
     }).join('');
@@ -904,9 +900,9 @@ function renderTable() {
 
 function renderMetrics() {
   const total = leads.length;
-  const hot   = leads.filter(l=>getTemp(l.score,l.lead_categoria)==='hot').length;
-  const avg   = leads.length ? Math.round(leads.reduce((s,l)=>s+l.score,0)/leads.length) : 0;
-  const pipe  = leads.reduce((s,l)=>s+(l.value||0),0);
+  const hot   = leads.filter(l=>getTemp(l.Lead_score,l.Lead_categoria)==='hot').length;
+  const avg   = leads.length ? Math.round(leads.reduce((s,l)=>s+(l.Lead_score||l.score||0),0)/leads.length) : 0;
+  const pipe  = leads.reduce((s,l)=>s+Number(l.Valor_lead||l.value||0),0);
   document.getElementById('metrics-area').innerHTML = `
     <div class="metric-card c-green"><div class="metric-label">TOTAL LEADS</div><div class="metric-value">${total}</div><div class="metric-sub">en seguimiento</div></div>
     <div class="metric-card c-red"><div class="metric-label">CALIENTES</div><div class="metric-value">${hot}</div><div class="metric-sub">score ≥ 80</div></div>
@@ -917,7 +913,7 @@ function renderMetrics() {
 
 function renderSide() {
   const counts = {hot:0,warm:0,cold:0};
-  leads.forEach(l => counts[getTemp(l.score, l.lead_categoria)]++);
+  leads.forEach(l => counts[getTemp(l.Lead_score, l.Lead_categoria)]++);
   const cfgDist = [
     {key:'hot',label:'Caliente',color:'var(--hot)'},
     {key:'warm',label:'Tibio',color:'var(--warm)'},
@@ -1058,18 +1054,20 @@ async function fetchFromN8N() {
     if (!arr.length) { toast('El webhook devolvió 0 leads', 'info'); updateSyncStatus('configured'); return; }
 
     leads = arr.map((l,i) => ({
-      id:               String(l.lead_id   || l.id              || l._id || i+1),
-      name:             l.lead_name        || l.name            || l.nombre || '',
-      pipeline_id:      Number(l.pipeline_id || 0),
-      pipeline_nombre:  l.pipeline_nombre  || l.pipeline_name   || '',
-      telefono:         l.telefono         || l.phone           || l.tel || '',
-      score:            Number(l.lead_score || l.score          || 0),
-      lead_categoria:   l.lead_categoria   || l.categoria       || '',
-      etiqueta_fuente:  l['etiqueta fuente'] || l.etiqueta_fuente || 'Facebook Ads',
-      value:            Number(l.valor_lead || l.value          || l.valor || 0),
-      stage:            l.stage            || l.etapa           || 'prospecto',
-      lead_score_detalle: Array.isArray(l.lead_score_detalle) ? l.lead_score_detalle : [],
-      updatedAt:        l.updatedAt        || new Date().toISOString()
+      id:              l.id               || i+1,
+      Lead_id:         l.Lead_id          || l.lead_id          || 0,
+      name:            l.Lead_name        || l.lead_name        || l.name || l.nombre || '',
+      Pipeline_id:     l.Pipeline_id      || l.pipeline_id      || 0,
+      Pipeline_nombre: l.Pipeline_nombre  || l.pipeline_nombre  || '',
+      Telefono:        l.Telefono         || l.telefono         || l.phone || '',
+      Lead_score:      Number(l.Lead_score || l.lead_score      || l.score || 0),
+      Lead_categoria:  l.Lead_categoria   || l.lead_categoria   || '',
+      etiqueta_fuente: l['etiqueta fuente'] || l.etiqueta_fuente || 'Facebook Ads',
+      value:           Number(l.Valor_lead || l.valor_lead      || l.value || 0),
+      Valor_lead:      String(l.Valor_lead || l.valor_lead      || l.value || '0'),
+      stage:           l.stage            || l.etapa            || 'prospecto',
+      createdAt:       l.createdAt        || new Date().toISOString(),
+      updatedAt:       l.updatedAt        || new Date().toISOString()
     }));
 
     lastSync = new Date();
@@ -1092,7 +1090,7 @@ async function pushToN8N(lead) {
   if (!cfg.postUrl) { toast('Configura la URL POST en la pestaña n8n', 'error'); switchTab('n8n'); return; }
   addLog(`Enviando lead ${lead.name}…`, 'warn');
   try {
-    const body = { ...extraPayload(), ...lead, temp: getTemp(lead.score), timestamp: new Date().toISOString() };
+    const body = { ...extraPayload(), ...lead, temp: getTemp(lead.Lead_score, lead.Lead_categoria), timestamp: new Date().toISOString() };
     const res = await fetch(cfg.postUrl, { method:'POST', headers: makeHeaders(), body: JSON.stringify(body) });
     if (!res.ok) throw new Error('HTTP '+res.status);
     addLog(`Lead ${lead.name} enviado OK`, 'ok');
@@ -1107,7 +1105,7 @@ async function pushAllToN8N() {
   if (!cfg.postUrl) { toast('Configura la URL POST en la pestaña n8n', 'error'); switchTab('n8n'); return; }
   addLog('Enviando todos los leads…', 'warn');
   try {
-    const body = { ...extraPayload(), leads: leads.map(l=>({...l,temp:getTemp(l.score)})), timestamp: new Date().toISOString() };
+    const body = { ...extraPayload(), leads: leads.map(l=>({...l,temp:getTemp(l.Lead_score,l.Lead_categoria)})), timestamp: new Date().toISOString() };
     const res = await fetch(cfg.postUrl, { method:'POST', headers: makeHeaders(), body: JSON.stringify(body) });
     if (!res.ok) throw new Error('HTTP '+res.status);
     addLog(`${leads.length} leads enviados OK`, 'ok');
@@ -1164,11 +1162,11 @@ function openModal(mode, id) {
     if (!l) return;
     editingId = id;
     document.getElementById('f-name').value            = l.name||'';
-    document.getElementById('f-telefono').value        = l.telefono||'';
-    document.getElementById('f-pipeline-id').value     = l.pipeline_id||'';
-    document.getElementById('f-pipeline-nombre').value = l.pipeline_nombre||'';
-    document.getElementById('f-score').value           = l.score||0;
-    document.getElementById('f-value').value           = l.value||0;
+    document.getElementById('f-telefono').value        = l.Telefono||'';
+    document.getElementById('f-pipeline-id').value     = l.Pipeline_id||'';
+    document.getElementById('f-pipeline-nombre').value = l.Pipeline_nombre||'';
+    document.getElementById('f-score').value           = l.Lead_score||0;
+    document.getElementById('f-value').value           = l.Valor_lead||'';
     document.getElementById('f-etiqueta-fuente').value = l.etiqueta_fuente||'Facebook Ads';
     document.getElementById('f-stage').value           = l.stage||'prospecto';
     document.getElementById('f-notes').value           = l.notes||'';
@@ -1197,18 +1195,20 @@ function closeModalOnBg(e) {
 
 async function saveLead() {
   const lead = {
-    id:               editingId || String(Date.now()),
+    id:               editingId || Date.now(),
+    Lead_id:          Date.now(),
     name:             document.getElementById('f-name').value.trim(),
-    telefono:         document.getElementById('f-telefono').value.trim(),
-    pipeline_id:      parseInt(document.getElementById('f-pipeline-id').value)||0,
-    pipeline_nombre:  document.getElementById('f-pipeline-nombre').value.trim(),
-    score:            parseInt(document.getElementById('f-score').value)||0,
+    Telefono:         document.getElementById('f-telefono').value.trim(),
+    Pipeline_id:      parseInt(document.getElementById('f-pipeline-id').value)||0,
+    Pipeline_nombre:  document.getElementById('f-pipeline-nombre').value.trim(),
+    Lead_score:       parseInt(document.getElementById('f-score').value)||0,
+    Valor_lead:       document.getElementById('f-value').value.trim()||'0',
     value:            parseInt(document.getElementById('f-value').value)||0,
     etiqueta_fuente:  document.getElementById('f-etiqueta-fuente').value.trim()||'Facebook Ads',
+    Lead_categoria:   '',
     stage:            document.getElementById('f-stage').value,
     notes:            document.getElementById('f-notes').value.trim(),
-    lead_score_detalle:[],
-    lead_categoria:   '',
+    createdAt:        new Date().toISOString(),
     updatedAt:        new Date().toISOString()
   };
   if (!lead.name) { toast('El nombre es requerido', 'error'); return; }
@@ -1229,7 +1229,7 @@ async function saveLead() {
 function deleteLead(id) {
   const l = leads.find(x=>x.id===id);
   if (!l || !confirm('¿Eliminar a ' + l.name + '?')) return;
-  leads = leads.filter(x=>x.id!==id);
+  leads = leads.filter(x=>String(x.id)!==String(id));
   addLog(`Lead ${l.name} eliminado`, 'warn');
   renderTable();
 }
@@ -1244,7 +1244,7 @@ function exportJSON() {
 }
 
 function exportCSV() {
-  const cols = ['id','name','pipeline_id','pipeline_nombre','telefono','score','lead_categoria','etiqueta_fuente','value','stage','updatedAt'];
+  const cols = ['id','Lead_id','name','Pipeline_id','Pipeline_nombre','Telefono','Lead_score','Lead_categoria','Valor_lead','etiqueta_fuente','stage','createdAt','updatedAt'];
   const rows = [cols.join(','), ...leads.map(l=>cols.map(c=>'"'+(String(l[c]||'').replace(/"/g,'""'))+'"').join(','))];
   const blob = new Blob([rows.join('\n')],{type:'text/csv'});
   const url = URL.createObjectURL(blob);
@@ -1288,41 +1288,6 @@ function toast(msg, type='info') {
   el.innerHTML = `<div class="toast-dot"></div><span>${esc(msg)}</span>`;
   wrap.appendChild(el);
   setTimeout(()=>el.remove(), 3500);
-}
-
-// ── SCORE DETALLE POPUP ──────────────────────────────────────────────────────
-function showDetalle(id) {
-  const l = leads.find(x=>x.id===id);
-  if (!l || !l.lead_score_detalle || !l.lead_score_detalle.length) return;
-  const existing = document.getElementById('detalle-popup');
-  if (existing) existing.remove();
-  const pop = document.createElement('div');
-  pop.id = 'detalle-popup';
-  pop.style.cssText = 'position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:#181c24;border:1px solid rgba(255,255,255,0.14);border-radius:12px;padding:1.25rem 1.5rem;z-index:400;min-width:280px;max-width:380px;box-shadow:0 8px 32px rgba(0,0,0,0.5)';
-  const scoreColor = l.score>=80?'var(--hot)':l.score>=50?'var(--warn)':'var(--cold)';
-  pop.innerHTML = `
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem">
-      <span style="font-weight:600;font-size:14px">${l.name}</span>
-      <button onclick="document.getElementById('detalle-popup').remove()" style="background:none;border:none;color:#5a6070;font-size:18px;cursor:pointer">✕</button>
-    </div>
-    <div style="font-family:var(--mono);font-size:11px;color:#5a6070;margin-bottom:8px">SCORE DETALLE</div>
-    <div style="font-size:28px;font-weight:600;color:${scoreColor};margin-bottom:12px">${l.score} pts</div>
-    ${l.lead_score_detalle.map(d=>{
-      const m = d.match(/([+-]\d+)$/);
-      const pts = m ? parseInt(m[1]) : 0;
-      const col = pts>0?'var(--accent)':'var(--danger)';
-      return `<div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid rgba(255,255,255,0.06);font-size:12px">
-        <span>${d.replace(/[+-]\d+$/,'').trim()}</span>
-        <span style="font-family:var(--mono);color:${col};font-weight:500">${pts>0?'+'+pts:pts}</span>
-      </div>`;
-    }).join('')}
-  `;
-  const overlay = document.createElement('div');
-  overlay.id = 'detalle-overlay';
-  overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:399';
-  overlay.onclick = () => { pop.remove(); overlay.remove(); };
-  document.body.appendChild(overlay);
-  document.body.appendChild(pop);
 }
 
 // ── INIT ───────────────────────────────────────────────────────────────────
