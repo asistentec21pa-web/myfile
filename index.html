@@ -701,6 +701,7 @@
         <button class="btn" onclick="testPostWebhook()">◎ Probar POST</button>
         <button class="btn" onclick="fetchFromN8N()">↻ Sincronizar ahora</button>
         <button class="btn" onclick="pushAllToN8N()">↑ Push todos los leads</button>
+        <button class="btn btn-danger" onclick="clearLeadsCache()">✕ Borrar caché</button>
         <button class="btn btn-primary" onclick="saveConfig()">✓ Guardar configuración</button>
       </div>
 
@@ -1071,11 +1072,12 @@ async function fetchFromN8N() {
     }));
 
     lastSync = new Date();
+    saveLeads();
     renderTable();
     updateSyncStatus('ok');
-    document.getElementById('last-sync-label').textContent = 'últ. sync '+lastSync.toLocaleTimeString('es');
-    addLog(`${leads.length} leads cargados desde n8n`, 'ok');
-    toast(`${leads.length} leads sincronizados`, 'success');
+    document.getElementById('last-sync-label').textContent = 'ult. sync '+lastSync.toLocaleTimeString('es');
+    addLog(leads.length + ' leads sincronizados y guardados en cache', 'ok');
+    toast(leads.length + ' leads sincronizados', 'success');
     updateStatusPanel();
   } catch(e) {
     updateSyncStatus('error');
@@ -1221,6 +1223,7 @@ async function saveLead() {
     addLog(`Lead ${lead.name} creado`, 'ok');
   }
   closeModal();
+  saveLeads();
   renderTable();
   if (cfg.postUrl) await pushToN8N(lead);
   else toast('Lead guardado localmente (sin webhook POST configurado)', 'info');
@@ -1230,7 +1233,8 @@ function deleteLead(id) {
   const l = leads.find(x=>x.id===id);
   if (!l || !confirm('¿Eliminar a ' + l.name + '?')) return;
   leads = leads.filter(x=>String(x.id)!==String(id));
-  addLog(`Lead ${l.name} eliminado`, 'warn');
+  addLog('Lead ' + l.name + ' eliminado', 'warn');
+  saveLeads();
   renderTable();
 }
 
@@ -1290,11 +1294,52 @@ function toast(msg, type='info') {
   setTimeout(()=>el.remove(), 3500);
 }
 
-// ── INIT ───────────────────────────────────────────────────────────────────
+// ── PERSISTENCIA localStorage ────────────────────────────────────────────
+function saveLeads() {
+  try {
+    localStorage.setItem('ls_leads', JSON.stringify(leads));
+    localStorage.setItem('ls_leads_ts', new Date().toISOString());
+  } catch(e) { console.warn('No se pudo guardar leads:', e); }
+}
+
+function loadLeads() {
+  try {
+    const saved = localStorage.getItem('ls_leads');
+    const ts    = localStorage.getItem('ls_leads_ts');
+    if (saved) {
+      const parsed = JSON.parse(saved);
+      if (Array.isArray(parsed) && parsed.length > 0) {
+        leads = parsed;
+        if (ts) {
+          lastSync = new Date(ts);
+          const label = document.getElementById('last-sync-label');
+          if (label) label.textContent = 'ult. sync ' + lastSync.toLocaleTimeString('es');
+        }
+        return true;
+      }
+    }
+  } catch(e) { console.warn('No se pudo cargar leads:', e); }
+  return false;
+}
+
+function clearLeadsCache() {
+  localStorage.removeItem('ls_leads');
+  localStorage.removeItem('ls_leads_ts');
+  toast('Cache de leads borrada', 'info');
+  addLog('Cache borrada — se usaran datos de ejemplo hasta la proxima sync', 'warn');
+}
+
+// ── INIT ─────────────────────────────────────────────────────────────────
 loadConfig();
+const fromCache = loadLeads();
 renderTable();
 updateStatusPanel();
-addLog('Dashboard iniciado', 'ok');
+if (fromCache) {
+  updateSyncStatus('ok');
+  addLog('leads cargados desde cache local (' + leads.length + ')', 'ok');
+} else {
+  addLog('Dashboard iniciado con datos de ejemplo', 'ok');
+}
 </script>
 </body>
 </html>
