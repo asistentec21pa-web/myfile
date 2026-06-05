@@ -436,9 +436,40 @@
 
   .last-sync { font-family: var(--mono); font-size: 10px; color: var(--muted); }
 
-  /* web tab url input */
-  #web-url-input { background: var(--bg); border: 1px solid var(--border-bright); border-radius: 7px; padding: 7px 12px; color: var(--text); }
-  #web-url-input:focus { border-color: var(--accent); outline: none; }
+  /* ── CHATS TAB ── */
+  .chats-layout { display: grid; grid-template-columns: 320px 1fr; height: calc(100vh - 100px); overflow: hidden; }
+  .leads-list { border-right: 1px solid var(--border); overflow-y: auto; background: var(--surface); }
+  .lead-item { display: flex; align-items: center; gap: 10px; padding: 12px 16px; border-bottom: 1px solid var(--border); cursor: pointer; transition: background 0.1s; }
+  .lead-item:hover { background: var(--surface2); }
+  .lead-item.active { background: rgba(79,255,176,0.06); border-left: 2px solid var(--accent); }
+  .lead-avatar { width: 38px; height: 38px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 14px; flex-shrink: 0; }
+  .lead-item-info { flex: 1; min-width: 0; }
+  .lead-item-name { font-size: 13px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .lead-item-preview { font-size: 11px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 2px; font-family: var(--mono); }
+  .lead-item-meta { text-align: right; flex-shrink: 0; }
+  .lead-item-score { font-family: var(--mono); font-size: 11px; font-weight: 500; }
+  .lead-item-time { font-size: 10px; color: var(--muted); font-family: var(--mono); margin-top: 3px; }
+  .chat-panel { display: flex; flex-direction: column; background: var(--bg); overflow: hidden; }
+  .chat-header { padding: 14px 20px; border-bottom: 1px solid var(--border); background: var(--surface); display: flex; align-items: center; gap: 12px; flex-shrink: 0; }
+  .chat-header-info { flex: 1; }
+  .chat-header-name { font-size: 15px; font-weight: 500; }
+  .chat-header-sub { font-size: 11px; color: var(--muted); font-family: var(--mono); margin-top: 2px; }
+  .chat-messages { flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 10px; }
+  .chat-empty { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; color: var(--muted); gap: 10px; }
+  .chat-empty-icon { font-size: 40px; opacity: 0.3; }
+  .msg-bubble { max-width: 75%; padding: 9px 13px; border-radius: 12px; font-size: 13px; line-height: 1.5; position: relative; }
+  .msg-interno { background: var(--surface2); border: 1px solid var(--border); align-self: flex-start; border-bottom-left-radius: 3px; }
+  .msg-evento { background: rgba(0,200,255,0.07); border: 1px solid rgba(0,200,255,0.15); align-self: center; text-align: center; font-size: 11px; color: var(--accent2); font-family: var(--mono); max-width: 90%; border-radius: 6px; }
+  .msg-saliente { background: rgba(79,255,176,0.1); border: 1px solid rgba(79,255,176,0.2); align-self: flex-end; border-bottom-right-radius: 3px; }
+  .msg-time { font-size: 10px; color: var(--muted); margin-top: 4px; font-family: var(--mono); }
+  .msg-tipo { font-size: 10px; font-family: var(--mono); color: var(--muted); margin-bottom: 3px; }
+  .chat-config { padding: 12px 20px; border-top: 1px solid var(--border); background: var(--surface); display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
+  .chat-loading { display: flex; align-items: center; justify-content: center; height: 100%; gap: 10px; color: var(--muted); font-size: 13px; }
+  .spinner { width: 20px; height: 20px; border: 2px solid var(--border); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.7s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .chats-no-config { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; gap: 14px; color: var(--muted); text-align: center; padding: 2rem; }
+
+
 
   @media(max-width:1100px) {
     .content-grid { grid-template-columns: 1fr; }
@@ -477,12 +508,13 @@
     <span class="tab-icon">◈</span> Dashboard
     <span class="tab-badge" id="tab-badge-count">0</span>
   </button>
+  <button class="tab-btn" id="tab-btn-chats" onclick="switchTab('chats')">
+    <span class="tab-icon">💬</span> Chats
+    <span class="tab-badge" id="tab-badge-chats" style="display:none">0</span>
+  </button>
   <button class="tab-btn" id="tab-btn-n8n" onclick="switchTab('n8n')">
     <span class="tab-icon" style="font-weight:700;font-size:12px">n8</span> Configuración n8n
     <span id="n8n-tab-dot" style="width:6px;height:6px;border-radius:50%;background:var(--muted);display:inline-block;margin-left:2px"></span>
-  </button>
-  <button class="tab-btn" id="tab-btn-web" onclick="switchTab('web')">
-    <span class="tab-icon">⊕</span> Sitio web
   </button>
 </div>
 
@@ -768,46 +800,54 @@
 </div>
 
 <!-- ══════════════════════════════════════════════════
-     TAB 3 — SITIO WEB
+     TAB 3 — CHATS KOMMO
 ══════════════════════════════════════════════════ -->
-<div class="tab-panel" id="tab-web">
+<div class="tab-panel" id="tab-chats">
 
-  <!-- URL bar -->
-  <div style="display:flex;align-items:center;gap:10px;padding:0.75rem 2rem;background:var(--surface);border-bottom:1px solid var(--border)">
-    <span style="font-family:var(--mono);font-size:11px;color:var(--muted);flex-shrink:0">URL</span>
-    <input type="text" id="web-url-input" placeholder="https://ejemplo.com"
-      style="flex:1;font-family:var(--mono);font-size:12px"
-      onkeydown="if(event.key==='Enter') loadWebUrl()">
-    <button class="btn btn-sm btn-primary" onclick="loadWebUrl()">→ Cargar</button>
-    <button class="btn btn-sm" onclick="openExternal()" title="Abrir en nueva pestaña">↗ Abrir</button>
-    <button class="btn btn-sm" onclick="reloadFrame()" title="Recargar">↻</button>
+  <!-- Config bar -->
+  <div style="display:flex;align-items:center;gap:10px;padding:0.65rem 1.5rem;background:var(--surface);border-bottom:1px solid var(--border);flex-wrap:wrap">
+    <span style="font-size:11px;font-family:var(--mono);color:var(--muted);flex-shrink:0">WEBHOOK CHATS</span>
+    <input type="text" id="chats-webhook-url" placeholder="https://tu-n8n.com/webhook/kommo-chats"
+      style="flex:1;min-width:260px;font-size:12px;font-family:var(--mono)">
+    <button class="btn btn-sm btn-primary" onclick="saveChatsConfig()">✓ Guardar</button>
+    <span style="font-size:11px;color:var(--muted);font-family:var(--mono)" id="chats-config-status"></span>
   </div>
 
-  <!-- Blocked warning (hidden by default) -->
-  <div id="web-blocked-msg" style="display:none;position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;z-index:10;pointer-events:none">
-    <div style="font-size:36px;margin-bottom:12px">🚫</div>
-    <div style="font-size:15px;font-weight:500;color:var(--text);margin-bottom:8px">El sitio bloqueó el iframe</div>
-    <div style="font-size:12px;color:var(--muted);margin-bottom:16px">Este sitio no permite ser cargado dentro de otro.<br>Puedes abrirlo en una pestaña nueva.</div>
-    <button class="btn btn-primary" style="pointer-events:all" onclick="openExternal()">↗ Abrir en nueva pestaña</button>
-  </div>
+  <!-- Layout -->
+  <div class="chats-layout" id="chats-main">
 
-  <!-- iframe container -->
-  <div id="web-frame-wrap" style="position:relative;width:100%;height:calc(100vh - 145px)">
-    <div id="web-placeholder" style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;color:var(--muted);gap:12px">
-      <div style="font-size:48px;opacity:0.3">⊕</div>
-      <div style="font-size:13px">Ingresa una URL arriba y presiona <strong style="color:var(--text)">Cargar</strong></div>
-      <div style="font-size:11px;font-family:var(--mono);color:var(--muted);max-width:420px;text-align:center;line-height:1.6">
-        Nota: sitios externos como Google o Facebook bloquean iframes.<br>
-        Si no carga, usa el botón <strong style="color:var(--text)">↗ Abrir</strong> para verlo en una pestaña nueva.
+    <!-- Left: leads list -->
+    <div class="leads-list" id="chats-leads-list">
+      <div style="padding:10px 16px;border-bottom:1px solid var(--border)">
+        <input type="text" id="chats-search" placeholder="Buscar lead..." oninput="renderChatsList()" style="font-size:12px">
       </div>
+      <div id="chats-list-body"></div>
     </div>
-    <iframe id="web-iframe"
-      style="display:none;width:100%;height:100%;border:none;background:#fff"
-      sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-presentation"
-      referrerpolicy="no-referrer">
-    </iframe>
-  </div>
 
+    <!-- Right: chat panel -->
+    <div class="chat-panel" id="chat-panel">
+      <div class="chat-empty" id="chat-no-selection">
+        <div class="chat-empty-icon">💬</div>
+        <div style="font-size:13px">Selecciona un lead para ver su chat</div>
+        <div style="font-size:11px;font-family:var(--mono)">Los mensajes se cargan desde Kommo vía n8n</div>
+      </div>
+
+      <!-- Header (hidden until lead selected) -->
+      <div class="chat-header" id="chat-header" style="display:none">
+        <div class="lead-avatar" id="chat-avatar"></div>
+        <div class="chat-header-info">
+          <div class="chat-header-name" id="chat-lead-name"></div>
+          <div class="chat-header-sub" id="chat-lead-sub"></div>
+        </div>
+        <button class="btn btn-sm" onclick="loadChats(currentChatLeadId, true)">↻ Actualizar</button>
+        <button class="btn btn-sm" onclick="switchTab('dashboard')" style="font-size:11px">← Dashboard</button>
+      </div>
+
+      <!-- Messages -->
+      <div class="chat-messages" id="chat-messages" style="display:none"></div>
+    </div>
+
+  </div>
 </div>
 
 <!-- ── MODAL ADD/EDIT ── -->
@@ -875,6 +915,7 @@ function switchTab(name) {
   document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
   document.getElementById('tab-'+name).classList.add('active');
   document.getElementById('tab-btn-'+name).classList.add('active');
+  if (name === 'chats') renderChatsList();
 }
 
 // ── HELPERS ────────────────────────────────────────────────────────────────
@@ -934,7 +975,7 @@ function renderTable() {
       const cScore = scoreColor(scoreVal);
       const tCat = getTemp(scoreVal, l.Lead_categoria);
       return `<tr onclick="openModal('edit','${l.id}')">
-        <td><div class="td-name">${esc(l.name)}</div><div class="td-email">${esc(l.Telefono||'')}</div></td>
+        <td><div class="td-name" style="cursor:pointer;color:var(--accent)" onclick="event.stopPropagation();goToChat(${l.Lead_id})" title="Ver chat de ${esc(l.name)}">${esc(l.name)}</div><div class="td-email">${esc(l.Telefono||'')}</div></td>
         <td><span style="font-family:var(--mono);font-size:11px;color:var(--accent2);background:rgba(0,200,255,0.08);border:1px solid rgba(0,200,255,0.2);border-radius:5px;padding:2px 8px;white-space:nowrap" title="Lead_id: ${l.Lead_id||''} | Pipeline_id: ${l.Pipeline_id||''}">${esc(pipeLabel)}</span></td>
         <td><div class="score-wrap"><div class="score-bar"><div class="score-fill" style="width:${scoreVal}%;background:${cScore}"></div></div><span class="score-num" style="color:${cScore}">${scoreVal}</span></div></td>
         <td><span class="badge badge-${tCat}">${tempLabel[tCat]||tCat}</span></td>
@@ -1358,71 +1399,181 @@ function toast(msg, type='info') {
   setTimeout(()=>el.remove(), 3500);
 }
 
-// ── WEB TAB ──────────────────────────────────────────────────────────────
-function loadWebUrl() {
-  let url = document.getElementById('web-url-input').value.trim();
-  if (!url) return;
-  if (!/^https?:\/\//i.test(url)) url = 'https://' + url;
-  document.getElementById('web-url-input').value = url;
+// ── GO TO CHAT (from dashboard) ─────────────────────────────────────────
+function goToChat(leadId) {
+  switchTab('chats');
+  // Short delay to let the tab render before selecting
+  setTimeout(() => selectChatLead(leadId), 50);
+}
 
-  const iframe   = document.getElementById('web-iframe');
-  const placeholder = document.getElementById('web-placeholder');
-  const blocked  = document.getElementById('web-blocked-msg');
+// ── CHATS TAB ────────────────────────────────────────────────────────────
+let currentChatLeadId = null;
+let chatsCache = {}; // leadId -> {messages, ts}
+let chatsCfg = { webhookUrl: '' };
 
-  placeholder.style.display = 'none';
-  blocked.style.display = 'none';
-  iframe.style.display = 'block';
-  iframe.src = url;
+function saveChatsConfig() {
+  chatsCfg.webhookUrl = document.getElementById('chats-webhook-url').value.trim();
+  try { localStorage.setItem('ls_chats_cfg', JSON.stringify(chatsCfg)); } catch(e) {}
+  document.getElementById('chats-config-status').textContent = chatsCfg.webhookUrl ? '✓ Guardado' : '';
+  document.getElementById('chats-config-status').style.color = 'var(--accent)';
+  renderChatsList();
+  toast('Webhook de chats guardado', 'success');
+}
 
-  // Detect block: if iframe fails to load content, show blocked message
-  const timer = setTimeout(() => {
-    try {
-      // If we can't access contentDocument it's cross-origin but may still load
-      // We use the error event as primary signal
-    } catch(e) {}
-  }, 3000);
-
-  iframe.onerror = () => {
-    clearTimeout(timer);
-    iframe.style.display = 'none';
-    blocked.style.display = 'block';
-  };
-
-  iframe.onload = () => {
-    clearTimeout(timer);
-    // Try to detect X-Frame-Options block (blank doc = blocked)
-    try {
-      const doc = iframe.contentDocument;
-      if (doc && doc.body && doc.body.innerHTML === '') {
-        iframe.style.display = 'none';
-        blocked.style.display = 'block';
+function loadChatsCfg() {
+  try {
+    const s = localStorage.getItem('ls_chats_cfg');
+    if (s) {
+      chatsCfg = JSON.parse(s);
+      document.getElementById('chats-webhook-url').value = chatsCfg.webhookUrl || '';
+      if (chatsCfg.webhookUrl) {
+        document.getElementById('chats-config-status').textContent = '✓ Configurado';
+        document.getElementById('chats-config-status').style.color = 'var(--accent)';
       }
-    } catch(e) {
-      // Cross-origin — can't read, but it may still be displaying fine
     }
-  };
-
-  // Save last URL
-  try { localStorage.setItem('ls_web_url', url); } catch(e) {}
+  } catch(e) {}
 }
 
-function openExternal() {
-  const url = document.getElementById('web-url-input').value.trim();
-  if (url) window.open(url, '_blank', 'noopener');
+function renderChatsList() {
+  const q = (document.getElementById('chats-search').value || '').toLowerCase();
+  const filtered = leads.filter(l => !q || l.name.toLowerCase().includes(q) || String(l.Lead_id||'').includes(q));
+  const body = document.getElementById('chats-list-body');
+
+  if (!filtered.length) {
+    body.innerHTML = '<div style="padding:20px;text-align:center;color:var(--muted);font-size:12px">Sin leads</div>';
+    return;
+  }
+
+  body.innerHTML = filtered.map(l => {
+    const t = getTemp(l.Lead_score, l.Lead_categoria);
+    const colors = {hot:'var(--hot)',warm:'var(--warm)',cold:'var(--cold)'};
+    const initials = l.name.split(' ').map(w=>w[0]).join('').substring(0,2).toUpperCase();
+    const cached = chatsCache[l.Lead_id];
+    const preview = cached ? (cached.messages[0]?.texto || 'Sin mensajes') : 'Click para cargar';
+    const timeStr = cached ? fmtDate(cached.messages[0]?.fecha) : '';
+    const active = currentChatLeadId === l.Lead_id ? ' active' : '';
+    return `<div class="lead-item${active}" onclick="selectChatLead(${l.Lead_id})">
+      <div class="lead-avatar" style="background:${colors[t]}22;color:${colors[t]}">${initials}</div>
+      <div class="lead-item-info">
+        <div class="lead-item-name">${esc(l.name)}</div>
+        <div class="lead-item-preview">${esc(preview)}</div>
+      </div>
+      <div class="lead-item-meta">
+        <div class="lead-item-score" style="color:${colors[t]}">${l.Lead_score}</div>
+        <div class="lead-item-time">${timeStr}</div>
+      </div>
+    </div>`;
+  }).join('');
 }
 
-function reloadFrame() {
-  const iframe = document.getElementById('web-iframe');
-  if (iframe.src && iframe.src !== 'about:blank') {
-    iframe.src = iframe.src;
+async function selectChatLead(leadId) {
+  currentChatLeadId = leadId;
+  const lead = leads.find(l => l.Lead_id === leadId);
+  if (!lead) return;
+
+  // Update header
+  const t = getTemp(lead.Lead_score, lead.Lead_categoria);
+  const colors = {hot:'var(--hot)',warm:'var(--warm)',cold:'var(--cold)'};
+  const initials = lead.name.split(' ').map(w=>w[0]).join('').substring(0,2).toUpperCase();
+  document.getElementById('chat-no-selection').style.display = 'none';
+  document.getElementById('chat-header').style.display = 'flex';
+  document.getElementById('chat-messages').style.display = 'flex';
+  document.getElementById('chat-avatar').textContent = initials;
+  document.getElementById('chat-avatar').style.cssText = `background:${colors[t]}22;color:${colors[t]};width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:600;font-size:14px`;
+  document.getElementById('chat-lead-name').textContent = lead.name;
+  document.getElementById('chat-lead-sub').textContent = `Lead_id: ${lead.Lead_id} · ${lead.Pipeline_nombre||''} · Score: ${lead.Lead_score}`;
+
+  renderChatsList();
+  await loadChats(leadId, false);
+}
+
+async function loadChats(leadId, forceRefresh) {
+  if (!chatsCfg.webhookUrl) {
+    document.getElementById('chat-messages').innerHTML = `
+      <div class="chats-no-config">
+        <div style="font-size:32px">⚙️</div>
+        <div style="font-size:14px;font-weight:500;color:var(--text)">Configura el webhook de chats</div>
+        <div style="font-size:12px">Pega la URL del webhook de n8n en la barra superior y guarda.</div>
+      </div>`;
+    return;
+  }
+
+  // Use cache if available and not forced refresh
+  if (!forceRefresh && chatsCache[leadId]) {
+    renderMessages(chatsCache[leadId].messages);
+    return;
+  }
+
+  // Show loading
+  document.getElementById('chat-messages').innerHTML = `
+    <div class="chat-loading"><div class="spinner"></div><span>Cargando mensajes...</span></div>`;
+
+  try {
+    const url = chatsCfg.webhookUrl + (chatsCfg.webhookUrl.includes('?') ? '&' : '?') + 'lead_id=' + leadId;
+    const res = await fetch(url, { headers: { 'Content-Type': 'application/json' } });
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const data = await res.json();
+    const messages = data.chats || data.messages || (Array.isArray(data) ? data : []);
+    chatsCache[leadId] = { messages, ts: new Date() };
+    renderMessages(messages);
+    renderChatsList();
+    const badge = document.getElementById('tab-badge-chats');
+    badge.style.display = 'inline-flex';
+    badge.textContent = messages.length;
+  } catch(e) {
+    document.getElementById('chat-messages').innerHTML = `
+      <div class="chats-no-config">
+        <div style="font-size:32px">⚠️</div>
+        <div style="font-size:14px;font-weight:500;color:var(--danger)">Error al cargar chats</div>
+        <div style="font-size:12px;font-family:var(--mono);color:var(--muted)">${esc(e.message)}</div>
+        <button class="btn btn-sm" onclick="loadChats(${leadId}, true)">↻ Reintentar</button>
+      </div>`;
+    addLog('Error chats lead ' + leadId + ': ' + e.message, 'err');
   }
 }
 
-function loadSavedWebUrl() {
+function renderMessages(messages) {
+  const container = document.getElementById('chat-messages');
+  if (!messages.length) {
+    container.innerHTML = `
+      <div class="chat-empty">
+        <div class="chat-empty-icon">📭</div>
+        <div>Sin mensajes para este lead</div>
+      </div>`;
+    return;
+  }
+
+  container.innerHTML = messages.map(m => {
+    const dir = m.direccion || 'interno';
+    const cls = dir === 'evento' ? 'msg-evento' : dir === 'saliente' ? 'msg-saliente' : 'msg-interno';
+    const tipo = m.tipo || '';
+    const tipoLabel = tipo && tipo !== 'nota' ? `<div class="msg-tipo">${esc(tipo)}</div>` : '';
+    const texto = m.texto || m.text || m.content || '';
+    const fecha = m.fecha || m.created_at || '';
+    return `<div style="display:flex;flex-direction:column;align-items:${dir==='saliente'?'flex-end':dir==='evento'?'center':'flex-start'}">
+      <div class="msg-bubble ${cls}">
+        ${tipoLabel}
+        <div>${esc(texto)}</div>
+      </div>
+      <div class="msg-time">${fmtDate(fecha)}</div>
+    </div>`;
+  }).join('');
+
+  // Scroll to bottom
+  container.scrollTop = container.scrollHeight;
+}
+
+function fmtDate(iso) {
+  if (!iso) return '';
   try {
-    const saved = localStorage.getItem('ls_web_url');
-    if (saved) document.getElementById('web-url-input').value = saved;
-  } catch(e) {}
+    const d = new Date(iso);
+    const now = new Date();
+    const diff = now - d;
+    if (diff < 60000)    return 'ahora';
+    if (diff < 3600000)  return Math.floor(diff/60000) + 'm';
+    if (diff < 86400000) return d.toLocaleTimeString('es', {hour:'2-digit',minute:'2-digit'});
+    return d.toLocaleDateString('es', {day:'2-digit',month:'2-digit'}) + ' ' + d.toLocaleTimeString('es',{hour:'2-digit',minute:'2-digit'});
+  } catch(e) { return iso; }
 }
 
 // ── PERSISTENCIA localStorage ────────────────────────────────────────────
@@ -1462,7 +1613,7 @@ function clearLeadsCache() {
 
 // ── INIT ─────────────────────────────────────────────────────────────────
 loadConfig();
-loadSavedWebUrl();
+loadChatsCfg();
 const fromCache = loadLeads();
 renderTable();
 updateStatusPanel();
