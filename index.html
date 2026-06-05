@@ -497,6 +497,9 @@
           <option value="warm">Tibio</option>
           <option value="cold">Frío</option>
         </select>
+        <select id="f-pipeline" onchange="renderTable()">
+          <option value="">Todos los pipelines</option>
+        </select>
         <select id="f-src" onchange="renderTable()" style="display:none">
           <option value="">Todas las fuentes</option>
         </select>
@@ -848,13 +851,15 @@ function esc(s) {
 
 // ── RENDER TABLE ───────────────────────────────────────────────────────────
 function getFiltered() {
-  const q = (document.getElementById('search').value||'').toLowerCase();
+  const q  = (document.getElementById('search').value||'').toLowerCase();
   const ft = document.getElementById('f-temp').value;
   const fs = document.getElementById('f-src').value;
+  const fp = document.getElementById('f-pipeline').value;
   return leads.filter(l => {
-    if (q && !l.name.toLowerCase().includes(q) && !(l.telefono||'').toLowerCase().includes(q) && !(l.email||'').toLowerCase().includes(q) && !String(l.pipeline||'').includes(q)) return false;
+    if (q && !l.name.toLowerCase().includes(q) && !(l.Telefono||'').toLowerCase().includes(q) && !(l.email||'').toLowerCase().includes(q) && !(l.Pipeline_nombre||'').toLowerCase().includes(q)) return false;
     if (ft && getTemp(l.Lead_score, l.Lead_categoria) !== ft) return false;
     if (fs && l.etiqueta_fuente !== fs) return false;
+    if (fp && (l.Pipeline_nombre||'') !== fp) return false;
     return true;
   }).sort((a,b) => {
     let av = a[sortCol], bv = b[sortCol];
@@ -896,6 +901,7 @@ function renderTable() {
   renderMetrics();
   renderSide();
   updateSourceFilter();
+  updatePipelineFilter();
   updateStatusPanel();
 }
 
@@ -941,6 +947,14 @@ function updateSourceFilter() {
   const srcs = [...new Set(leads.map(l=>l.etiqueta_fuente).filter(Boolean))].sort();
   sel.innerHTML = '<option value="">Todas las fuentes</option>' + srcs.map(s=>`<option value="${s}">${s}</option>`).join('');
   sel.value = cur;
+}
+
+function updatePipelineFilter() {
+  const sel = document.getElementById('f-pipeline');
+  const cur = sel.value;
+  const pipes = [...new Set(leads.map(l=>l.Pipeline_nombre).filter(Boolean))].sort();
+  sel.innerHTML = '<option value="">Todos los pipelines</option>' + pipes.map(p=>`<option value="${p}">${p}</option>`).join('');
+  if (pipes.includes(cur)) sel.value = cur;
 }
 
 function sortBy(col) {
