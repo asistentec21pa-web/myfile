@@ -1595,12 +1595,11 @@ function fmtDate(iso) {
   if (!iso) return '';
   try {
     const d = new Date(iso);
-    const now = new Date();
-    const diff = now - d;
-    if (diff < 60000)    return 'ahora';
-    if (diff < 3600000)  return Math.floor(diff/60000) + 'm';
-    if (diff < 86400000) return d.toLocaleTimeString('es', {hour:'2-digit',minute:'2-digit'});
-    return d.toLocaleDateString('es', {day:'2-digit',month:'2-digit'}) + ' ' + d.toLocaleTimeString('es',{hour:'2-digit',minute:'2-digit'});
+    const hora = d.toLocaleTimeString('es', { hour: '2-digit', minute: '2-digit' });
+    const hoy = new Date();
+    const esHoy = d.toDateString() === hoy.toDateString();
+    if (esHoy) return hora;
+    return d.toLocaleDateString('es', { day: '2-digit', month: '2-digit' }) + ' ' + hora;
   } catch(e) { return iso; }
 }
 
