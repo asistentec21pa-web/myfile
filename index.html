@@ -458,6 +458,7 @@
   .chat-empty { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; color: var(--muted); gap: 10px; }
   .chat-empty-icon { font-size: 40px; opacity: 0.3; }
   .msg-bubble { max-width: 75%; padding: 9px 13px; border-radius: 12px; font-size: 13px; line-height: 1.5; position: relative; }
+  .msg-author { font-size: 10px; font-weight: 600; font-family: var(--mono); margin-bottom: 3px; }
   .msg-interno { background: var(--surface2); border: 1px solid var(--border); align-self: flex-start; border-bottom-left-radius: 3px; }
   .msg-evento { background: rgba(0,200,255,0.07); border: 1px solid rgba(0,200,255,0.15); align-self: center; text-align: center; font-size: 11px; color: var(--accent2); font-family: var(--mono); max-width: 90%; border-radius: 6px; }
   .msg-saliente { background: rgba(79,255,176,0.1); border: 1px solid rgba(79,255,176,0.2); align-self: flex-end; border-bottom-right-radius: 3px; }
@@ -1402,8 +1403,7 @@ function toast(msg, type='info') {
 // ── GO TO CHAT (from dashboard) ─────────────────────────────────────────
 function goToChat(leadId) {
   switchTab('chats');
-  // Short delay to let the tab render before selecting
-  setTimeout(() => selectChatLead(leadId), 50);
+  setTimeout(() => selectChatLead(leadId, true), 50); // true = force refresh
 }
 
 // ── CHATS TAB ────────────────────────────────────────────────────────────
@@ -1452,7 +1452,7 @@ function renderChatsList() {
     const preview = cached ? (cached.messages[0]?.texto || 'Sin mensajes') : 'Click para cargar';
     const timeStr = cached ? fmtDate(cached.messages[0]?.fecha) : '';
     const active = currentChatLeadId === l.Lead_id ? ' active' : '';
-    return `<div class="lead-item${active}" onclick="selectChatLead(${l.Lead_id})">
+    return `<div class="lead-item${active}" onclick="selectChatLead(${l.Lead_id}, true)">
       <div class="lead-avatar" style="background:${colors[t]}22;color:${colors[t]}">${initials}</div>
       <div class="lead-item-info">
         <div class="lead-item-name">${esc(l.name)}</div>
@@ -1466,7 +1466,7 @@ function renderChatsList() {
   }).join('');
 }
 
-async function selectChatLead(leadId) {
+async function selectChatLead(leadId, forceRefresh) {
   currentChatLeadId = leadId;
   const lead = leads.find(l => l.Lead_id === leadId);
   if (!lead) return;
@@ -1483,8 +1483,12 @@ async function selectChatLead(leadId) {
   document.getElementById('chat-lead-name').textContent = lead.name;
   document.getElementById('chat-lead-sub').textContent = `Lead_id: ${lead.Lead_id} · ${lead.Pipeline_nombre||''} · Score: ${lead.Lead_score}`;
 
+  // Store lead name for use in chat bubbles
+  window._currentChatLeadName = lead.name;
+  window._currentChatAgentName = 'Agente';
+
   renderChatsList();
-  await loadChats(leadId, false);
+  await loadChats(leadId, forceRefresh !== false); // always refresh by default
 }
 
 async function loadChats(leadId, forceRefresh) {
@@ -1515,6 +1519,9 @@ async function loadChats(leadId, forceRefresh) {
     const data = await res.json();
     const messages = data.chats || data.messages || (Array.isArray(data) ? data : []);
     chatsCache[leadId] = { messages, ts: new Date() };
+    // Auto-detect agent name from first outbound message with a real autor
+    const agentMsg = messages.find(m => m.direccion === 'saliente' && m.autor && m.autor !== 'Agente' && m.autor !== 'Sistema');
+    if (agentMsg) window._currentChatAgentName = agentMsg.autor;
     renderMessages(messages);
     renderChatsList();
     const badge = document.getElementById('tab-badge-chats');
@@ -1543,19 +1550,40 @@ function renderMessages(messages) {
     return;
   }
 
+  // Determine names for this conversation
+  const leadName  = window._currentChatLeadName  || 'Lead';
+  const agentName = window._currentChatAgentName || 'Agente';
+
   container.innerHTML = messages.map(m => {
-    const dir = m.direccion || 'interno';
-    const cls = dir === 'evento' ? 'msg-evento' : dir === 'saliente' ? 'msg-saliente' : 'msg-interno';
-    const tipo = m.tipo || '';
-    const tipoLabel = tipo && tipo !== 'nota' ? `<div class="msg-tipo">${esc(tipo)}</div>` : '';
+    const dir   = m.direccion || 'interno';
+    const cls   = dir === 'evento' ? 'msg-evento' : dir === 'saliente' ? 'msg-saliente' : 'msg-interno';
     const texto = m.texto || m.text || m.content || '';
     const fecha = m.fecha || m.created_at || '';
-    return `<div style="display:flex;flex-direction:column;align-items:${dir==='saliente'?'flex-end':dir==='evento'?'center':'flex-start'}">
-      <div class="msg-bubble ${cls}">
-        ${tipoLabel}
-        <div>${esc(texto)}</div>
-      </div>
-      <div class="msg-time">${fmtDate(fecha)}</div>
+    const align = dir === 'saliente' ? 'flex-end' : dir === 'evento' ? 'center' : 'flex-start';
+
+    // Resolve display name
+    let displayName = m.autor || '';
+    if (!displayName || displayName === 'Sistema' || displayName === 'Desconocido') {
+      displayName = dir === 'saliente' ? agentName : dir === 'evento' ? '' : leadName;
+    }
+
+    // Name color: green for agent, accent2 for lead, muted for events
+    const nameColor = dir === 'saliente' ? 'var(--accent)' : dir === 'evento' ? '' : 'var(--accent2)';
+    const nameLabel = displayName && dir !== 'evento'
+      ? `<div style="font-size:10px;font-weight:600;color:${nameColor};margin-bottom:4px;font-family:var(--mono)">${esc(displayName)}</div>`
+      : '';
+
+    if (dir === 'evento') {
+      return `<div style="display:flex;flex-direction:column;align-items:center;margin:4px 0">
+        <div class="msg-bubble msg-evento">${esc(texto)}</div>
+        <div class="msg-time">${fmtDate(fecha)}</div>
+      </div>`;
+    }
+
+    return `<div style="display:flex;flex-direction:column;align-items:${align};margin:2px 0">
+      ${nameLabel}
+      <div class="msg-bubble ${cls}">${esc(texto)}</div>
+      <div class="msg-time" style="text-align:${dir==='saliente'?'right':'left'}">${fmtDate(fecha)}</div>
     </div>`;
   }).join('');
 
