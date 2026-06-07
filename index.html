@@ -235,9 +235,9 @@
   .toolbar-right { margin-left: auto; display: flex; gap: 8px; }
 
   /* ── TABLE ── */
-  .table-wrap { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
+  .table-wrap { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; overflow-y: auto; max-height: calc(100vh - 320px); min-height: 300px; }
   table { width: 100%; border-collapse: collapse; }
-  thead { background: var(--surface2); }
+  thead { background: var(--surface2); position: sticky; top: 0; z-index: 2; }
   th {
     padding: 10px 14px; text-align: left;
     font-size: 11px; font-family: var(--mono); color: var(--muted); font-weight: 400;
@@ -757,6 +757,36 @@
 
   <!-- FORMATO ESPERADO -->
   <div class="n8n-section">
+  </div>
+
+  <!-- CHATS WEBHOOK -->
+  <div class="n8n-section">
+    <div class="n8n-section-header">
+      <div class="n8n-section-icon blue">💬</div>
+      <div class="n8n-section-info">
+        <div class="n8n-section-title">Webhook de Chats (Kommo)</div>
+        <div class="n8n-section-desc">URL del workflow n8n que devuelve los mensajes de un lead</div>
+      </div>
+    </div>
+    <div class="n8n-section-body">
+      <div class="form-grid-2">
+        <div class="field-group full">
+          <label class="field-label"><span class="method-pill method-get">GET</span>WEBHOOK URL — Chats por lead (?lead_id=...)</label>
+          <input type="text" id="chats-webhook-url" placeholder="https://tu-n8n.com/webhook/kommo-chats">
+        </div>
+      </div>
+      <div style="margin-top:1rem;display:flex;align-items:center;gap:10px">
+        <button class="btn btn-primary" onclick="saveChatsConfig()">✓ Guardar webhook de chats</button>
+        <span style="font-size:11px;color:var(--accent);font-family:var(--mono)" id="chats-config-status"></span>
+      </div>
+      <div style="margin-top:1rem" class="info-box">
+        El webhook recibe <code>?lead_id={Lead_id}</code> y debe devolver:<br>
+        <code>{ "chats": [ { "texto": "...", "autor": "Nombre", "direccion": "saliente|interno", "fecha": "ISO date" } ] }</code>
+      </div>
+    </div>
+  </div>
+
+  <div class="n8n-section">
     <div class="n8n-section-header">
       <div class="n8n-section-icon green">📋</div>
       <div class="n8n-section-info">
@@ -805,17 +835,8 @@
 ══════════════════════════════════════════════════ -->
 <div class="tab-panel" id="tab-chats">
 
-  <!-- Config bar -->
-  <div style="display:flex;align-items:center;gap:10px;padding:0.65rem 1.5rem;background:var(--surface);border-bottom:1px solid var(--border);flex-wrap:wrap">
-    <span style="font-size:11px;font-family:var(--mono);color:var(--muted);flex-shrink:0">WEBHOOK CHATS</span>
-    <input type="text" id="chats-webhook-url" placeholder="https://tu-n8n.com/webhook/kommo-chats"
-      style="flex:1;min-width:260px;font-size:12px;font-family:var(--mono)">
-    <button class="btn btn-sm btn-primary" onclick="saveChatsConfig()">✓ Guardar</button>
-    <span style="font-size:11px;color:var(--muted);font-family:var(--mono)" id="chats-config-status"></span>
-  </div>
-
   <!-- Layout -->
-  <div class="chats-layout" id="chats-main">
+  <div class="chats-layout" id="chats-main" style="height:calc(100vh - 100px)">
 
     <!-- Left: leads list -->
     <div class="leads-list" id="chats-leads-list">
@@ -960,34 +981,78 @@ function getFiltered() {
   });
 }
 
+// ── VIRTUAL SCROLL STATE ─────────────────────────────────────────────────
+let _vsData       = [];   // full filtered+sorted dataset
+const VS_PAGE     = 80;   // rows rendered per batch
+let _vsRendered   = 0;    // how many rows currently in DOM
+
+function buildRow(l) {
+  const pipeLabel = l.Pipeline_nombre || ('#' + (l.Pipeline_id||'—'));
+  const scoreVal  = l.Lead_score !== undefined ? l.Lead_score : (l.score || 0);
+  const cScore    = scoreColor(scoreVal);
+  const tCat      = getTemp(scoreVal, l.Lead_categoria);
+  return `<tr onclick="openModal('edit','${l.id}')">
+    <td><div class="td-name" style="cursor:pointer;color:var(--accent)" onclick="event.stopPropagation();goToChat(${l.Lead_id})" title="Ver chat">${esc(l.name)}</div><div class="td-email">${esc(l.Telefono||'')}</div></td>
+    <td><span style="font-family:var(--mono);font-size:11px;color:var(--accent2);background:rgba(0,200,255,0.08);border:1px solid rgba(0,200,255,0.2);border-radius:5px;padding:2px 8px;white-space:nowrap" title="Lead_id:${l.Lead_id||''}">${esc(pipeLabel)}</span></td>
+    <td><div class="score-wrap"><div class="score-bar"><div class="score-fill" style="width:${scoreVal}%;background:${cScore}"></div></div><span class="score-num" style="color:${cScore}">${scoreVal}</span></div></td>
+    <td><span class="badge badge-${tCat}">${tempLabel[tCat]||tCat}</span></td>
+    <td style="font-size:11px;color:var(--muted)">${esc(l.etiqueta_fuente||'—')}</td>
+    <td style="font-family:var(--mono);font-size:12px">$${Number(l.Valor_lead||l.value||0).toLocaleString()}</td>
+    <td onclick="event.stopPropagation()">
+      <button class="btn btn-sm" onclick="pushToN8N(leads.find(x=>x.id===${l.id}))">↑</button>
+      <button class="btn btn-sm btn-danger" onclick="deleteLead(${l.id})">✕</button>
+    </td>
+  </tr>`;
+}
+
+function vsAppendMore() {
+  if (_vsRendered >= _vsData.length) return;
+  const tbody  = document.getElementById('tbody');
+  const next   = _vsData.slice(_vsRendered, _vsRendered + VS_PAGE);
+  const frag   = document.createDocumentFragment();
+  next.forEach(l => {
+    const tr = document.createElement('tbody');
+    tr.innerHTML = buildRow(l);
+    frag.appendChild(tr.firstChild);
+  });
+  tbody.appendChild(frag);
+  _vsRendered += next.length;
+  updateFooter();
+}
+
+function updateFooter() {
+  const showing = Math.min(_vsRendered, _vsData.length);
+  const suffix  = _vsData.length < leads.length
+    ? ` (filtrado de ${leads.length})`
+    : '';
+  document.getElementById('table-footer').textContent =
+    `Mostrando ${showing} de ${_vsData.length} leads${suffix}`;
+}
+
+function setupTableScroll() {
+  const wrap = document.querySelector('.table-wrap');
+  if (!wrap || wrap._vsListening) return;
+  wrap._vsListening = true;
+  wrap.addEventListener('scroll', () => {
+    if (wrap.scrollTop + wrap.clientHeight >= wrap.scrollHeight - 120) {
+      vsAppendMore();
+    }
+  });
+}
+
 function renderTable() {
-  const data = getFiltered();
-  document.getElementById('table-footer').textContent = data.length + ' de ' + leads.length + ' leads';
+  _vsData      = getFiltered();
+  _vsRendered  = 0;
   document.getElementById('tab-badge-count').textContent = leads.length;
 
   const tbody = document.getElementById('tbody');
-  if (!data.length) {
+  tbody.innerHTML = '';
+
+  if (!_vsData.length) {
     tbody.innerHTML = '<tr class="empty-row"><td colspan="7">Sin resultados</td></tr>';
   } else {
-    tbody.innerHTML = data.map(l => {
-      const t = getTemp(l.score), c = scoreColor(l.score);
-      const pipeLabel = l.Pipeline_nombre ? `${l.Pipeline_nombre}` : `#${l.Pipeline_id||'—'}`;
-      const scoreVal = l.Lead_score !== undefined ? l.Lead_score : l.score || 0;
-      const cScore = scoreColor(scoreVal);
-      const tCat = getTemp(scoreVal, l.Lead_categoria);
-      return `<tr onclick="openModal('edit','${l.id}')">
-        <td><div class="td-name" style="cursor:pointer;color:var(--accent)" onclick="event.stopPropagation();goToChat(${l.Lead_id})" title="Ver chat de ${esc(l.name)}">${esc(l.name)}</div><div class="td-email">${esc(l.Telefono||'')}</div></td>
-        <td><span style="font-family:var(--mono);font-size:11px;color:var(--accent2);background:rgba(0,200,255,0.08);border:1px solid rgba(0,200,255,0.2);border-radius:5px;padding:2px 8px;white-space:nowrap" title="Lead_id: ${l.Lead_id||''} | Pipeline_id: ${l.Pipeline_id||''}">${esc(pipeLabel)}</span></td>
-        <td><div class="score-wrap"><div class="score-bar"><div class="score-fill" style="width:${scoreVal}%;background:${cScore}"></div></div><span class="score-num" style="color:${cScore}">${scoreVal}</span></div></td>
-        <td><span class="badge badge-${tCat}">${tempLabel[tCat]||tCat}</span></td>
-        <td style="font-size:11px;color:var(--muted)">${esc(l.etiqueta_fuente||'—')}</td>
-        <td style="font-family:var(--mono);font-size:12px">$${Number(l.Valor_lead||l.value||0).toLocaleString()}</td>
-        <td onclick="event.stopPropagation()">
-          <button class="btn btn-sm" onclick="pushToN8N(leads.find(x=>x.id===${l.id}))">↑</button>
-          <button class="btn btn-sm btn-danger" onclick="deleteLead(${l.id})">✕</button>
-        </td>
-      </tr>`;
-    }).join('');
+    vsAppendMore();          // render first batch
+    setupTableScroll();      // lazy-load on scroll
   }
 
   renderMetrics();
@@ -1414,10 +1479,11 @@ let chatsCfg = { webhookUrl: '' };
 function saveChatsConfig() {
   chatsCfg.webhookUrl = document.getElementById('chats-webhook-url').value.trim();
   try { localStorage.setItem('ls_chats_cfg', JSON.stringify(chatsCfg)); } catch(e) {}
-  document.getElementById('chats-config-status').textContent = chatsCfg.webhookUrl ? '✓ Guardado' : '';
-  document.getElementById('chats-config-status').style.color = 'var(--accent)';
+  const statusEl = document.getElementById('chats-config-status');
+  if (statusEl) { statusEl.textContent = chatsCfg.webhookUrl ? '✓ Guardado' : ''; statusEl.style.color = 'var(--accent)'; }
   renderChatsList();
   toast('Webhook de chats guardado', 'success');
+  addLog('Webhook de chats guardado', 'ok');
 }
 
 function loadChatsCfg() {
@@ -1427,8 +1493,8 @@ function loadChatsCfg() {
       chatsCfg = JSON.parse(s);
       document.getElementById('chats-webhook-url').value = chatsCfg.webhookUrl || '';
       if (chatsCfg.webhookUrl) {
-        document.getElementById('chats-config-status').textContent = '✓ Configurado';
-        document.getElementById('chats-config-status').style.color = 'var(--accent)';
+        const statusEl = document.getElementById('chats-config-status');
+        if (statusEl) { statusEl.textContent = '✓ Configurado'; statusEl.style.color = 'var(--accent)'; }
       }
     }
   } catch(e) {}
@@ -1606,9 +1672,24 @@ function fmtDate(iso) {
 // ── PERSISTENCIA localStorage ────────────────────────────────────────────
 function saveLeads() {
   try {
-    localStorage.setItem('ls_leads', JSON.stringify(leads));
+    // Cap cache at 500 most recent leads to avoid localStorage quota errors
+    const toSave = leads.length > 500
+      ? leads.slice(0, 500)
+      : leads;
+    localStorage.setItem('ls_leads', JSON.stringify(toSave));
     localStorage.setItem('ls_leads_ts', new Date().toISOString());
-  } catch(e) { console.warn('No se pudo guardar leads:', e); }
+    localStorage.setItem('ls_leads_total', String(leads.length));
+    if (leads.length > 500) {
+      addLog('Cache local limitado a 500 leads (total: ' + leads.length + ')', 'warn');
+    }
+  } catch(e) {
+    // If still quota error, try saving only first 200
+    try {
+      localStorage.setItem('ls_leads', JSON.stringify(leads.slice(0, 200)));
+      localStorage.setItem('ls_leads_ts', new Date().toISOString());
+      addLog('Cache reducido a 200 leads por limite de almacenamiento', 'warn');
+    } catch(e2) { console.warn('No se pudo guardar leads:', e2); }
+  }
 }
 
 function loadLeads() {
@@ -1621,8 +1702,10 @@ function loadLeads() {
         leads = parsed;
         if (ts) {
           lastSync = new Date(ts);
+          const total = localStorage.getItem('ls_leads_total');
           const label = document.getElementById('last-sync-label');
-          if (label) label.textContent = 'ult. sync ' + lastSync.toLocaleTimeString('es');
+          const totalTxt = total && parseInt(total) > parsed.length ? ' (' + total + ' total)' : '';
+          if (label) label.textContent = 'ult. sync ' + lastSync.toLocaleTimeString('es') + totalTxt;
         }
         return true;
       }
@@ -1634,6 +1717,7 @@ function loadLeads() {
 function clearLeadsCache() {
   localStorage.removeItem('ls_leads');
   localStorage.removeItem('ls_leads_ts');
+  localStorage.removeItem('ls_leads_total');
   toast('Cache de leads borrada', 'info');
   addLog('Cache borrada — se usaran datos de ejemplo hasta la proxima sync', 'warn');
 }
