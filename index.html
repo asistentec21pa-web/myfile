@@ -556,7 +556,7 @@
             <tr>
               <th onclick="sortBy('name')">NOMBRE / TELÉFONO <span id="sh-name"></span></th>
               <th onclick="sortBy('pipeline_nombre')">PIPELINE <span id="sh-pipeline_nombre"></span></th>
-              <th onclick="sortBy('score')">SCORE <span id="sh-score">↓</span></th>
+              <th onclick="sortBy('Lead_score')">SCORE <span id="sh-Lead_score">↓</span></th>
               <th>ESTADO</th>
               <th>FUENTE</th>
               <th onclick="sortBy('value')">VALOR EST. <span id="sh-value"></span></th>
@@ -926,7 +926,7 @@ let leads = [
 ];
 
 let cfg = { getUrl:'', postUrl:'', authType:'none', apiKey:'', authHeader:'X-API-Key', interval:0, method:'GET', timeout:10000, extra:'' };
-let sortCol = 'score', sortDir = -1;
+let sortCol = 'Lead_score', sortDir = -1;
 let editingId = null;
 let autoTimer = null;
 let logEntries = [];
@@ -976,7 +976,8 @@ function getFiltered() {
     if (fp && (l.Pipeline_nombre||'') !== fp) return false;
     return true;
   }).sort((a,b) => {
-    let av = a[sortCol], bv = b[sortCol];
+    let av = sortCol === 'Lead_score' ? (a.Lead_score !== undefined ? a.Lead_score : a.score || 0) : a[sortCol];
+    let bv = sortCol === 'Lead_score' ? (b.Lead_score !== undefined ? b.Lead_score : b.score || 0) : b[sortCol];
     if (typeof av === 'string') av = av.toLowerCase(), bv = bv.toLowerCase();
     return av < bv ? sortDir : av > bv ? -sortDir : 0;
   });
@@ -1117,7 +1118,7 @@ function updatePipelineFilter() {
 
 function sortBy(col) {
   if (sortCol===col) sortDir*=-1; else { sortCol=col; sortDir=-1; }
-  ['name','pipeline_nombre','score','value'].forEach(c => { const el=document.getElementById('sh-'+c); if(el) el.textContent=''; });
+  ['name','pipeline_nombre','Lead_score','value'].forEach(c => { const el=document.getElementById('sh-'+c); if(el) el.textContent=''; });
   const el = document.getElementById('sh-'+col);
   if (el) el.textContent = sortDir===-1?' ↓':' ↑';
   renderTable();
