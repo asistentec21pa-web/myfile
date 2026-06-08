@@ -236,8 +236,8 @@
   .toolbar-right { margin-left: auto; display: flex; gap: 8px; }
 
   /* ── TABLE ── */
-  .table-wrap { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; overflow-y: auto; max-height: calc(100vh - 320px); min-height: 300px; }
-  table { width: 100%; border-collapse: collapse; }
+  .table-wrap { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; overflow: auto; max-height: calc(100vh - 320px); min-height: 300px; }
+  table { width: 100%; border-collapse: collapse; min-width: 900px; }
   thead { background: var(--surface2); position: sticky; top: 0; z-index: 2; }
   th {
     padding: 10px 14px; text-align: left;
@@ -245,6 +245,20 @@
     border-bottom: 1px solid var(--border); white-space: nowrap;
     cursor: pointer; user-select: none;
   }
+  th:first-child,
+  td:first-child {
+    position: sticky;
+    left: 0;
+    z-index: 1;
+    background: var(--surface);
+    border-right: 1px solid var(--border-bright);
+    min-width: 180px;
+  }
+  thead th:first-child {
+    background: var(--surface2);
+    z-index: 3;
+  }
+  tbody tr:hover td:first-child { background: var(--surface2); }
   th:hover { color: var(--text); }
   td { padding: 11px 14px; border-bottom: 1px solid var(--border); font-size: 13px; vertical-align: middle; }
   tr:last-child td { border-bottom: none; }
