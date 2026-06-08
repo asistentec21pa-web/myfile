@@ -251,14 +251,17 @@
     left: 0;
     z-index: 1;
     background: var(--surface);
-    border-right: 1px solid var(--border-bright);
-    min-width: 180px;
+    border-right: 2px solid var(--border-bright);
+    min-width: 190px;
+    box-shadow: 4px 0 8px rgba(0,0,0,0.3);
   }
   thead th:first-child {
     background: var(--surface2);
     z-index: 3;
+    box-shadow: 4px 0 8px rgba(0,0,0,0.3);
   }
   tbody tr:hover td:first-child { background: var(--surface2); }
+  tbody tr.selected td:first-child { background: rgba(79,255,176,0.05); }
   th:hover { color: var(--text); }
   td { padding: 11px 14px; border-bottom: 1px solid var(--border); font-size: 13px; vertical-align: middle; }
   tr:last-child td { border-bottom: none; }
