@@ -557,6 +557,7 @@
               <th onclick="sortBy('name')">NOMBRE / TELÉFONO <span id="sh-name"></span></th>
               <th onclick="sortBy('pipeline_nombre')">PIPELINE <span id="sh-pipeline_nombre"></span></th>
               <th onclick="sortBy('Lead_score')">SCORE <span id="sh-Lead_score">↓</span></th>
+              <th onclick="sortBy('Nivel_interaccion')">INTERACCIÓN <span id="sh-Nivel_interaccion"></span></th>
               <th>ESTADO</th>
               <th>FUENTE</th>
               <th onclick="sortBy('value')">VALOR EST. <span id="sh-value"></span></th>
@@ -804,13 +805,14 @@
     "Lead_name": "Pedro Arias",
     "Telefono": "+59170883977",
     "Pipeline_id": 13852180,
-    "Pipeline_nombre": "LEAD CAMPAÑAS",
+    "Pipeline_nombre": "LEAD CAMPAÑAS (75952084)",
     "Valor_lead": "75000",
     "Lead_score": 100,
     "Lead_categoria": "HOT",
+    "Nivel_interaccion": "Alta",
     "id": 1,
     "createdAt": "2026-06-03T00:26:42.834Z",
-    "updatedAt": "2026-06-03T00:26:42.834Z"
+    "updatedAt": "2026-06-08T04:15:32.520Z"
   }
 ]</div>
       </div>
@@ -915,14 +917,14 @@
 <script>
 // ── STATE ──────────────────────────────────────────────────────────────────
 let leads = [
-  {id:1, Lead_id:21637253, name:'Pedro Arias',   Pipeline_id:13852180, Pipeline_nombre:'LEAD CAMPAÑAS',  Telefono:'+59170883977', Lead_score:100, Lead_categoria:'HOT',  etiqueta_fuente:'Facebook Ads', value:75000, Valor_lead:'75000', stage:'propuesta',  createdAt:'2026-06-03T00:26:42.834Z', updatedAt:'2026-06-03T00:26:42.834Z'},
-  {id:2, Lead_id:21637254, name:'Ana García',    Pipeline_id:13852180, Pipeline_nombre:'LEAD CAMPAÑAS',  Telefono:'+59170011001', Lead_score:85,  Lead_categoria:'HOT',  etiqueta_fuente:'Facebook Ads', value:48000, Valor_lead:'48000', stage:'interesado', createdAt:'2026-06-03T01:00:00.000Z', updatedAt:'2026-06-03T01:00:00.000Z'},
-  {id:3, Lead_id:21637255, name:'Luis Mendoza',  Pipeline_id:13852181, Pipeline_nombre:'LEAD REFERIDOS', Telefono:'+59170022002', Lead_score:65,  Lead_categoria:'WARM', etiqueta_fuente:'Facebook Ads', value:32000, Valor_lead:'32000', stage:'contactado', createdAt:'2026-06-03T02:00:00.000Z', updatedAt:'2026-06-03T02:00:00.000Z'},
-  {id:4, Lead_id:21637256, name:'Carla Rojas',   Pipeline_id:13852181, Pipeline_nombre:'LEAD REFERIDOS', Telefono:'+59170033003', Lead_score:55,  Lead_categoria:'WARM', etiqueta_fuente:'Facebook Ads', value:61000, Valor_lead:'61000', stage:'prospecto',  createdAt:'2026-06-03T03:00:00.000Z', updatedAt:'2026-06-03T03:00:00.000Z'},
-  {id:5, Lead_id:21637257, name:'Sofía Herrera', Pipeline_id:13852182, Pipeline_nombre:'LEAD ORGÁNICO',  Telefono:'+59170055005', Lead_score:40,  Lead_categoria:'COLD', etiqueta_fuente:'Facebook Ads', value:19000, Valor_lead:'19000', stage:'prospecto',  createdAt:'2026-06-03T04:00:00.000Z', updatedAt:'2026-06-03T04:00:00.000Z'},
-  {id:6, Lead_id:21637258, name:'Marcos Díaz',   Pipeline_id:13852180, Pipeline_nombre:'LEAD CAMPAÑAS',  Telefono:'+59170066006', Lead_score:90,  Lead_categoria:'HOT',  etiqueta_fuente:'Facebook Ads', value:14000, Valor_lead:'14000', stage:'cierre',     createdAt:'2026-06-03T05:00:00.000Z', updatedAt:'2026-06-03T05:00:00.000Z'},
-  {id:7, Lead_id:21637259, name:'Elena Torres',  Pipeline_id:13852182, Pipeline_nombre:'LEAD ORGÁNICO',  Telefono:'+59170088008', Lead_score:30,  Lead_categoria:'COLD', etiqueta_fuente:'Facebook Ads', value:55000, Valor_lead:'55000', stage:'prospecto',  createdAt:'2026-06-03T06:00:00.000Z', updatedAt:'2026-06-03T06:00:00.000Z'},
-  {id:8, Lead_id:21637260, name:'Isabel Campos', Pipeline_id:13852180, Pipeline_nombre:'LEAD CAMPAÑAS',  Telefono:'+59170099009', Lead_score:75,  Lead_categoria:'WARM', etiqueta_fuente:'Facebook Ads', value:72000, Valor_lead:'72000', stage:'interesado', createdAt:'2026-06-03T07:00:00.000Z', updatedAt:'2026-06-03T07:00:00.000Z'},
+  {id:1, Lead_id:21637253, name:'Pedro Arias',   Pipeline_id:13852180, Pipeline_nombre:'LEAD CAMPAÑAS (75952084)',  Telefono:'+59170883977', Lead_score:100, Lead_categoria:'HOT',  Nivel_interaccion:'Alta',   etiqueta_fuente:'Facebook Ads', value:75000, Valor_lead:'75000', stage:'propuesta',  createdAt:'2026-06-03T00:26:42.834Z', updatedAt:'2026-06-08T04:15:32.520Z'},
+  {id:2, Lead_id:21637254, name:'Ana García',    Pipeline_id:13852180, Pipeline_nombre:'LEAD CAMPAÑAS (75952084)',  Telefono:'+59170011001', Lead_score:85,  Lead_categoria:'HOT',  Nivel_interaccion:'Alta',   etiqueta_fuente:'Facebook Ads', value:48000, Valor_lead:'48000', stage:'interesado', createdAt:'2026-06-03T01:00:00.000Z', updatedAt:'2026-06-08T01:00:00.000Z'},
+  {id:3, Lead_id:21637255, name:'Luis Mendoza',  Pipeline_id:13852181, Pipeline_nombre:'LEAD REFERIDOS (75952085)', Telefono:'+59170022002', Lead_score:65,  Lead_categoria:'WARM', Nivel_interaccion:'Media',  etiqueta_fuente:'Facebook Ads', value:32000, Valor_lead:'32000', stage:'contactado', createdAt:'2026-06-03T02:00:00.000Z', updatedAt:'2026-06-08T02:00:00.000Z'},
+  {id:4, Lead_id:21637256, name:'Carla Rojas',   Pipeline_id:13852181, Pipeline_nombre:'LEAD REFERIDOS (75952085)', Telefono:'+59170033003', Lead_score:55,  Lead_categoria:'WARM', Nivel_interaccion:'Media',  etiqueta_fuente:'Facebook Ads', value:61000, Valor_lead:'61000', stage:'prospecto',  createdAt:'2026-06-03T03:00:00.000Z', updatedAt:'2026-06-08T03:00:00.000Z'},
+  {id:5, Lead_id:21637257, name:'Sofía Herrera', Pipeline_id:13852182, Pipeline_nombre:'LEAD ORGÁNICO (75952086)',  Telefono:'+59170055005', Lead_score:40,  Lead_categoria:'COLD', Nivel_interaccion:'Baja',   etiqueta_fuente:'Facebook Ads', value:19000, Valor_lead:'19000', stage:'prospecto',  createdAt:'2026-06-03T04:00:00.000Z', updatedAt:'2026-06-08T04:00:00.000Z'},
+  {id:6, Lead_id:21637258, name:'Marcos Díaz',   Pipeline_id:13852180, Pipeline_nombre:'LEAD CAMPAÑAS (75952084)',  Telefono:'+59170066006', Lead_score:90,  Lead_categoria:'HOT',  Nivel_interaccion:'Alta',   etiqueta_fuente:'Facebook Ads', value:14000, Valor_lead:'14000', stage:'cierre',     createdAt:'2026-06-03T05:00:00.000Z', updatedAt:'2026-06-08T05:00:00.000Z'},
+  {id:7, Lead_id:21637259, name:'Elena Torres',  Pipeline_id:13852182, Pipeline_nombre:'LEAD ORGÁNICO (75952086)',  Telefono:'+59170088008', Lead_score:30,  Lead_categoria:'COLD', Nivel_interaccion:'Baja',   etiqueta_fuente:'Facebook Ads', value:55000, Valor_lead:'55000', stage:'prospecto',  createdAt:'2026-06-03T06:00:00.000Z', updatedAt:'2026-06-08T06:00:00.000Z'},
+  {id:8, Lead_id:21637260, name:'Isabel Campos', Pipeline_id:13852180, Pipeline_nombre:'LEAD CAMPAÑAS (75952084)',  Telefono:'+59170099009', Lead_score:75,  Lead_categoria:'WARM', Nivel_interaccion:'Media',  etiqueta_fuente:'Facebook Ads', value:72000, Valor_lead:'72000', stage:'interesado', createdAt:'2026-06-03T07:00:00.000Z', updatedAt:'2026-06-08T07:00:00.000Z'},
 ];
 
 let cfg = { getUrl:'', postUrl:'', authType:'none', apiKey:'', authHeader:'X-API-Key', interval:0, method:'GET', timeout:10000, extra:'' };
@@ -988,6 +990,18 @@ let _vsData       = [];   // full filtered+sorted dataset
 const VS_PAGE     = 80;   // rows rendered per batch
 let _vsRendered   = 0;    // how many rows currently in DOM
 
+function nivelBadge(nivel) {
+  if (!nivel) return '<span style="color:var(--muted);font-size:11px">—</span>';
+  const n = String(nivel).toLowerCase();
+  const cfg = {
+    'alta':  { color:'var(--accent)',  bg:'rgba(79,255,176,0.08)',  border:'rgba(79,255,176,0.25)'  },
+    'media': { color:'var(--warn)',    bg:'rgba(255,179,64,0.08)',  border:'rgba(255,179,64,0.25)'  },
+    'baja':  { color:'var(--cold)',    bg:'rgba(0,200,255,0.08)',   border:'rgba(0,200,255,0.25)'   },
+  };
+  const s = cfg[n] || { color:'var(--muted)', bg:'transparent', border:'var(--border)' };
+  return `<span style="font-size:11px;font-weight:500;padding:2px 8px;border-radius:20px;color:${s.color};background:${s.bg};border:1px solid ${s.border}">${nivel}</span>`;
+}
+
 function buildRow(l) {
   const pipeLabel = l.Pipeline_nombre || ('#' + (l.Pipeline_id||'—'));
   const scoreVal  = l.Lead_score !== undefined ? l.Lead_score : (l.score || 0);
@@ -997,6 +1011,7 @@ function buildRow(l) {
     <td><div class="td-name" style="cursor:pointer;color:var(--accent)" onclick="event.stopPropagation();goToChat(${l.Lead_id})" title="Ver chat">${esc(l.name)}</div><div class="td-email">${esc(l.Telefono||'')}</div></td>
     <td><span style="font-family:var(--mono);font-size:11px;color:var(--accent2);background:rgba(0,200,255,0.08);border:1px solid rgba(0,200,255,0.2);border-radius:5px;padding:2px 8px;white-space:nowrap" title="Lead_id:${l.Lead_id||''}">${esc(pipeLabel)}</span></td>
     <td><div class="score-wrap"><div class="score-bar"><div class="score-fill" style="width:${scoreVal}%;background:${cScore}"></div></div><span class="score-num" style="color:${cScore}">${scoreVal}</span></div></td>
+    <td>${nivelBadge(l.Nivel_interaccion)}</td>
     <td><span class="badge badge-${tCat}">${tempLabel[tCat]||tCat}</span></td>
     <td style="font-size:11px;color:var(--muted)">${esc(l.etiqueta_fuente||'—')}</td>
     <td style="font-family:var(--mono);font-size:12px">$${Number(l.Valor_lead||l.value||0).toLocaleString()}</td>
@@ -1118,7 +1133,7 @@ function updatePipelineFilter() {
 
 function sortBy(col) {
   if (sortCol===col) sortDir*=-1; else { sortCol=col; sortDir=-1; }
-  ['name','pipeline_nombre','Lead_score','value'].forEach(c => { const el=document.getElementById('sh-'+c); if(el) el.textContent=''; });
+  ['name','pipeline_nombre','Lead_score','Nivel_interaccion','value'].forEach(c => { const el=document.getElementById('sh-'+c); if(el) el.textContent=''; });
   const el = document.getElementById('sh-'+col);
   if (el) el.textContent = sortDir===-1?' ↓':' ↑';
   renderTable();
@@ -1239,6 +1254,7 @@ async function fetchFromN8N() {
       etiqueta_fuente: l['etiqueta fuente'] || l.etiqueta_fuente || 'Facebook Ads',
       value:           Number(l.Valor_lead || l.valor_lead      || l.value || 0),
       Valor_lead:      String(l.Valor_lead || l.valor_lead      || l.value || '0'),
+      Nivel_interaccion: l.Nivel_interaccion || l.nivel_interaccion || '',
       stage:           l.stage            || l.etapa            || 'prospecto',
       createdAt:       l.createdAt        || new Date().toISOString(),
       updatedAt:       l.updatedAt        || new Date().toISOString()
@@ -1381,6 +1397,7 @@ async function saveLead() {
     value:            parseInt(document.getElementById('f-value').value)||0,
     etiqueta_fuente:  document.getElementById('f-etiqueta-fuente').value.trim()||'Facebook Ads',
     Lead_categoria:   '',
+    Nivel_interaccion: '',
     stage:            document.getElementById('f-stage').value,
     notes:            document.getElementById('f-notes').value.trim(),
     createdAt:        new Date().toISOString(),
@@ -1421,7 +1438,7 @@ function exportJSON() {
 }
 
 function exportCSV() {
-  const cols = ['id','Lead_id','name','Pipeline_id','Pipeline_nombre','Telefono','Lead_score','Lead_categoria','Valor_lead','etiqueta_fuente','stage','createdAt','updatedAt'];
+  const cols = ['id','Lead_id','name','Pipeline_id','Pipeline_nombre','Telefono','Lead_score','Lead_categoria','Nivel_interaccion','Valor_lead','etiqueta_fuente','stage','createdAt','updatedAt'];
   const rows = [cols.join(','), ...leads.map(l=>cols.map(c=>'"'+(String(l[c]||'').replace(/"/g,'""'))+'"').join(','))];
   const blob = new Blob([rows.join('\n')],{type:'text/csv'});
   const url = URL.createObjectURL(blob);
