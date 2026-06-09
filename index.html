@@ -454,6 +454,21 @@
 
   .last-sync { font-family: var(--mono); font-size: 10px; color: var(--muted); }
 
+  /* visit panels */
+  .visit-panel { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
+  .visit-panel-header { display: flex; align-items: center; gap: 10px; padding: 10px 14px; border-bottom: 1px solid var(--border); }
+  .visit-panel-icon { width: 28px; height: 28px; border-radius: 7px; display: flex; align-items: center; justify-content: center; font-size: 13px; flex-shrink: 0; }
+  .visit-panel-title { font-size: 12px; font-weight: 600; flex: 1; }
+  .visit-panel-count { font-family: var(--mono); font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 10px; }
+  .visit-table { width: 100%; table-layout: fixed; border-collapse: collapse; font-size: 12px; }
+  .visit-table th { padding: 7px 12px; text-align: left; font-size: 10px; font-family: var(--mono); color: var(--muted); font-weight: 400; border-bottom: 1px solid var(--border); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .visit-table td { padding: 8px 12px; border-bottom: 1px solid var(--border); vertical-align: middle; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 0; }
+  .visit-table tr:last-child td { border-bottom: none; }
+  .visit-table tbody tr { cursor: pointer; transition: background 0.1s; }
+  .visit-table tbody tr:hover td { background: var(--surface2); }
+  .visit-empty { padding: 18px; text-align: center; color: var(--muted); font-size: 12px; font-family: var(--mono); }
+  @media(max-width:900px) { #visit-panels { grid-template-columns: 1fr; } }
+
   /* ── CHATS TAB ── */
   .chats-layout { display: grid; grid-template-columns: 320px 1fr; height: calc(100vh - 100px); overflow: hidden; }
   .leads-list { border-right: 1px solid var(--border); overflow-y: auto; background: var(--surface); }
@@ -544,6 +559,9 @@
 <div class="page">
 
   <div class="metrics" id="metrics-area"></div>
+
+  <!-- VISIT PANELS -->
+  <div id="visit-panels" style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1.5rem"></div>
 
   <div class="content-grid">
     <div>
@@ -827,6 +845,12 @@
     "Lead_score": 100,
     "Lead_categoria": "HOT",
     "Nivel_interaccion": "Alta",
+    "Status_id": "106888152",
+    "lead_score_detalle": [
+      "Zona definida +5",
+      "Tipo inmueble +5",
+      "Visita agendada +15"
+    ],
     "id": 1,
     "createdAt": "2026-06-03T00:26:42.834Z",
     "updatedAt": "2026-06-08T04:15:32.520Z"
@@ -934,9 +958,9 @@
 <script>
 // ── STATE ──────────────────────────────────────────────────────────────────
 let leads = [
-  {id:1, Lead_id:21637253, name:'Pedro Arias',   Pipeline_id:13852180, Pipeline_nombre:'LEAD CAMPAÑAS (75952084)',  Telefono:'+59170883977', Lead_score:100, Lead_categoria:'HOT',  Nivel_interaccion:'Alta',   etiqueta_fuente:'Facebook Ads', value:75000, Valor_lead:'75000', stage:'propuesta',  createdAt:'2026-06-03T00:26:42.834Z', updatedAt:'2026-06-08T04:15:32.520Z'},
+  {id:1, Lead_id:21637253, name:'Pedro Arias',   Pipeline_id:13852180, Pipeline_nombre:'LEAD CAMPAÑAS (75952084)',  Telefono:'+59170883977', Lead_score:100, Lead_categoria:'HOT',  Nivel_interaccion:'Alta',   etiqueta_fuente:'Facebook Ads', value:75000, Valor_lead:'75000', Status_id:'106888152', lead_score_detalle:['Rango presupuesto +5','Zona definida +5','Califica crédito +20','Visita agendada +15','Visita realizada +20'], stage:'propuesta',  createdAt:'2026-06-03T00:26:42.834Z', updatedAt:'2026-06-08T04:15:32.520Z'},
   {id:2, Lead_id:21637254, name:'Ana García',    Pipeline_id:13852180, Pipeline_nombre:'LEAD CAMPAÑAS (75952084)',  Telefono:'+59170011001', Lead_score:85,  Lead_categoria:'HOT',  Nivel_interaccion:'Alta',   etiqueta_fuente:'Facebook Ads', value:48000, Valor_lead:'48000', stage:'interesado', createdAt:'2026-06-03T01:00:00.000Z', updatedAt:'2026-06-08T01:00:00.000Z'},
-  {id:3, Lead_id:21637255, name:'Luis Mendoza',  Pipeline_id:13852181, Pipeline_nombre:'LEAD REFERIDOS (75952085)', Telefono:'+59170022002', Lead_score:65,  Lead_categoria:'WARM', Nivel_interaccion:'Media',  etiqueta_fuente:'Facebook Ads', value:32000, Valor_lead:'32000', stage:'contactado', createdAt:'2026-06-03T02:00:00.000Z', updatedAt:'2026-06-08T02:00:00.000Z'},
+  {id:3, Lead_id:21637255, name:'Luis Mendoza',  Pipeline_id:13852181, Pipeline_nombre:'LEAD REFERIDOS (75952085)', Telefono:'+59170022002', Lead_score:65,  Lead_categoria:'WARM', Nivel_interaccion:'Media',  etiqueta_fuente:'Facebook Ads', value:32000, Valor_lead:'32000', Status_id:'106888064', lead_score_detalle:['Rango presupuesto +5','Zona definida +5','Tipo inmueble +5'], stage:'contactado', createdAt:'2026-06-03T02:00:00.000Z', updatedAt:'2026-06-08T02:00:00.000Z'},
   {id:4, Lead_id:21637256, name:'Carla Rojas',   Pipeline_id:13852181, Pipeline_nombre:'LEAD REFERIDOS (75952085)', Telefono:'+59170033003', Lead_score:55,  Lead_categoria:'WARM', Nivel_interaccion:'Media',  etiqueta_fuente:'Facebook Ads', value:61000, Valor_lead:'61000', stage:'prospecto',  createdAt:'2026-06-03T03:00:00.000Z', updatedAt:'2026-06-08T03:00:00.000Z'},
   {id:5, Lead_id:21637257, name:'Sofía Herrera', Pipeline_id:13852182, Pipeline_nombre:'LEAD ORGÁNICO (75952086)',  Telefono:'+59170055005', Lead_score:40,  Lead_categoria:'COLD', Nivel_interaccion:'Baja',   etiqueta_fuente:'Facebook Ads', value:19000, Valor_lead:'19000', stage:'prospecto',  createdAt:'2026-06-03T04:00:00.000Z', updatedAt:'2026-06-08T04:00:00.000Z'},
   {id:6, Lead_id:21637258, name:'Marcos Díaz',   Pipeline_id:13852180, Pipeline_nombre:'LEAD CAMPAÑAS (75952084)',  Telefono:'+59170066006', Lead_score:90,  Lead_categoria:'HOT',  Nivel_interaccion:'Alta',   etiqueta_fuente:'Facebook Ads', value:14000, Valor_lead:'14000', stage:'cierre',     createdAt:'2026-06-03T05:00:00.000Z', updatedAt:'2026-06-08T05:00:00.000Z'},
@@ -1027,7 +1051,7 @@ function buildRow(l) {
   return `<tr onclick="openModal('edit','${l.id}')">
     <td><div class="td-name" style="cursor:pointer;color:var(--accent)" onclick="event.stopPropagation();goToChat(${l.Lead_id})" title="Ver chat">${esc(l.name)}</div><div class="td-email">${esc(l.Telefono||'')}</div></td>
     <td><span style="font-family:var(--mono);font-size:11px;color:var(--accent2);background:rgba(0,200,255,0.08);border:1px solid rgba(0,200,255,0.2);border-radius:5px;padding:2px 8px;white-space:nowrap" title="Lead_id:${l.Lead_id||''}">${esc(pipeLabel)}</span></td>
-    <td><div class="score-wrap"><div class="score-bar"><div class="score-fill" style="width:${scoreVal}%;background:${cScore}"></div></div><span class="score-num" style="color:${cScore}">${scoreVal}</span></div></td>
+    <td><div class="score-wrap" onclick="event.stopPropagation();showScoreDetalle('${l.id}')" style="cursor:${l.lead_score_detalle&&l.lead_score_detalle.length?'pointer':'default'}" title="${l.lead_score_detalle&&l.lead_score_detalle.length?'Ver detalle de score':''}"><div class="score-bar"><div class="score-fill" style="width:${scoreVal}%;background:${cScore}"></div></div><span class="score-num" style="color:${cScore}">${scoreVal}${l.lead_score_detalle&&l.lead_score_detalle.length?' ℹ':''}</span></div></td>
     <td>${nivelBadge(l.Nivel_interaccion)}</td>
     <td><span class="badge badge-${tCat}">${tempLabel[tCat]||tCat}</span></td>
     <td style="font-size:11px;color:var(--muted)">${esc(l.etiqueta_fuente||'—')}</td>
@@ -1091,9 +1115,94 @@ function renderTable() {
 
   renderMetrics();
   renderSide();
+  renderVisitPanels();
   updateSourceFilter();
   updatePipelineFilter();
   updateStatusPanel();
+}
+
+// ── STATUS IDs CONFIG ─────────────────────────────────────────────────────
+const INTENCION_VISITA_IDS  = new Set(['106888064','105257100','89413287','81405567']);
+const VISITA_AGENDADA_IDS   = new Set(['106888152','105257104','81074171','79521939']);
+
+function renderVisitPanels() {
+  const intencion = leads.filter(l => INTENCION_VISITA_IDS.has(String(l.Status_id||'')));
+  const agendada  = leads.filter(l => VISITA_AGENDADA_IDS.has(String(l.Status_id||'')));
+
+  function buildPanel(title, icon, accentColor, bgColor, data) {
+    const rows = data.length ? data.map(l => `
+      <tr onclick="goToChat(${l.Lead_id})">
+        <td style="font-weight:500;color:var(--text)" title="${esc(l.name)}">${esc(l.name)}</td>
+        <td style="font-family:var(--mono);font-size:11px;color:var(--muted)" title="${esc(l.Telefono||'')}">${esc(l.Telefono||'—')}</td>
+        <td title="${esc(l.Pipeline_nombre||'')}"><span style="font-size:10px;font-family:var(--mono);color:${accentColor};background:${bgColor};border:1px solid ${accentColor}33;border-radius:4px;padding:1px 6px;display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(l.Pipeline_nombre||'—')}</span></td>
+      </tr>`).join('')
+    : `<tr><td colspan="3" class="visit-empty">Sin leads en esta etapa</td></tr>`;
+
+    return `<div class="visit-panel">
+      <div class="visit-panel-header">
+        <div class="visit-panel-icon" style="background:${bgColor};color:${accentColor}">${icon}</div>
+        <span class="visit-panel-title" style="color:${accentColor}">${title}</span>
+        <span class="visit-panel-count" style="background:${bgColor};color:${accentColor}">${data.length}</span>
+      </div>
+      <div style="overflow-y:auto;max-height:240px">
+        <table class="visit-table">
+          <colgroup>
+            <col style="width:35%">
+            <col style="width:25%">
+            <col style="width:40%">
+          </colgroup>
+          <thead><tr><th>NOMBRE</th><th>CONTACTO</th><th>PIPELINE</th></tr></thead>
+          <tbody>${rows}</tbody>
+        </table>
+      </div>
+    </div>`;
+  }
+
+  document.getElementById('visit-panels').innerHTML =
+    buildPanel('LEADS CON VISITA AGENDADA',   '📅', 'var(--accent)',  'rgba(79,255,176,0.08)',  agendada)  +
+    buildPanel('LEADS CON INTENCIÓN DE VISITA','👁', 'var(--accent2)', 'rgba(0,200,255,0.08)',   intencion);
+}
+
+// ── SCORE DETALLE POPUP ────────────────────────────────────────────────────
+function showScoreDetalle(leadId) {
+  const l = leads.find(x => String(x.id) === String(leadId) || x.Lead_id === leadId);
+  if (!l || !l.lead_score_detalle || !l.lead_score_detalle.length) {
+    toast('Sin detalle de score para este lead', 'info');
+    return;
+  }
+  const existing = document.getElementById('score-detalle-popup');
+  if (existing) { existing.remove(); document.getElementById('score-detalle-overlay')?.remove(); return; }
+
+  const scoreColor = l.Lead_score>=80?'var(--hot)':l.Lead_score>=50?'var(--warn)':'var(--cold)';
+  const pop = document.createElement('div');
+  pop.id = 'score-detalle-popup';
+  pop.style.cssText = 'position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:var(--surface);border:1px solid var(--border-bright);border-radius:14px;padding:1.5rem;z-index:400;min-width:300px;max-width:400px;max-height:80vh;overflow-y:auto;box-shadow:0 8px 40px rgba(0,0,0,0.6)';
+  pop.innerHTML = `
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem">
+      <div>
+        <div style="font-weight:600;font-size:15px">${esc(l.name)}</div>
+        <div style="font-size:11px;color:var(--muted);font-family:var(--mono);margin-top:2px">Detalle de score</div>
+      </div>
+      <button onclick="document.getElementById('score-detalle-popup').remove();document.getElementById('score-detalle-overlay')?.remove()" style="background:none;border:none;color:var(--muted);font-size:20px;cursor:pointer;line-height:1">✕</button>
+    </div>
+    <div style="font-size:32px;font-weight:600;color:${scoreColor};font-family:var(--mono);margin-bottom:1rem">${l.Lead_score} pts</div>
+    ${l.lead_score_detalle.map(d => {
+      const m = d.match(/([+-]\d+)$/);
+      const pts = m ? parseInt(m[1]) : 0;
+      const col = pts > 0 ? 'var(--accent)' : 'var(--danger)';
+      const label = d.replace(/[+-]\d+$/, '').trim();
+      return `<div style="display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid var(--border);font-size:12px">
+        <span style="color:var(--text)">${esc(label)}</span>
+        <span style="font-family:var(--mono);font-weight:600;color:${col}">${pts>0?'+'+pts:pts}</span>
+      </div>`;
+    }).join('')}`;
+
+  const overlay = document.createElement('div');
+  overlay.id = 'score-detalle-overlay';
+  overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:399';
+  overlay.onclick = () => { pop.remove(); overlay.remove(); };
+  document.body.appendChild(overlay);
+  document.body.appendChild(pop);
 }
 
 function renderMetrics() {
@@ -1271,10 +1380,12 @@ async function fetchFromN8N() {
       etiqueta_fuente: l['etiqueta fuente'] || l.etiqueta_fuente || 'Facebook Ads',
       value:           Number(l.Valor_lead || l.valor_lead      || l.value || 0),
       Valor_lead:      String(l.Valor_lead || l.valor_lead      || l.value || '0'),
-      Nivel_interaccion: l.Nivel_interaccion || l.nivel_interaccion || '',
-      stage:           l.stage            || l.etapa            || 'prospecto',
-      createdAt:       l.createdAt        || new Date().toISOString(),
-      updatedAt:       l.updatedAt        || new Date().toISOString()
+      Nivel_interaccion:   l.Nivel_interaccion   || l.nivel_interaccion   || '',
+      Status_id:           String(l.Status_id   || l.status_id          || ''),
+      lead_score_detalle:  Array.isArray(l.lead_score_detalle) ? l.lead_score_detalle : (Array.isArray(l.Lead_score_detalle) ? l.Lead_score_detalle : []),
+      stage:               l.stage              || l.etapa               || 'prospecto',
+      createdAt:           l.createdAt          || new Date().toISOString(),
+      updatedAt:           l.updatedAt          || new Date().toISOString()
     }));
 
     lastSync = new Date();
