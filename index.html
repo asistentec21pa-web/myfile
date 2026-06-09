@@ -454,20 +454,23 @@
 
   .last-sync { font-family: var(--mono); font-size: 10px; color: var(--muted); }
 
-  /* visit panels */
-  .visit-panel { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
-  .visit-panel-header { display: flex; align-items: center; gap: 10px; padding: 10px 14px; border-bottom: 1px solid var(--border); }
-  .visit-panel-icon { width: 28px; height: 28px; border-radius: 7px; display: flex; align-items: center; justify-content: center; font-size: 13px; flex-shrink: 0; }
-  .visit-panel-title { font-size: 12px; font-weight: 600; flex: 1; }
-  .visit-panel-count { font-family: var(--mono); font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 10px; }
-  .visit-table { width: 100%; table-layout: fixed; border-collapse: collapse; font-size: 12px; }
-  .visit-table th { padding: 7px 12px; text-align: left; font-size: 10px; font-family: var(--mono); color: var(--muted); font-weight: 400; border-bottom: 1px solid var(--border); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .visit-table td { padding: 8px 12px; border-bottom: 1px solid var(--border); vertical-align: middle; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 0; }
-  .visit-table tr:last-child td { border-bottom: none; }
-  .visit-table tbody tr { cursor: pointer; transition: background 0.1s; }
-  .visit-table tbody tr:hover td { background: var(--surface2); }
-  .visit-empty { padding: 18px; text-align: center; color: var(--muted); font-size: 12px; font-family: var(--mono); }
-  @media(max-width:900px) { #visit-panels { grid-template-columns: 1fr; } }
+  /* visit panels — card style */
+  .vp-section {}
+  .vp-header { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+  .vp-icon { width: 30px; height: 30px; border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 15px; }
+  .vp-title { font-size: 12px; font-weight: 500; flex: 1; }
+  .vp-badge { font-size: 11px; font-weight: 600; padding: 2px 9px; border-radius: 20px; font-family: var(--mono); }
+  .vp-cards { display: flex; flex-direction: column; gap: 7px; max-height: 300px; overflow-y: auto; padding-right: 2px; }
+  .vp-card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 10px 13px; display: flex; align-items: center; gap: 11px; cursor: pointer; transition: border-color 0.15s, background 0.15s; }
+  .vp-card:hover { background: var(--surface2); border-color: var(--border-bright); }
+  .vp-avatar { width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600; flex-shrink: 0; }
+  .vp-info { flex: 1; min-width: 0; }
+  .vp-name { font-size: 13px; font-weight: 500; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .vp-tel { font-size: 11px; color: var(--muted); font-family: var(--mono); margin-top: 2px; }
+  .vp-pipe { display: inline-block; font-size: 10px; font-family: var(--mono); padding: 2px 7px; border-radius: 5px; margin-top: 5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
+  .vp-arrow { color: var(--muted); font-size: 18px; flex-shrink: 0; line-height: 1; }
+  .vp-empty { padding: 20px; text-align: center; color: var(--muted); font-size: 12px; font-family: var(--mono); background: var(--surface); border: 1px solid var(--border); border-radius: 10px; }
+  @media(max-width:900px) { #visit-panels { grid-template-columns: 1fr !important; } }
 
   /* ── CHATS TAB ── */
   .chats-layout { display: grid; grid-template-columns: 320px 1fr; height: calc(100vh - 100px); overflow: hidden; }
@@ -561,7 +564,7 @@
   <div class="metrics" id="metrics-area"></div>
 
   <!-- VISIT PANELS -->
-  <div id="visit-panels" style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1.5rem"></div>
+  <div id="visit-panels" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:1.25rem;margin-bottom:1.75rem"></div>
 
   <div class="content-grid">
     <div>
@@ -1129,38 +1132,40 @@ function renderVisitPanels() {
   const intencion = leads.filter(l => INTENCION_VISITA_IDS.has(String(l.Status_id||'')));
   const agendada  = leads.filter(l => VISITA_AGENDADA_IDS.has(String(l.Status_id||'')));
 
-  function buildPanel(title, icon, accentColor, bgColor, data) {
-    const rows = data.length ? data.map(l => `
-      <tr onclick="goToChat(${l.Lead_id})">
-        <td style="font-weight:500;color:var(--text)" title="${esc(l.name)}">${esc(l.name)}</td>
-        <td style="font-family:var(--mono);font-size:11px;color:var(--muted)" title="${esc(l.Telefono||'')}">${esc(l.Telefono||'—')}</td>
-        <td title="${esc(l.Pipeline_nombre||'')}"><span style="font-size:10px;font-family:var(--mono);color:${accentColor};background:${bgColor};border:1px solid ${accentColor}33;border-radius:4px;padding:1px 6px;display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(l.Pipeline_nombre||'—')}</span></td>
-      </tr>`).join('')
-    : `<tr><td colspan="3" class="visit-empty">Sin leads en esta etapa</td></tr>`;
+  function initials(name) {
+    return (name||'').split(' ').map(w=>w[0]||'').join('').substring(0,2).toUpperCase();
+  }
 
-    return `<div class="visit-panel">
-      <div class="visit-panel-header">
-        <div class="visit-panel-icon" style="background:${bgColor};color:${accentColor}">${icon}</div>
-        <span class="visit-panel-title" style="color:${accentColor}">${title}</span>
-        <span class="visit-panel-count" style="background:${bgColor};color:${accentColor}">${data.length}</span>
+  function buildPanel(title, icon, accentColor, bgColor, borderColor, data) {
+    const cards = data.length ? data.map(l => {
+      const ini = initials(l.name);
+      const tel = l.Telefono || '—';
+      const pipe = l.Pipeline_nombre || '—';
+      return `<div class="vp-card" onclick="goToChat(${l.Lead_id})">
+        <div class="vp-avatar" style="background:${bgColor};color:${accentColor}">${ini}</div>
+        <div class="vp-info">
+          <div class="vp-name" title="${esc(l.name)}">${esc(l.name)}</div>
+          <div class="vp-tel">&#9990; ${esc(tel)}</div>
+          <span class="vp-pipe" style="background:${bgColor};color:${accentColor};border:1px solid ${borderColor}" title="${esc(pipe)}">${esc(pipe)}</span>
+        </div>
+        <span class="vp-arrow">›</span>
+      </div>`;
+    }).join('')
+    : `<div class="vp-empty">Sin leads en esta etapa</div>`;
+
+    return `<div class="vp-section">
+      <div class="vp-header">
+        <div class="vp-icon" style="background:${bgColor};color:${accentColor}">${icon}</div>
+        <span class="vp-title" style="color:${accentColor}">${title}</span>
+        <span class="vp-badge" style="background:${bgColor};color:${accentColor}">${data.length}</span>
       </div>
-      <div style="overflow-y:auto;max-height:240px">
-        <table class="visit-table">
-          <colgroup>
-            <col style="width:35%">
-            <col style="width:25%">
-            <col style="width:40%">
-          </colgroup>
-          <thead><tr><th>NOMBRE</th><th>CONTACTO</th><th>PIPELINE</th></tr></thead>
-          <tbody>${rows}</tbody>
-        </table>
-      </div>
+      <div class="vp-cards">${cards}</div>
     </div>`;
   }
 
   document.getElementById('visit-panels').innerHTML =
-    buildPanel('LEADS CON VISITA AGENDADA',   '📅', 'var(--accent)',  'rgba(79,255,176,0.08)',  agendada)  +
-    buildPanel('LEADS CON INTENCIÓN DE VISITA','👁', 'var(--accent2)', 'rgba(0,200,255,0.08)',   intencion);
+    buildPanel('Leads con visita agendada',    '📅', 'var(--accent)',  'rgba(79,255,176,0.1)',  'rgba(79,255,176,0.3)',  agendada) +
+    buildPanel('Leads con intención de visita','👁', 'var(--accent2)', 'rgba(0,200,255,0.1)',   'rgba(0,200,255,0.3)',   intencion);
 }
 
 // ── SCORE DETALLE POPUP ────────────────────────────────────────────────────
