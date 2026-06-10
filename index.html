@@ -506,6 +506,42 @@
   @keyframes spin { to { transform: rotate(360deg); } }
   .chats-no-config { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; gap: 14px; color: var(--muted); text-align: center; padding: 2rem; }
 
+  /* ── MOBILE SORT BAR ── */
+  .mobile-sort-bar {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    padding: 0 0 10px;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  .mobile-sort-bar::-webkit-scrollbar { display: none; }
+  .mobile-sort-label { font-size: 10px; color: var(--muted); font-family: var(--mono); white-space: nowrap; flex-shrink: 0; }
+  .msort-btn {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    padding: 6px 11px;
+    border-radius: 20px;
+    border: 1px solid var(--border-bright);
+    background: var(--surface);
+    color: var(--muted);
+    font-size: 11px;
+    font-family: var(--mono);
+    cursor: pointer;
+    white-space: nowrap;
+    flex-shrink: 0;
+    transition: background 0.15s, color 0.15s, border-color 0.15s;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .msort-btn.active {
+    background: rgba(79,255,176,0.12);
+    border-color: rgba(79,255,176,0.5);
+    color: var(--accent);
+  }
+  .msort-btn .msort-arrow { font-size: 10px; opacity: 0.7; }
+
   /* ── MOBILE LEAD CARDS (reemplaza tabla en móvil) ── */
   .mobile-lead-card {
     background: var(--surface);
@@ -533,6 +569,56 @@
   .mobile-card-pipe { font-size: 10px; font-family: var(--mono); color: var(--accent2); background: rgba(0,200,255,0.08); border: 1px solid rgba(0,200,255,0.2); border-radius: 5px; padding: 2px 7px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
   .mobile-card-actions { display: flex; gap: 8px; padding-top: 4px; border-top: 1px solid var(--border); }
   .mobile-card-actions .btn { flex: 1; justify-content: center; font-size: 12px; padding: 7px; }
+
+  /* ── CHATS SORT BAR ── */
+  .chats-toolbar {
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--border);
+    background: var(--surface);
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .chats-sort-bar {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    padding-bottom: 2px;
+  }
+  .chats-sort-bar::-webkit-scrollbar { display: none; }
+  .csort-btn {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 5px 10px;
+    border-radius: 20px;
+    border: 1px solid var(--border-bright);
+    background: var(--surface2);
+    color: var(--muted);
+    font-size: 11px;
+    font-family: var(--mono);
+    cursor: pointer;
+    white-space: nowrap;
+    flex-shrink: 0;
+    transition: background 0.15s, color 0.15s, border-color 0.15s;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .csort-btn.active {
+    background: rgba(79,255,176,0.12);
+    border-color: rgba(79,255,176,0.5);
+    color: var(--accent);
+  }
+  .csort-btn .csort-arrow { font-size: 10px; }
+  .chats-count-label {
+    font-size: 10px;
+    color: var(--muted);
+    font-family: var(--mono);
+    padding: 0 2px;
+    flex-shrink: 0;
+  }
 
   /* ── BOTTOM NAV (mobile) ── */
   .bottom-nav {
@@ -1087,8 +1173,11 @@
 
     <!-- Left: leads list -->
     <div class="leads-list" id="chats-leads-list">
-      <div style="padding:10px 16px;border-bottom:1px solid var(--border)">
+      <div class="chats-toolbar">
         <input type="text" id="chats-search" placeholder="Buscar lead..." oninput="renderChatsList()" style="font-size:12px">
+        <div class="chats-sort-bar" id="chats-sort-bar">
+          <!-- rendered by JS -->
+        </div>
       </div>
       <div id="chats-list-body"></div>
     </div>
@@ -1254,9 +1343,21 @@ function getFiltered() {
     if (fp && (l.Pipeline_nombre||'') !== fp) return false;
     return true;
   }).sort((a,b) => {
-    let av = sortCol === 'Lead_score' ? (a.Lead_score !== undefined ? a.Lead_score : a.score || 0) : a[sortCol];
-    let bv = sortCol === 'Lead_score' ? (b.Lead_score !== undefined ? b.Lead_score : b.score || 0) : b[sortCol];
-    if (typeof av === 'string') av = av.toLowerCase(), bv = bv.toLowerCase();
+    const sortVal = (l) => {
+      if (sortCol === 'Lead_score')        return l.Lead_score !== undefined ? l.Lead_score : (l.score || 0);
+      if (sortCol === 'Nivel_interaccion') { const m = {'alta':3,'media':2,'baja':1}; return m[(l.Nivel_interaccion||'').toLowerCase()] || 0; }
+      if (sortCol === 'Lead_categoria')    { const m = {'HOT':3,'WARM':2,'COLD':1}; return m[(l.Lead_categoria||'').toUpperCase()] || 0; }
+      if (sortCol === 'Status_id') {
+        const sid = String(l.Status_id != null ? l.Status_id : (l.status_id||'')).trim();
+        if (!sid || sid === 'null') return 0;
+        if (typeof AGENDADA_SET  !== 'undefined' && AGENDADA_SET.has(sid))  return 3;
+        if (typeof INTENCION_SET !== 'undefined' && INTENCION_SET.has(sid)) return 2;
+        return 1;
+      }
+      return l[sortCol];
+    };
+    let av = sortVal(a), bv = sortVal(b);
+    if (typeof av === 'string' && typeof bv === 'string') { av = av.toLowerCase(); bv = bv.toLowerCase(); }
     return av < bv ? sortDir : av > bv ? -sortDir : 0;
   });
 }
@@ -1348,14 +1449,46 @@ function setupTableScroll() {
 function isMobile() { return window.innerWidth <= 640; }
 
 // ── MOBILE CARDS ───────────────────────────────────────────────────────────
+// Mobile sort options
+const MOBILE_SORT_OPTIONS = [
+  { col: 'Lead_score',         label: 'Score',      icon: '📊' },
+  { col: 'Nivel_interaccion',  label: 'Interacción', icon: '🔥' },
+  { col: 'Lead_categoria',     label: 'Estado',     icon: '🌡' },
+  { col: 'Status_id',          label: 'Visita',     icon: '📅' },
+];
+
+function mobileSortBy(col) {
+  if (sortCol === col) { sortDir *= -1; }
+  else { sortCol = col; sortDir = -1; }
+  // sync desktop table headers
+  document.querySelectorAll('[id^="sh-"]').forEach(el => el.textContent = '');
+  const desktopEl = document.getElementById('sh-' + col);
+  if (desktopEl) desktopEl.textContent = sortDir === -1 ? ' ↓' : ' ↑';
+  renderTable();
+}
+
+function renderMobileSortBar() {
+  return '<div class="mobile-sort-bar">' +
+    '<span class="mobile-sort-label">Ordenar:</span>' +
+    MOBILE_SORT_OPTIONS.map(opt => {
+      const isActive = sortCol === opt.col;
+      const arrow = isActive ? (sortDir === -1 ? '↓' : '↑') : '';
+      return '<button class="msort-btn' + (isActive ? ' active' : '') + '" onclick="mobileSortBy(\'' + opt.col + '\')">' +
+        opt.icon + ' ' + opt.label +
+        (isActive ? ' <span class="msort-arrow">' + arrow + '</span>' : '') +
+      '</button>';
+    }).join('') +
+  '</div>';
+}
+
 function renderMobileCards() {
   const wrap = document.getElementById('mobile-cards-wrap');
   if (!wrap) return;
   if (!_vsData.length) {
-    wrap.innerHTML = '<div style="text-align:center;padding:2rem;color:var(--muted);font-size:13px">Sin resultados</div>';
+    wrap.innerHTML = renderMobileSortBar() + '<div style="text-align:center;padding:2rem;color:var(--muted);font-size:13px">Sin resultados</div>';
     return;
   }
-  wrap.innerHTML = _vsData.map(l => {
+  wrap.innerHTML = renderMobileSortBar() + _vsData.map(l => {
     const scoreVal = l.Lead_score !== undefined ? l.Lead_score : (l.score || 0);
     const cScore   = scoreColor(scoreVal);
     const tCat     = getTemp(scoreVal, l.Lead_categoria);
@@ -1993,9 +2126,65 @@ function loadChatsCfg() {
   } catch(e) {}
 }
 
+// ── CHATS SORT STATE ─────────────────────────────────────────────────────
+let chatsSortCol = 'Lead_score';
+let chatsSortDir = -1;
+
+const CHATS_SORT_OPTIONS = [
+  { col: 'Lead_score',        label: 'Score',       icon: '📊' },
+  { col: 'Nivel_interaccion', label: 'Interacción', icon: '🔥' },
+  { col: 'Lead_categoria',    label: 'Estado',      icon: '🌡' },
+  { col: 'Status_id',         label: 'Visita',      icon: '📅' },
+  { col: 'name',              label: 'Nombre',      icon: '🔤' },
+];
+
+function chatsSortVal(l, col) {
+  if (col === 'Lead_score')        return l.Lead_score !== undefined ? l.Lead_score : (l.score || 0);
+  if (col === 'Nivel_interaccion') { const m = {'alta':3,'media':2,'baja':1}; return m[(l.Nivel_interaccion||'').toLowerCase()] || 0; }
+  if (col === 'Lead_categoria')    { const m = {'HOT':3,'WARM':2,'COLD':1}; return m[(l.Lead_categoria||'').toUpperCase()] || 0; }
+  if (col === 'Status_id') {
+    const sid = String(l.Status_id != null ? l.Status_id : (l.status_id||'')).trim();
+    if (!sid || sid === 'null') return 0;
+    if (typeof AGENDADA_SET  !== 'undefined' && AGENDADA_SET.has(sid))  return 3;
+    if (typeof INTENCION_SET !== 'undefined' && INTENCION_SET.has(sid)) return 2;
+    return 1;
+  }
+  if (col === 'name') return (l.name||'').toLowerCase();
+  return l[col];
+}
+
+function chatsSortBy(col) {
+  if (chatsSortCol === col) { chatsSortDir *= -1; }
+  else { chatsSortCol = col; chatsSortDir = -1; }
+  renderChatsList();
+}
+
+function renderChatsSortBar() {
+  const bar = document.getElementById('chats-sort-bar');
+  if (!bar) return;
+  bar.innerHTML = CHATS_SORT_OPTIONS.map(opt => {
+    const isActive = chatsSortCol === opt.col;
+    const arrow = isActive ? (chatsSortDir === -1 ? ' ↓' : ' ↑') : '';
+    return `<button class="csort-btn${isActive ? ' active' : ''}" onclick="chatsSortBy('${opt.col}')">` +
+      opt.icon + ' ' + opt.label +
+      (isActive ? `<span class="csort-arrow">${arrow}</span>` : '') +
+      '</button>';
+  }).join('');
+}
+
 function renderChatsList() {
+  renderChatsSortBar();
   const q = (document.getElementById('chats-search').value || '').toLowerCase();
-  const filtered = leads.filter(l => !q || l.name.toLowerCase().includes(q) || String(l.Lead_id||'').includes(q));
+  let filtered = leads.filter(l => !q || l.name.toLowerCase().includes(q) || String(l.Lead_id||'').includes(q));
+
+  // Sort
+  filtered = filtered.slice().sort((a, b) => {
+    let av = chatsSortVal(a, chatsSortCol);
+    let bv = chatsSortVal(b, chatsSortCol);
+    if (typeof av === 'string' && typeof bv === 'string') { av = av.toLowerCase(); bv = bv.toLowerCase(); }
+    return av < bv ? chatsSortDir : av > bv ? -chatsSortDir : 0;
+  });
+
   const body = document.getElementById('chats-list-body');
 
   if (!filtered.length) {
@@ -2008,17 +2197,31 @@ function renderChatsList() {
     const colors = {hot:'var(--hot)',warm:'var(--warm)',cold:'var(--cold)'};
     const initials = l.name.split(' ').map(w=>w[0]).join('').substring(0,2).toUpperCase();
     const cached = chatsCache[l.Lead_id];
-    const preview = cached ? (cached.messages[0]?.texto || 'Sin mensajes') : 'Click para cargar';
-    const timeStr = cached ? fmtDate(cached.messages[0]?.fecha) : '';
+    const lastMsg = cached ? cached.messages[cached.messages.length-1] : null;
+    const preview = cached
+      ? (lastMsg?.texto
+          ? (lastMsg.texto.length > 38 ? lastMsg.texto.substring(0,38)+'…' : lastMsg.texto)
+          : 'Sin mensajes')
+      : 'Toca para cargar';
+    const timeStr = cached && lastMsg ? fmtDate(lastMsg.fecha) : '';
+    const msgCount = cached ? cached.messages.length : null;
     const active = currentChatLeadId === l.Lead_id ? ' active' : '';
+    // Visit badge inline
+    const sid = String(l.Status_id != null ? l.Status_id : (l.status_id||'')).trim();
+    const visitDot = (typeof AGENDADA_SET!=='undefined' && AGENDADA_SET.has(sid))
+      ? '<span style="font-size:9px;background:#EAF3DE;color:#27500A;border:1px solid #C0DD97;border-radius:10px;padding:1px 5px;margin-left:4px">📅</span>'
+      : (typeof INTENCION_SET!=='undefined' && INTENCION_SET.has(sid))
+      ? '<span style="font-size:9px;background:#FDF3D0;color:#7a5300;border:1px solid #e0b84a;border-radius:10px;padding:1px 5px;margin-left:4px">👁</span>'
+      : '';
     return `<div class="lead-item${active}" onclick="selectChatLead(${l.Lead_id}, true)">
       <div class="lead-avatar" style="background:${colors[t]}22;color:${colors[t]}">${initials}</div>
       <div class="lead-item-info">
-        <div class="lead-item-name">${esc(l.name)}</div>
+        <div class="lead-item-name">${esc(l.name)}${visitDot}</div>
         <div class="lead-item-preview">${esc(preview)}</div>
       </div>
       <div class="lead-item-meta">
         <div class="lead-item-score" style="color:${colors[t]}">${l.Lead_score}</div>
+        ${msgCount !== null ? `<div style="font-size:9px;color:var(--muted);font-family:var(--mono);margin-top:2px">${msgCount} msg</div>` : ''}
         <div class="lead-item-time">${timeStr}</div>
       </div>
     </div>`;
