@@ -597,6 +597,7 @@
               <th onclick="sortBy('Lead_score')">SCORE <span id="sh-Lead_score">↓</span></th>
               <th onclick="sortBy('Nivel_interaccion')">INTERACCIÓN <span id="sh-Nivel_interaccion"></span></th>
               <th>ESTADO</th>
+              <th>ESTADO VISITA</th>
               <th>FUENTE</th>
               <th onclick="sortBy('value')">VALOR EST. <span id="sh-value"></span></th>
               <th>ACCIONES</th>
@@ -1035,6 +1036,17 @@ let _vsData       = [];   // full filtered+sorted dataset
 const VS_PAGE     = 80;   // rows rendered per batch
 let _vsRendered   = 0;    // how many rows currently in DOM
 
+const INTENCION_SET = new Set(['106888064','105257100','89413287','81405567']);
+const AGENDADA_SET  = new Set(['106888152','105257104','81074171','79521939']);
+
+function visitaBadge(statusId) {
+  const sid = statusId != null && statusId !== '' ? String(statusId).trim() : '';
+  if (!sid || sid === 'null') return '<span style="color:var(--muted);font-size:11px">&#8212;</span>';
+  if (AGENDADA_SET.has(sid))  return '<span style="font-size:11px;font-weight:500;padding:2px 8px;border-radius:20px;color:#27500A;background:#EAF3DE;border:1px solid #C0DD97;white-space:nowrap">&#128197; Agendada</span>';
+  if (INTENCION_SET.has(sid)) return '<span style="font-size:11px;font-weight:500;padding:2px 8px;border-radius:20px;color:#0C447C;background:#E6F1FB;border:1px solid #B5D4F4;white-space:nowrap">&#128065; Intenci&#243;n</span>';
+  return '<span style="color:var(--muted);font-size:11px">&#8212;</span>';
+}
+
 function nivelBadge(nivel) {
   if (!nivel) return '<span style="color:var(--muted);font-size:11px">—</span>';
   const n = String(nivel).toLowerCase();
@@ -1044,7 +1056,7 @@ function nivelBadge(nivel) {
     'baja':  { color:'var(--cold)',    bg:'rgba(0,200,255,0.08)',   border:'rgba(0,200,255,0.25)'   },
   };
   const s = cfg[n] || { color:'var(--muted)', bg:'transparent', border:'var(--border)' };
-  return `<span style="font-size:11px;font-weight:500;padding:2px 8px;border-radius:20px;color:${s.color};background:${s.bg};border:1px solid ${s.border}">${nivel}</span>`;
+  return '<span style="font-size:11px;font-weight:500;padding:2px 8px;border-radius:20px;color:'+s.color+';background:'+s.bg+';border:1px solid '+s.border+'">' + nivel + '</span>';
 }
 
 function buildRow(l) {
@@ -1058,6 +1070,7 @@ function buildRow(l) {
     <td><div class="score-wrap" onclick="event.stopPropagation();showScoreDetalle('${l.id}')" style="cursor:${l.lead_score_detalle&&l.lead_score_detalle.length?'pointer':'default'}" title="${l.lead_score_detalle&&l.lead_score_detalle.length?'Ver detalle de score':''}"><div class="score-bar"><div class="score-fill" style="width:${scoreVal}%;background:${cScore}"></div></div><span class="score-num" style="color:${cScore}">${scoreVal}${l.lead_score_detalle&&l.lead_score_detalle.length?' ℹ':''}</span></div></td>
     <td>${nivelBadge(l.Nivel_interaccion)}</td>
     <td><span class="badge badge-${tCat}">${tempLabel[tCat]||tCat}</span></td>
+    <td>${visitaBadge(l.Status_id)}</td>
     <td style="font-size:11px;color:var(--muted)">${esc(l.etiqueta_fuente||'—')}</td>
     <td style="font-family:var(--mono);font-size:12px">$${Number(l.Valor_lead||l.value||0).toLocaleString()}</td>
     <td onclick="event.stopPropagation()">
@@ -1126,8 +1139,8 @@ function renderTable() {
 }
 
 // ── STATUS IDs CONFIG ─────────────────────────────────────────────────────
-const INTENCION_VISITA_IDS  = new Set(['106888064','105257100','89413287','81405567']);
-const VISITA_AGENDADA_IDS   = new Set(['106888152','105257104','81074171','79521939']);
+const INTENCION_VISITA_IDS  = INTENCION_SET;
+const VISITA_AGENDADA_IDS   = AGENDADA_SET;
 
 function renderVisitPanels() {
   const toSid = l => { const v = l.Status_id != null ? l.Status_id : l.status_id; return v != null && v !== '' ? String(v).trim() : ''; };
@@ -1178,36 +1191,38 @@ function showScoreDetalle(leadId) {
     return;
   }
   const existing = document.getElementById('score-detalle-popup');
-  if (existing) { existing.remove(); document.getElementById('score-detalle-overlay')?.remove(); return; }
+  if (existing) { existing.remove(); const ov = document.getElementById('score-detalle-overlay'); if(ov) ov.remove(); return; }
 
-  const scoreColor = l.Lead_score>=80?'var(--hot)':l.Lead_score>=50?'var(--warn)':'var(--cold)';
+  const sc = l.Lead_score >= 80 ? 'var(--hot)' : l.Lead_score >= 50 ? 'var(--warn)' : 'var(--cold)';
   const pop = document.createElement('div');
   pop.id = 'score-detalle-popup';
   pop.style.cssText = 'position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:var(--surface);border:1px solid var(--border-bright);border-radius:14px;padding:1.5rem;z-index:400;min-width:300px;max-width:400px;max-height:80vh;overflow-y:auto;box-shadow:0 8px 40px rgba(0,0,0,0.6)';
-  pop.innerHTML = `
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem">
-      <div>
-        <div style="font-weight:600;font-size:15px">${esc(l.name)}</div>
-        <div style="font-size:11px;color:var(--muted);font-family:var(--mono);margin-top:2px">Detalle de score</div>
-      </div>
-      <button onclick="document.getElementById('score-detalle-popup').remove();document.getElementById('score-detalle-overlay')?.remove()" style="background:none;border:none;color:var(--muted);font-size:20px;cursor:pointer;line-height:1">✕</button>
-    </div>
-    <div style="font-size:32px;font-weight:600;color:${scoreColor};font-family:var(--mono);margin-bottom:1rem">${l.Lead_score} pts</div>
-    ${l.lead_score_detalle.map(d => {
-      const m = d.match(/([+-]\d+)$/);
-      const pts = m ? parseInt(m[1]) : 0;
-      const col = pts > 0 ? 'var(--accent)' : 'var(--danger)';
-      const label = d.replace(/[+-]\d+$/, '').trim();
-      return `<div style="display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid var(--border);font-size:12px">
-        <span style="color:var(--text)">${esc(label)}</span>
-        <span style="font-family:var(--mono);font-weight:600;color:${col}">${pts>0?'+'+pts:pts}</span>
-      </div>`;
-    }).join('')}`;
+
+  let rows = '';
+  l.lead_score_detalle.forEach(function(d) {
+    const m = d.match(/([+-]\d+)$/);
+    const pts = m ? parseInt(m[1]) : 0;
+    const col = pts > 0 ? 'var(--accent)' : 'var(--danger)';
+    const label = d.replace(/[+-]\d+$/, '').trim();
+    const ptsStr = pts > 0 ? '+' + pts : String(pts);
+    rows += '<div style="display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid var(--border);font-size:12px">'
+          + '<span style="color:var(--text)">' + esc(label) + '</span>'
+          + '<span style="font-family:var(--mono);font-weight:600;color:' + col + '">' + ptsStr + '</span>'
+          + '</div>';
+  });
+
+  pop.innerHTML = '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem">'
+    + '<div><div style="font-weight:600;font-size:15px">' + esc(l.name) + '</div>'
+    + '<div style="font-size:11px;color:var(--muted);font-family:var(--mono);margin-top:2px">Detalle de score</div></div>'
+    + '<button onclick="var p=document.getElementById(&quot;score-detalle-popup&quot;);if(p)p.remove();var o=document.getElementById(&quot;score-detalle-overlay&quot;);if(o)o.remove();" style="background:none;border:none;color:var(--muted);font-size:20px;cursor:pointer;line-height:1">&#x2715;</button>'
+    + '</div>'
+    + '<div style="font-size:32px;font-weight:600;color:' + sc + ';font-family:var(--mono);margin-bottom:1rem">' + l.Lead_score + ' pts</div>'
+    + rows;
 
   const overlay = document.createElement('div');
   overlay.id = 'score-detalle-overlay';
   overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:399';
-  overlay.onclick = () => { pop.remove(); overlay.remove(); };
+  overlay.onclick = function() { pop.remove(); overlay.remove(); };
   document.body.appendChild(overlay);
   document.body.appendChild(pop);
 }
@@ -1899,7 +1914,7 @@ function debugStatusIds() {
   pop.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.8);z-index:999;display:flex;align-items:center;justify-content:center';
   pop.innerHTML = '<div style="background:var(--surface);border:1px solid var(--border-bright);border-radius:12px;padding:1.5rem;max-width:600px;width:90%;max-height:80vh;overflow-y:auto">' +
     '<div style="display:flex;justify-content:space-between;margin-bottom:1rem"><strong>🔍 Debug Status_id</strong>' +
-    '<button onclick="this.closest('div[style*=fixed]').remove()" style="background:none;border:none;color:var(--muted);font-size:18px;cursor:pointer">✕</button></div>' +
+    '<button onclick="this.parentElement.parentElement.remove()" style="background:none;border:none;color:var(--muted);font-size:18px;cursor:pointer">✕</button></div>' +
     '<pre style="font-family:var(--mono);font-size:11px;color:var(--accent);white-space:pre-wrap;line-height:1.6">' + msg + '</pre>' +
     '</div>';
   pop.onclick = e => { if(e.target === pop) pop.remove(); };
