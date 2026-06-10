@@ -1129,7 +1129,7 @@ const INTENCION_VISITA_IDS  = new Set(['106888064','105257100','89413287','81405
 const VISITA_AGENDADA_IDS   = new Set(['106888152','105257104','81074171','79521939']);
 
 function renderVisitPanels() {
-  const toSid = l => String(l.Status_id || l.status_id || '').trim();
+  const toSid = l => String(l.Status_id ?? l.status_id ?? l.StatusId ?? '').trim();
   const intencion = leads.filter(l => INTENCION_VISITA_IDS.has(toSid(l)));
   const agendada  = leads.filter(l => VISITA_AGENDADA_IDS.has(toSid(l)));
 
@@ -1387,7 +1387,7 @@ async function fetchFromN8N() {
       value:           Number(l.Valor_lead || l.valor_lead      || l.value || 0),
       Valor_lead:      String(l.Valor_lead || l.valor_lead      || l.value || '0'),
       Nivel_interaccion:   l.Nivel_interaccion   || l.nivel_interaccion   || '',
-      Status_id:           String(l.Status_id || l.status_id || l.StatusId || ''),
+      Status_id:           String(l.Status_id ?? l.status_id ?? l.StatusId ?? l.status ?? '').trim(),
       lead_score_detalle:  Array.isArray(l.lead_score_detalle) ? l.lead_score_detalle : (Array.isArray(l.Lead_score_detalle) ? l.Lead_score_detalle : []),
       stage:               l.stage              || l.etapa               || 'prospecto',
       createdAt:           l.createdAt          || new Date().toISOString(),
@@ -1398,6 +1398,9 @@ async function fetchFromN8N() {
     saveLeads();
     renderTable();
     updateSyncStatus('ok');
+    // Debug: log unique Status_ids received
+    const uids = [...new Set(leads.map(l=>l.Status_id).filter(Boolean))];
+    addLog('Status_ids recibidos: ' + (uids.length ? uids.join(', ') : 'ninguno'), 'ok');
     document.getElementById('last-sync-label').textContent = 'ult. sync '+lastSync.toLocaleTimeString('es');
     addLog(leads.length + ' leads sincronizados y guardados en cache', 'ok');
     toast(leads.length + ' leads sincronizados', 'success');
