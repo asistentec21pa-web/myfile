@@ -961,7 +961,7 @@
 <script>
 // ── STATE ──────────────────────────────────────────────────────────────────
 let leads = [
-  {id:1, Lead_id:21637253, name:'Pedro Arias',   Pipeline_id:13852180, Pipeline_nombre:'LEAD CAMPAÑAS (75952084)',  Telefono:'+59170883977', Lead_score:100, Lead_categoria:'HOT',  Nivel_interaccion:'Alta',   etiqueta_fuente:'Facebook Ads', value:75000, Valor_lead:'75000', Status_id:'106888152', lead_score_detalle:['Rango presupuesto +5','Zona definida +5','Califica crédito +20','Visita agendada +15','Visita realizada +20'], stage:'propuesta',  createdAt:'2026-06-03T00:26:42.834Z', updatedAt:'2026-06-08T04:15:32.520Z'},
+  {id:1, Lead_id:21637253, name:'Pedro Arias',   Pipeline_id:13852180, Pipeline_nombre:'LEAD CAMPAÑAS (75952084)',  Telefono:'+59170883977', Lead_score:100, Lead_categoria:'HOT',  Nivel_interaccion:'Alta',   etiqueta_fuente:'Facebook Ads', value:75000, Valor_lead:'75000', Status_id:'106888064', lead_score_detalle:['Rango presupuesto +5','Zona definida +5','Califica crédito +20','Visita agendada +15','Visita realizada +20'], stage:'propuesta',  createdAt:'2026-06-03T00:26:42.834Z', updatedAt:'2026-06-08T04:15:32.520Z'},
   {id:2, Lead_id:21637254, name:'Ana García',    Pipeline_id:13852180, Pipeline_nombre:'LEAD CAMPAÑAS (75952084)',  Telefono:'+59170011001', Lead_score:85,  Lead_categoria:'HOT',  Nivel_interaccion:'Alta',   etiqueta_fuente:'Facebook Ads', value:48000, Valor_lead:'48000', stage:'interesado', createdAt:'2026-06-03T01:00:00.000Z', updatedAt:'2026-06-08T01:00:00.000Z'},
   {id:3, Lead_id:21637255, name:'Luis Mendoza',  Pipeline_id:13852181, Pipeline_nombre:'LEAD REFERIDOS (75952085)', Telefono:'+59170022002', Lead_score:65,  Lead_categoria:'WARM', Nivel_interaccion:'Media',  etiqueta_fuente:'Facebook Ads', value:32000, Valor_lead:'32000', Status_id:'106888064', lead_score_detalle:['Rango presupuesto +5','Zona definida +5','Tipo inmueble +5'], stage:'contactado', createdAt:'2026-06-03T02:00:00.000Z', updatedAt:'2026-06-08T02:00:00.000Z'},
   {id:4, Lead_id:21637256, name:'Carla Rojas',   Pipeline_id:13852181, Pipeline_nombre:'LEAD REFERIDOS (75952085)', Telefono:'+59170033003', Lead_score:55,  Lead_categoria:'WARM', Nivel_interaccion:'Media',  etiqueta_fuente:'Facebook Ads', value:61000, Valor_lead:'61000', stage:'prospecto',  createdAt:'2026-06-03T03:00:00.000Z', updatedAt:'2026-06-08T03:00:00.000Z'},
@@ -1129,8 +1129,9 @@ const INTENCION_VISITA_IDS  = new Set(['106888064','105257100','89413287','81405
 const VISITA_AGENDADA_IDS   = new Set(['106888152','105257104','81074171','79521939']);
 
 function renderVisitPanels() {
-  const intencion = leads.filter(l => INTENCION_VISITA_IDS.has(String(l.Status_id||'')));
-  const agendada  = leads.filter(l => VISITA_AGENDADA_IDS.has(String(l.Status_id||'')));
+  const toSid = l => String(l.Status_id || l.status_id || '').trim();
+  const intencion = leads.filter(l => INTENCION_VISITA_IDS.has(toSid(l)));
+  const agendada  = leads.filter(l => VISITA_AGENDADA_IDS.has(toSid(l)));
 
   function initials(name) {
     return (name||'').split(' ').map(w=>w[0]||'').join('').substring(0,2).toUpperCase();
@@ -1386,7 +1387,7 @@ async function fetchFromN8N() {
       value:           Number(l.Valor_lead || l.valor_lead      || l.value || 0),
       Valor_lead:      String(l.Valor_lead || l.valor_lead      || l.value || '0'),
       Nivel_interaccion:   l.Nivel_interaccion   || l.nivel_interaccion   || '',
-      Status_id:           String(l.Status_id   || l.status_id          || ''),
+      Status_id:           String(l.Status_id || l.status_id || l.StatusId || ''),
       lead_score_detalle:  Array.isArray(l.lead_score_detalle) ? l.lead_score_detalle : (Array.isArray(l.Lead_score_detalle) ? l.Lead_score_detalle : []),
       stage:               l.stage              || l.etapa               || 'prospecto',
       createdAt:           l.createdAt          || new Date().toISOString(),
