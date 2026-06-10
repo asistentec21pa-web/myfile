@@ -1043,7 +1043,7 @@ function visitaBadge(statusId) {
   const sid = statusId != null && statusId !== '' ? String(statusId).trim() : '';
   if (!sid || sid === 'null') return '<span style="color:var(--muted);font-size:11px">&#8212;</span>';
   if (AGENDADA_SET.has(sid))  return '<span style="font-size:11px;font-weight:500;padding:2px 8px;border-radius:20px;color:#27500A;background:#EAF3DE;border:1px solid #C0DD97;white-space:nowrap">&#128197; Agendada</span>';
-  if (INTENCION_SET.has(sid)) return '<span style="font-size:11px;font-weight:500;padding:2px 8px;border-radius:20px;color:#0C447C;background:#E6F1FB;border:1px solid #B5D4F4;white-space:nowrap">&#128065; Intenci&#243;n</span>';
+  if (INTENCION_SET.has(sid)) return '<span style="font-size:11px;font-weight:500;padding:2px 8px;border-radius:20px;color:#7a5300;background:#FDF3D0;border:1px solid #e0b84a;white-space:nowrap">&#128065; Intenci&#243;n</span>';
   return '<span style="color:var(--muted);font-size:11px">&#8212;</span>';
 }
 
@@ -1180,7 +1180,7 @@ function renderVisitPanels() {
 
   document.getElementById('visit-panels').innerHTML =
     buildPanel('Leads con visita agendada',    '📅', 'var(--accent)',  'rgba(79,255,176,0.1)',  'rgba(79,255,176,0.3)',  agendada) +
-    buildPanel('Leads con intención de visita','👁', 'var(--accent2)', 'rgba(0,200,255,0.1)',   'rgba(0,200,255,0.3)',   intencion);
+    buildPanel('Leads con intención de visita','👁', '#c9911a',        'rgba(201,145,26,0.1)',  'rgba(201,145,26,0.35)', intencion);
 }
 
 // ── SCORE DETALLE POPUP ────────────────────────────────────────────────────
