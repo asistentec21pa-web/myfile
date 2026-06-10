@@ -785,6 +785,7 @@
         <button class="btn" onclick="fetchFromN8N()">↻ Sincronizar ahora</button>
         <button class="btn" onclick="pushAllToN8N()">↑ Push todos los leads</button>
         <button class="btn btn-danger" onclick="clearLeadsCache()">✕ Borrar caché</button>
+        <button class="btn" onclick="debugStatusIds()" style="border-color:var(--warn);color:var(--warn)">🔍 Debug Status_id</button>
         <button class="btn btn-primary" onclick="saveConfig()">✓ Guardar configuración</button>
       </div>
 
@@ -1876,6 +1877,33 @@ function clearLeadsCache() {
   localStorage.removeItem('ls_leads_total');
   toast('Cache de leads borrada', 'info');
   addLog('Cache borrada — se usaran datos de ejemplo hasta la proxima sync', 'warn');
+}
+
+// ── DEBUG ────────────────────────────────────────────────────────────────
+function debugStatusIds() {
+  const sample = leads.slice(0, 5);
+  let msg = 'Total leads: ' + leads.length + '\n\n';
+  sample.forEach((l, i) => {
+    msg += 'Lead ' + (i+1) + ': ' + (l.name||'?') + '\n';
+    msg += '  Status_id: ' + JSON.stringify(l.Status_id) + ' (tipo: ' + typeof l.Status_id + ')\n';
+    msg += '  status_id: ' + JSON.stringify(l.status_id) + '\n';
+    msg += '  Keys: ' + Object.keys(l).join(', ') + '\n\n';
+  });
+
+  const withStatus = leads.filter(l => l.Status_id && l.Status_id !== '');
+  msg += 'Leads con Status_id no vacío: ' + withStatus.length + '\n';
+  msg += 'Valores únicos: ' + [...new Set(leads.map(l=>l.Status_id))].join(', ');
+
+  // Show in a modal-style overlay
+  const pop = document.createElement('div');
+  pop.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.8);z-index:999;display:flex;align-items:center;justify-content:center';
+  pop.innerHTML = '<div style="background:var(--surface);border:1px solid var(--border-bright);border-radius:12px;padding:1.5rem;max-width:600px;width:90%;max-height:80vh;overflow-y:auto">' +
+    '<div style="display:flex;justify-content:space-between;margin-bottom:1rem"><strong>🔍 Debug Status_id</strong>' +
+    '<button onclick="this.closest('div[style*=fixed]').remove()" style="background:none;border:none;color:var(--muted);font-size:18px;cursor:pointer">✕</button></div>' +
+    '<pre style="font-family:var(--mono);font-size:11px;color:var(--accent);white-space:pre-wrap;line-height:1.6">' + msg + '</pre>' +
+    '</div>';
+  pop.onclick = e => { if(e.target === pop) pop.remove(); };
+  document.body.appendChild(pop);
 }
 
 // ── INIT ─────────────────────────────────────────────────────────────────
