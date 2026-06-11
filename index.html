@@ -273,7 +273,7 @@
 
   .score-wrap { display: flex; align-items: center; gap: 8px; }
   .score-bar  { flex: 1; height: 4px; background: rgba(255,255,255,0.08); border-radius: 2px; overflow: hidden; min-width: 60px; }
-  .score-fill { height: 100%; border-radius: 2px; }
+  .score-fill { height: 100%; border-radius: 2px; transition: width 0.5s ease, background 0.4s ease; }
   .score-num  { font-family: var(--mono); font-size: 12px; font-weight: 500; min-width: 28px; }
 
   .badge { display: inline-block; padding: 2px 9px; border-radius: 20px; font-size: 11px; font-weight: 500; border: 1px solid; }
@@ -564,7 +564,7 @@
   .mobile-card-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
   .mobile-card-score-wrap { display: flex; align-items: center; gap: 8px; flex: 1; }
   .mobile-card-score-bar { flex: 1; height: 5px; background: rgba(255,255,255,0.08); border-radius: 3px; overflow: hidden; }
-  .mobile-card-score-fill { height: 100%; border-radius: 3px; }
+  .mobile-card-score-fill { height: 100%; border-radius: 3px; transition: width 0.5s ease, background 0.4s ease; }
   .mobile-card-score-num { font-family: var(--mono); font-size: 12px; font-weight: 600; min-width: 28px; text-align: right; }
   .mobile-card-pipe { font-size: 10px; font-family: var(--mono); color: var(--accent2); background: rgba(0,200,255,0.08); border: 1px solid rgba(0,200,255,0.2); border-radius: 5px; padding: 2px 7px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
   .mobile-card-actions { display: flex; gap: 8px; padding-top: 4px; border-top: 1px solid var(--border); }
@@ -1420,14 +1420,16 @@ function getTemp(score, categoria) {
     if (c === 'WARM') return 'warm';
     return 'cold';
   }
-  if (score >= 80) return 'hot';
-  if (score >= 50) return 'warm';
+  const n = Number(score) || 0;
+  if (n >= 80) return 'hot';
+  if (n >= 50) return 'warm';
   return 'cold';
 }
 const tempLabel = {hot:'Caliente', warm:'Tibio', cold:'Frío'};
 function scoreColor(s) {
-  if (s >= 80) return 'var(--hot)';
-  if (s >= 50) return 'var(--warm)';
+  const n = Number(s) || 0;
+  if (n >= 80) return 'var(--hot)';
+  if (n >= 50) return 'var(--warm)';
   return 'var(--cold)';
 }
 function esc(s) {
@@ -1496,7 +1498,7 @@ function nivelBadge(nivel) {
 
 function buildRow(l) {
   const pipeLabel = l.Pipeline_nombre || ('#' + (l.Pipeline_id||'—'));
-  const scoreVal  = l.Lead_score !== undefined ? l.Lead_score : (l.score || 0);
+  const scoreVal  = Math.min(100, Math.max(0, Number(l.Lead_score !== undefined ? l.Lead_score : (l.score || 0)) || 0));
   const cScore    = scoreColor(scoreVal);
   const tCat      = getTemp(scoreVal, l.Lead_categoria);
   return `<tr onclick="openModal('edit','${l.id}')">
@@ -1593,7 +1595,7 @@ function renderMobileCards() {
     return;
   }
   wrap.innerHTML = renderMobileSortBar() + _vsData.map(l => {
-    const scoreVal = l.Lead_score !== undefined ? l.Lead_score : (l.score || 0);
+    const scoreVal = Math.min(100, Math.max(0, Number(l.Lead_score !== undefined ? l.Lead_score : (l.score || 0)) || 0));
     const cScore   = scoreColor(scoreVal);
     const tCat     = getTemp(scoreVal, l.Lead_categoria);
     const ini      = (l.name||'').split(' ').map(w=>w[0]||'').join('').substring(0,2).toUpperCase();
