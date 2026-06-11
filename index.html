@@ -1197,8 +1197,9 @@
           <div class="chat-header-name" id="chat-lead-name"></div>
           <div class="chat-header-sub" id="chat-lead-sub"></div>
         </div>
-        <button class="btn btn-sm" onclick="loadChats(currentChatLeadId, true)">↻ Actualizar</button>
-        <button class="btn btn-sm" onclick="closeChatPanel()" style="font-size:11px">← Volver</button>
+        <a id="chat-wa-btn" href="#" target="_blank" rel="noopener" style="display:none;align-items:center;gap:5px;padding:5px 10px;border-radius:8px;background:rgba(37,211,102,0.12);border:1px solid rgba(37,211,102,0.4);color:#25D366;text-decoration:none;font-size:12px;font-weight:500;flex-shrink:0">📲 WA</a>
+        <button class="btn btn-sm" onclick="loadChats(currentChatLeadId, true)" style="flex-shrink:0">↻</button>
+        <button class="btn btn-sm" onclick="closeChatPanel()" style="font-size:11px;flex-shrink:0">← Volver</button>
       </div>
 
       <!-- Messages -->
@@ -1274,6 +1275,22 @@
 <div id="toast-wrap"></div>
 
 <script>
+// ── WHATSAPP MESSAGE HELPER ──────────────────────────────────────────────
+function waGreeting() {
+  const h = new Date().getHours();
+  if (h >= 5  && h < 12) return 'buenos días';
+  if (h >= 12 && h < 19) return 'buenas tardes';
+  return 'buenas noches';
+}
+function waMessage(leadName) {
+  return encodeURIComponent(
+    'Sr ' + leadName + ', ' + waGreeting() + '. ' +
+    'Soy Pedro Arias Asesor inmobiliario de Century 21. ' +
+    'Se contactó con mi asistente Lucía al número de WhatsApp _______ por nuestro anuncio de Facebook recientemente_______. ' +
+    'Tengo entendido que____'
+  );
+}
+
 // ── STATE ──────────────────────────────────────────────────────────────────
 let leads = [
   {id:1, Lead_id:21637253, name:'Pedro Arias',   Pipeline_id:13852180, Pipeline_nombre:'LEAD CAMPAÑAS (75952084)',  Telefono:'+59170883977', Lead_score:100, Lead_categoria:'HOT',  Nivel_interaccion:'Alta',   etiqueta_fuente:'Facebook Ads', value:75000, Valor_lead:'75000', Status_id:'106888064', lead_score_detalle:['Rango presupuesto +5','Zona definida +5','Califica crédito +20','Visita agendada +15','Visita realizada +20'], stage:'propuesta',  createdAt:'2026-06-03T00:26:42.834Z', updatedAt:'2026-06-08T04:15:32.520Z'},
@@ -1495,31 +1512,30 @@ function renderMobileCards() {
     const ini      = (l.name||'').split(' ').map(w=>w[0]||'').join('').substring(0,2).toUpperCase();
     const bgMap    = {hot:'rgba(255,91,107,0.15)',warm:'rgba(255,179,64,0.15)',cold:'rgba(0,200,255,0.15)'};
     const phone    = (l.Telefono||'').replace(/[^\d+]/g,'');
-    const waMsg    = encodeURIComponent('Hola ' + l.name + ', te contacto sobre tu solicitud.');
-    const waLink   = phone ? 'whatsapp://send?phone=' + phone + '&text=' + waMsg : '';
-    return '<div class="mobile-lead-card" onclick="openModal(\'edit\',\''+l.id+'\')">'+
-      '<div class="mobile-card-top">'+
-        '<div class="mobile-card-avatar" style="background:'+bgMap[tCat]+';color:'+cScore+'">'+ini+'</div>'+
-        '<div style="flex:1;min-width:0">'+
-          '<div class="mobile-card-name">'+esc(l.name)+'</div>'+
-          '<div class="mobile-card-tel">'+esc(l.Telefono||'—')+'</div>'+
-        '</div>'+
-        '<span class="badge badge-'+tCat+'">'+tempLabel[tCat]+'</span>'+
-      '</div>'+
-      '<div class="mobile-card-row">'+
-        '<div class="mobile-card-score-wrap">'+
-          '<div class="mobile-card-score-bar"><div class="mobile-card-score-fill" style="width:'+scoreVal+'%;background:'+cScore+'"></div></div>'+
-          '<span class="mobile-card-score-num" style="color:'+cScore+'">'+scoreVal+'</span>'+
-        '</div>'+
-        (nivelBadge(l.Nivel_interaccion))+
-        (visitaBadge(l.Status_id))+
-      '</div>'+
-      '<div class="mobile-card-pipe" title="'+esc(l.Pipeline_nombre||'')+'">'+esc(l.Pipeline_nombre||'—')+'</div>'+
-      '<div class="mobile-card-actions" onclick="event.stopPropagation()">'+
-        (waLink ? '<a href="'+waLink+'" style="flex:1;display:flex;align-items:center;justify-content:center;gap:6px;padding:7px;border-radius:7px;background:rgba(37,211,102,0.1);border:1px solid rgba(37,211,102,0.3);color:#25D366;text-decoration:none;font-size:12px;font-weight:500">📲 WhatsApp</a>' : '')+
-        '<button class="btn btn-sm" onclick="openModal(\'edit\',\''+l.id+'\')">✏ Editar</button>'+
-        '<button class="btn btn-sm btn-danger" onclick="deleteLead('+l.id+')">✕</button>'+
-      '</div>'+
+    const waLink   = phone ? 'whatsapp://send?phone=' + phone + '&text=' + waMessage(l.name) : '';
+    return '<div class="mobile-lead-card">' +
+      '<div class="mobile-card-top">' +
+        '<div class="mobile-card-avatar" style="background:'+bgMap[tCat]+';color:'+cScore+'">'+ini+'</div>' +
+        '<div style="flex:1;min-width:0;cursor:pointer" onclick="goToChat('+l.Lead_id+')">' +
+          '<div class="mobile-card-name" style="color:var(--accent)">'+esc(l.name)+'</div>' +
+          '<div class="mobile-card-tel">'+esc(l.Telefono||'—')+'</div>' +
+        '</div>' +
+        '<span class="badge badge-'+tCat+'">'+tempLabel[tCat]+'</span>' +
+      '</div>' +
+      '<div class="mobile-card-row">' +
+        '<div class="mobile-card-score-wrap">' +
+          '<div class="mobile-card-score-bar"><div class="mobile-card-score-fill" style="width:'+scoreVal+'%;background:'+cScore+'"></div></div>' +
+          '<span class="mobile-card-score-num" style="color:'+cScore+'">'+scoreVal+'</span>' +
+        '</div>' +
+        (nivelBadge(l.Nivel_interaccion)) +
+        (visitaBadge(l.Status_id)) +
+      '</div>' +
+      '<div class="mobile-card-pipe" title="'+esc(l.Pipeline_nombre||'')+'">'+esc(l.Pipeline_nombre||'—')+'</div>' +
+      '<div class="mobile-card-actions">' +
+        (waLink ? '<a href="'+waLink+'" style="flex:1;display:flex;align-items:center;justify-content:center;gap:6px;padding:7px;border-radius:7px;background:rgba(37,211,102,0.1);border:1px solid rgba(37,211,102,0.3);color:#25D366;text-decoration:none;font-size:12px;font-weight:500">📲 WhatsApp</a>' : '') +
+        '<button class="btn btn-sm" style="flex:1" onclick="openModal(\'edit\',String('+l.id+'))">✏ Editar</button>' +
+        '<button class="btn btn-sm btn-danger" onclick="deleteLead('+l.id+')">✕</button>' +
+      '</div>' +
     '</div>';
   }).join('');
 }
@@ -1585,7 +1601,7 @@ function renderVisitPanels() {
       const tel = l.Telefono || '—';
       const pipe = l.Pipeline_nombre || '—';
       const phone = tel !== '—' ? tel.replace(/[^\d+]/g, '') : '';
-      const msg   = encodeURIComponent('Hola ' + l.name + ', te contacto respecto a tu visita.');
+      const msg   = waMessage(l.name);
       const waLink = phone ? `whatsapp://send?phone=${phone}&text=${msg}` : '';
       const cardClick = waLink ? `window.location.href='${waLink}'` : `goToChat(${l.Lead_id})`;
       return `<div class="vp-card" onclick="${cardClick}" title="${waLink ? 'Abrir WhatsApp' : 'Ver chat'}">
@@ -2245,6 +2261,16 @@ async function selectChatLead(leadId, forceRefresh) {
   document.getElementById('chat-avatar').textContent = initials;
   document.getElementById('chat-avatar').style.cssText = `background:${colors[t]}22;color:${colors[t]};width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:600;font-size:14px`;
   document.getElementById('chat-lead-name').textContent = lead.name;
+  const chatWaBtn = document.getElementById('chat-wa-btn');
+  if (chatWaBtn) {
+    const p = (lead.Telefono||'').replace(/[^\d+]/g,'');
+    if (p) {
+      chatWaBtn.href = 'whatsapp://send?phone=' + p + '&text=' + waMessage(lead.name);
+      chatWaBtn.style.display = 'inline-flex';
+    } else {
+      chatWaBtn.style.display = 'none';
+    }
+  }
   document.getElementById('chat-lead-sub').textContent = `Lead_id: ${lead.Lead_id} · ${lead.Pipeline_nombre||''} · Score: ${lead.Lead_score}`;
 
   // Store lead name for use in chat bubbles
