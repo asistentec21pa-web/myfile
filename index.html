@@ -1160,6 +1160,35 @@
     </div>
   </div>
 
+  <!-- ── SECCIÓN: Mensaje WhatsApp ── -->
+  <div class="n8n-section">
+    <div class="n8n-section-header">
+      <div class="n8n-section-icon green">📲</div>
+      <div class="n8n-section-info">
+        <div class="n8n-section-title">Mensaje de WhatsApp directo</div>
+        <div class="n8n-section-desc">Texto pre-cargado al abrir WhatsApp desde las cards y el chat. Usa <code style="background:rgba(255,255,255,0.07);padding:1px 5px;border-radius:4px;font-family:var(--mono)">{nombre}</code> para el nombre del lead y <code style="background:rgba(255,255,255,0.07);padding:1px 5px;border-radius:4px;font-family:var(--mono)">{saludo}</code> para el saludo dinámico.</div>
+      </div>
+    </div>
+    <div class="n8n-section-body">
+      <div class="field-group">
+        <label class="field-label">PLANTILLA DEL MENSAJE</label>
+        <textarea id="wa-msg-template" rows="6"
+          style="width:100%;background:var(--surface2);border:1px solid var(--border-bright);border-radius:8px;color:var(--text);font-family:var(--mono);font-size:12px;padding:10px 12px;resize:vertical;line-height:1.6;box-sizing:border-box"
+          placeholder="Escribe tu mensaje aquí..."></textarea>
+        <div style="font-size:10px;color:var(--muted);margin-top:6px;font-family:var(--mono)">
+          Variables disponibles: <span style="color:var(--accent)">{nombre}</span> · <span style="color:var(--accent)">{saludo}</span>
+        </div>
+      </div>
+      <div style="display:flex;gap:10px;margin-top:12px;flex-wrap:wrap">
+        <button class="btn btn-primary" onclick="saveWaTemplate()">💾 Guardar plantilla</button>
+        <button class="btn" onclick="resetWaTemplate()">↺ Restaurar original</button>
+        <button class="btn" onclick="previewWaTemplate()" style="margin-left:auto">👁 Vista previa</button>
+      </div>
+      <div id="wa-template-preview" style="display:none;margin-top:14px;padding:12px 14px;background:rgba(79,255,176,0.06);border:1px solid rgba(79,255,176,0.2);border-radius:8px;font-size:12px;line-height:1.7;color:var(--text);white-space:pre-wrap;font-family:var(--mono)"></div>
+      <div id="wa-template-toast" style="display:none;margin-top:10px;padding:8px 12px;border-radius:8px;font-size:12px;font-family:var(--mono)"></div>
+    </div>
+  </div>
+
 </div>
 </div>
 
@@ -1282,13 +1311,70 @@ function waGreeting() {
   if (h >= 12 && h < 19) return 'buenas tardes';
   return 'buenas noches';
 }
+// waMessage defined below after template system
+
+// ── WA TEMPLATE CONFIG ──────────────────────────────────────────────────────
+const WA_DEFAULT_TEMPLATE =
+  'Sr {nombre}, {saludo}. ' +
+  'Soy Pedro Arias Asesor inmobiliario de Century 21. ' +
+  'Se contactó con mi asistente Lucía al número de WhatsApp _______ por nuestro anuncio de Facebook recientemente_______. ' +
+  'Tengo entendido que____';
+
+function loadWaTemplate() {
+  try { return localStorage.getItem('wa_msg_template') || WA_DEFAULT_TEMPLATE; }
+  catch(e) { return WA_DEFAULT_TEMPLATE; }
+}
+
+function saveWaTemplate() {
+  const val = (document.getElementById('wa-msg-template').value || '').trim();
+  if (!val) { showWaToast('El mensaje no puede estar vacío', 'error'); return; }
+  try {
+    localStorage.setItem('wa_msg_template', val);
+    showWaToast('✓ Plantilla guardada correctamente', 'ok');
+  } catch(e) { showWaToast('Error al guardar: ' + e.message, 'error'); }
+}
+
+function resetWaTemplate() {
+  try { localStorage.removeItem('wa_msg_template'); } catch(e) {}
+  document.getElementById('wa-msg-template').value = WA_DEFAULT_TEMPLATE;
+  showWaToast('↺ Plantilla restaurada al original', 'ok');
+}
+
+function previewWaTemplate() {
+  const tpl = (document.getElementById('wa-msg-template').value || '').trim();
+  const preview = applyWaTemplate(tpl, 'Juan Pérez');
+  const box = document.getElementById('wa-template-preview');
+  box.textContent = preview;
+  box.style.display = box.style.display === 'none' ? 'block' : 'none';
+}
+
+function showWaToast(msg, type) {
+  const el = document.getElementById('wa-template-toast');
+  if (!el) return;
+  el.textContent = msg;
+  el.style.display = 'block';
+  el.style.background = type === 'ok' ? 'rgba(79,255,176,0.1)' : 'rgba(255,91,107,0.1)';
+  el.style.border = type === 'ok' ? '1px solid rgba(79,255,176,0.3)' : '1px solid rgba(255,91,107,0.3)';
+  el.style.color = type === 'ok' ? 'var(--accent)' : 'var(--danger)';
+  clearTimeout(el._t);
+  el._t = setTimeout(() => { el.style.display = 'none'; }, 3000);
+}
+
+function applyWaTemplate(tpl, leadName) {
+  return (tpl || WA_DEFAULT_TEMPLATE)
+    .replace(/\{nombre\}/gi, leadName)
+    .replace(/\{saludo\}/gi, waGreeting());
+}
+
+// Override waMessage to use template
 function waMessage(leadName) {
-  return encodeURIComponent(
-    'Sr ' + leadName + ', ' + waGreeting() + '. ' +
-    'Soy Pedro Arias Asesor inmobiliario de Century 21. ' +
-    'Se contactó con mi asistente Lucía al número de WhatsApp _______ por nuestro anuncio de Facebook recientemente_______. ' +
-    'Tengo entendido que____'
-  );
+  return encodeURIComponent(applyWaTemplate(loadWaTemplate(), leadName));
+}
+
+// Init: load saved template into textarea when tab is shown
+function initWaTemplateEditor() {
+  const ta = document.getElementById('wa-msg-template');
+  if (ta) ta.value = loadWaTemplate();
 }
 
 // ── STATE ──────────────────────────────────────────────────────────────────
@@ -1323,6 +1409,7 @@ function switchTab(name) {
   const fab = document.getElementById('fab-new');
   if (fab) fab.style.display = name === 'dashboard' ? 'flex' : 'none';
   if (name === 'chats') renderChatsList();
+  if (name === 'n8n')   initWaTemplateEditor();
 }
 
 // ── HELPERS ────────────────────────────────────────────────────────────────
@@ -1533,7 +1620,7 @@ function renderMobileCards() {
       '<div class="mobile-card-pipe" title="'+esc(l.Pipeline_nombre||'')+'">'+esc(l.Pipeline_nombre||'—')+'</div>' +
       '<div class="mobile-card-actions">' +
         (waLink ? '<a href="'+waLink+'" style="flex:1;display:flex;align-items:center;justify-content:center;gap:6px;padding:7px;border-radius:7px;background:rgba(37,211,102,0.1);border:1px solid rgba(37,211,102,0.3);color:#25D366;text-decoration:none;font-size:12px;font-weight:500">📲 WhatsApp</a>' : '') +
-        '<button class="btn btn-sm" style="flex:1" onclick="openModal(\'edit\',String('+l.id+'))">✏ Editar</button>' +
+        '<button class="btn btn-sm" style="flex:1" onclick="openModal(\'edit\','+l.id+')">✏ Editar</button>' +
         '<button class="btn btn-sm btn-danger" onclick="deleteLead('+l.id+')">✕</button>' +
       '</div>' +
     '</div>';
@@ -1965,9 +2052,9 @@ function openModal(mode, id) {
   editingId = null;
   document.getElementById('modal-title').textContent = mode === 'edit' ? 'Editar lead' : 'Nuevo lead';
   if (mode === 'edit' && id) {
-    const l = leads.find(x=>x.id===id);
+    const l = leads.find(x=>Number(x.id)===Number(id));
     if (!l) return;
-    editingId = id;
+    editingId = Number(id);
     document.getElementById('f-name').value            = l.name||'';
     document.getElementById('f-telefono').value        = l.Telefono||'';
     document.getElementById('f-pipeline-id').value     = l.Pipeline_id||'';
@@ -2021,7 +2108,7 @@ async function saveLead() {
   };
   if (!lead.name) { toast('El nombre es requerido', 'error'); return; }
   if (editingId) {
-    const idx = leads.findIndex(l=>l.id===editingId);
+    const idx = leads.findIndex(l=>Number(l.id)===Number(editingId));
     if (idx !== -1) leads[idx] = lead;
     addLog(`Lead ${lead.name} actualizado`, 'ok');
   } else {
