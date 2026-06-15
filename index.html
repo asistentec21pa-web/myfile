@@ -1456,8 +1456,9 @@ function getFiltered() {
       if (sortCol === 'Status_id') {
         const sid = String(l.Status_id != null ? l.Status_id : (l.status_id||'')).trim();
         if (!sid || sid === 'null') return 0;
-        if (typeof AGENDADA_SET  !== 'undefined' && AGENDADA_SET.has(sid))  return 3;
-        if (typeof INTENCION_SET !== 'undefined' && INTENCION_SET.has(sid)) return 2;
+        if (typeof AGENDADA_SET  !== 'undefined' && AGENDADA_SET.has(sid))  return 4;
+        if (typeof INTENCION_SET !== 'undefined' && INTENCION_SET.has(sid)) return 3;
+        if (typeof OTRAS_SET     !== 'undefined' && OTRAS_SET.has(sid))     return 2;
         return 1;
       }
       return l[sortCol];
@@ -1475,12 +1476,14 @@ let _vsRendered   = 0;    // how many rows currently in DOM
 
 const INTENCION_SET = new Set(['106888064','105257100','89413287','81405567']);
 const AGENDADA_SET  = new Set(['106888152','105257104','81074171','79521939']);
+const OTRAS_SET     = new Set(['106888144','105257084','82099375','82099555']);
 
 function visitaBadge(statusId) {
   const sid = statusId != null && statusId !== '' ? String(statusId).trim() : '';
   if (!sid || sid === 'null') return '<span style="color:var(--muted);font-size:11px">&#8212;</span>';
   if (AGENDADA_SET.has(sid))  return '<span style="font-size:11px;font-weight:500;padding:2px 8px;border-radius:20px;color:#27500A;background:#EAF3DE;border:1px solid #C0DD97;white-space:nowrap">&#128197; Agendada</span>';
   if (INTENCION_SET.has(sid)) return '<span style="font-size:11px;font-weight:500;padding:2px 8px;border-radius:20px;color:#7a5300;background:#FDF3D0;border:1px solid #e0b84a;white-space:nowrap">&#128065; Intenci&#243;n</span>';
+  if (OTRAS_SET.has(sid))     return '<span style="font-size:11px;font-weight:500;padding:2px 8px;border-radius:20px;color:#0c4a6e;background:#e0f2fe;border:1px solid #7dd3fc;white-space:nowrap">&#128269; Otras opciones</span>';
   return '<span style="color:var(--muted);font-size:11px">&#8212;</span>';
 }
 
@@ -1679,6 +1682,7 @@ function renderVisitPanels() {
   const toSid = l => { const v = l.Status_id != null ? l.Status_id : l.status_id; return v != null && v !== '' ? String(v).trim() : ''; };
   const intencion = leads.filter(l => INTENCION_VISITA_IDS.has(toSid(l)));
   const agendada  = leads.filter(l => VISITA_AGENDADA_IDS.has(toSid(l)));
+  const otras     = leads.filter(l => OTRAS_SET.has(toSid(l)));
 
   function initials(name) {
     return (name||'').split(' ').map(w=>w[0]||'').join('').substring(0,2).toUpperCase();
@@ -1716,8 +1720,9 @@ function renderVisitPanels() {
   }
 
   document.getElementById('visit-panels').innerHTML =
-    buildPanel('Leads con visita agendada',    '📅', 'var(--accent)',  'rgba(79,255,176,0.1)',  'rgba(79,255,176,0.3)',  agendada) +
-    buildPanel('Leads con intenci\u00f3n de visita', '&#128065;', '#c9911a', 'rgba(201,145,26,0.1)', 'rgba(201,145,26,0.35)', intencion);
+    buildPanel('Leads con visita agendada',        '📅',         'var(--accent)',  'rgba(79,255,176,0.1)',   'rgba(79,255,176,0.3)',   agendada)  +
+    buildPanel('Leads con intención de visita',  '&#128065;',  '#c9911a',       'rgba(201,145,26,0.1)',   'rgba(201,145,26,0.35)',  intencion) +
+    buildPanel('Buscan más/otras opciones',       '&#128269;',  '#0ea5e9',       'rgba(14,165,233,0.1)',   'rgba(14,165,233,0.35)',  otras);
 }
 
 // ── SCORE DETALLE POPUP ────────────────────────────────────────────────────
@@ -2317,6 +2322,8 @@ function renderChatsList() {
       ? '<span style="font-size:9px;background:#EAF3DE;color:#27500A;border:1px solid #C0DD97;border-radius:10px;padding:1px 5px;margin-left:4px">📅</span>'
       : (typeof INTENCION_SET!=='undefined' && INTENCION_SET.has(sid))
       ? '<span style="font-size:9px;background:#FDF3D0;color:#7a5300;border:1px solid #e0b84a;border-radius:10px;padding:1px 5px;margin-left:4px">👁</span>'
+      : (typeof OTRAS_SET!=='undefined' && OTRAS_SET.has(sid))
+      ? '<span style="font-size:9px;background:#e0f2fe;color:#0c4a6e;border:1px solid #7dd3fc;border-radius:10px;padding:1px 5px;margin-left:4px">🔍</span>'
       : '';
     return `<div class="lead-item${active}" onclick="selectChatLead(${l.Lead_id}, true)">
       <div class="lead-avatar" style="background:${colors[t]}22;color:${colors[t]}">${initials}</div>
