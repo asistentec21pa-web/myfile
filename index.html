@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Lead Scoring Dashboard</title>
+<title>Lead Scoring Dashboard - Asistente C21 Pedro Arias</title>
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%2032%2032%27%3E%3Ccircle%20cx%3D%2716%27%20cy%3D%2716%27%20r%3D%2712%27%20fill%3D%27%230a0c10%27%2F%3E%3Ccircle%20cx%3D%2716%27%20cy%3D%2716%27%20r%3D%277%27%20fill%3D%27%234fffb0%27%2F%3E%3Ccircle%20cx%3D%2716%27%20cy%3D%2716%27%20r%3D%2711%27%20fill%3D%27none%27%20stroke%3D%27%234fffb0%27%20stroke-width%3D%271.5%27%20opacity%3D%270.35%27%2F%3E%3C%2Fsvg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Sora:wght@300;400;500;600&display=swap" rel="stylesheet">
@@ -847,7 +847,7 @@
 <header>
   <div class="logo">
     <div class="logo-dot"></div>
-    Lead Scoring
+    Lead Scoring Dashboard - Asistente C21 Pedro Arias
   </div>
   <div class="header-right">
     <div class="sync-status">
@@ -1342,6 +1342,16 @@
         </select>
       </div>
 
+      <!-- Tipo de operación -->
+      <div class="field-group">
+        <label class="field-label">TIPO DE OPERACIÓN</label>
+        <select id="req-operacion">
+          <option value="">Seleccionar...</option>
+          <option value="Venta">Venta</option>
+          <option value="Alquiler">Alquiler</option>
+        </select>
+      </div>
+
       <!-- Zona / Ubicación -->
       <div class="field-group">
         <label class="field-label">ZONA / UBICACIÓN</label>
@@ -1350,8 +1360,14 @@
 
       <!-- Presupuesto -->
       <div class="field-group">
-        <label class="field-label">PRESUPUESTO (Bs.)</label>
-        <input type="text" id="req-presupuesto" placeholder="Ej: 150,000">
+        <label class="field-label">PRESUPUESTO</label>
+        <div style="display:flex;gap:6px">
+          <select id="req-moneda" style="flex-shrink:0;width:80px;font-size:12px">
+            <option value="Bs.">Bs.</option>
+            <option value="$us">$us</option>
+          </select>
+          <input type="text" id="req-presupuesto" placeholder="Ej: 150,000" style="flex:1">
+        </div>
       </div>
 
       <!-- Habitaciones -->
@@ -2863,12 +2879,17 @@ function renderReqs() {
     const ini   = reqIni(r.cliente);
     const color = r.estado === 'resuelto' ? 'var(--accent)' : r.estado === 'en_proceso' ? 'var(--accent2)' : 'var(--warm)';
     const date  = r.updatedAt ? new Date(r.updatedAt).toLocaleDateString('es-BO',{day:'2-digit',month:'short',year:'numeric'}) : '';
-    const chips = [
-      r.tipo          ? ('&#127968; ' + esc(r.tipo))                : '',
-      r.zona          ? ('&#128205; ' + esc(r.zona))                : '',
-      r.presupuesto   ? ('&#128176; Bs. ' + esc(r.presupuesto))     : '',
-      r.habitaciones  ? ('&#127963; ' + esc(r.habitaciones) + ' hab') : '',
-    ].filter(Boolean);
+    // Build resumen sentence
+    const tipoStr      = r.tipo       || 'propiedad';
+    const habStr       = r.habitaciones ? r.habitaciones + ' habitaciones' : 's/n habitaciones';
+    const opStr        = r.operacion  || 'venta/alquiler';
+    const zonaStr      = r.zona       || 'zona no definida';
+    const monedaStr    = r.moneda     || 'Bs.';
+    const presupStr    = r.presupuesto ? monedaStr + ' ' + esc(r.presupuesto) : 'no definido';
+    const resumen      = 'Busco en Santa Cruz. Un ' + tipoStr + ' de ' + habStr +
+                         ' en ' + opStr + '. ' + zonaStr +
+                         ' con presupuesto ' + presupStr +
+                         '. Para el cliente ' + esc(r.cliente) + '.';
 
     return '<div class="req-card">' +
       '<div class="req-card-top">' +
@@ -2879,7 +2900,7 @@ function renderReqs() {
         '</div>' +
         '<span class="req-chip ' + reqEstadoClass(r.estado) + '">' + reqEstadoLabel(r.estado) + '</span>' +
       '</div>' +
-      (chips.length ? '<div class="req-card-body">' + chips.map(c => '<span class="req-chip highlight">' + c + '</span>').join('') + '</div>' : '') +
+      '<div class="req-obs" style="font-size:13px;color:var(--text);line-height:1.6;border-left:2px solid ' + color + '">' + resumen + '</div>' +
       (r.obs ? '<div class="req-obs">' + esc(r.obs) + '</div>' : '') +
       '<div class="req-card-actions">' +
         '<button class="btn btn-sm" style="flex:1" onclick="openReqModal(' + JSON.stringify(r.id) + ')">✏ Editar</button>' +
@@ -2919,7 +2940,9 @@ function openReqModal(id) {
   document.getElementById('req-modal-title').textContent = r ? 'Editar requerimiento' : 'Nuevo requerimiento';
   document.getElementById('req-cliente').value      = r ? (r.cliente||'') : '';
   document.getElementById('req-tipo').value         = r ? (r.tipo||'')    : '';
+  document.getElementById('req-operacion').value    = r ? (r.operacion||'') : '';
   document.getElementById('req-zona').value         = r ? (r.zona||'')    : '';
+  document.getElementById('req-moneda').value       = r ? (r.moneda||'Bs.') : 'Bs.';
   document.getElementById('req-presupuesto').value  = r ? (r.presupuesto||'') : '';
   document.getElementById('req-habitaciones').value = r ? (r.habitaciones||'') : '';
   document.getElementById('req-estado').value       = r ? (r.estado||'pendiente') : 'pendiente';
@@ -2962,7 +2985,9 @@ function saveReq() {
   const data = {
     cliente,
     tipo:        document.getElementById('req-tipo').value,
+    operacion:   document.getElementById('req-operacion').value,
     zona:        document.getElementById('req-zona').value.trim(),
+    moneda:      document.getElementById('req-moneda').value,
     presupuesto: document.getElementById('req-presupuesto').value.trim(),
     habitaciones:document.getElementById('req-habitaciones').value,
     estado:      document.getElementById('req-estado').value,
