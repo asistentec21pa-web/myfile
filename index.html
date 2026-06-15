@@ -1693,18 +1693,31 @@ function renderVisitPanels() {
       const ini = initials(l.name);
       const tel = l.Telefono || '—';
       const pipe = l.Pipeline_nombre || '—';
-      const phone = tel !== '—' ? tel.replace(/[^\d+]/g, '') : '';
+      const rawPhone = (l.Telefono != null && l.Telefono !== '' && l.Telefono !== 'null')
+        ? String(l.Telefono).replace(/[^\d+]/g, '') : '';
+      const phone = rawPhone.length >= 7 ? rawPhone : '';  // must have at least 7 digits
       const msg   = waMessage(l.name);
       const waLink = phone ? `whatsapp://send?phone=${phone}&text=${msg}` : '';
-      const cardClick = waLink ? `window.location.href='${waLink}'` : `goToChat(${l.Lead_id})`;
-      return `<div class="vp-card" onclick="${cardClick}" title="${waLink ? 'Abrir WhatsApp' : 'Ver chat'}">
+      // Use <a> for WA (deep link), div+onclick for chat
+      if (waLink) {
+        return `<a class="vp-card" href="${waLink}" target="_blank" rel="noopener" style="text-decoration:none;display:flex;align-items:center;gap:10px;cursor:pointer" title="Abrir WhatsApp">
+          <div class="vp-avatar" style="background:${bgColor};color:${accentColor}">${ini}</div>
+          <div class="vp-info">
+            <div class="vp-name" title="${esc(l.name)}">${esc(l.name)}</div>
+            <div class="vp-tel">&#9990; ${esc(tel)}</div>
+            <span class="vp-pipe" style="background:${bgColor};color:${accentColor};border:1px solid ${borderColor}" title="${esc(pipe)}">${esc(pipe)}</span>
+          </div>
+          <span style="font-size:18px;flex-shrink:0">📲</span>
+        </a>`;
+      }
+      return `<div class="vp-card" onclick="goToChat(${l.Lead_id})" title="Ver chat">
         <div class="vp-avatar" style="background:${bgColor};color:${accentColor}">${ini}</div>
         <div class="vp-info">
           <div class="vp-name" title="${esc(l.name)}">${esc(l.name)}</div>
           <div class="vp-tel">&#9990; ${esc(tel)}</div>
           <span class="vp-pipe" style="background:${bgColor};color:${accentColor};border:1px solid ${borderColor}" title="${esc(pipe)}">${esc(pipe)}</span>
         </div>
-        <span style="font-size:${waLink ? '18' : '16'}px;flex-shrink:0">${waLink ? '📲' : '›'}</span>
+        <span style="font-size:16px;flex-shrink:0">›</span>
       </div>`;
     }).join('')
     : `<div class="vp-empty">Sin leads en esta etapa</div>`;
