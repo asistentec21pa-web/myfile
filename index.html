@@ -1538,6 +1538,26 @@ function initWaTemplateEditor() {
 }
 
 // ── STATE ──────────────────────────────────────────────────────────────────
+// Requerimientos state — must be declared before renderTable() is called
+let reqs = [];
+let editingReqId = null;
+function loadReqs() {
+  try { reqs = JSON.parse(localStorage.getItem('requerimientos') || '[]'); } catch(e) { reqs = []; }
+}
+function saveReqs() {
+  try { localStorage.setItem('requerimientos', JSON.stringify(reqs)); } catch(e) {}
+  updateReqBadge();
+}
+function updateReqBadge() {
+  const pending = reqs.filter(r => r.estado !== 'resuelto').length;
+  ['tab-badge-req','bnav-badge-req'].forEach(id => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.textContent = pending;
+    el.style.display = pending ? (id.startsWith('bnav') ? 'block' : 'inline-flex') : 'none';
+  });
+}
+
 let leads = [
   {id:1, Lead_id:21637253, name:'Pedro Arias',   Pipeline_id:13852180, Pipeline_nombre:'LEAD CAMPAÑAS (75952084)',  Telefono:'+59170883977', Lead_score:100, Lead_categoria:'HOT',  Nivel_interaccion:'Alta',   etiqueta_fuente:'Facebook Ads', value:75000, Valor_lead:'75000', Status_id:'106888064', lead_score_detalle:['Rango presupuesto +5','Zona definida +5','Califica crédito +20','Visita agendada +15','Visita realizada +20'], stage:'propuesta',  createdAt:'2026-06-03T00:26:42.834Z', updatedAt:'2026-06-08T04:15:32.520Z'},
   {id:2, Lead_id:21637254, name:'Ana García',    Pipeline_id:13852180, Pipeline_nombre:'LEAD CAMPAÑAS (75952084)',  Telefono:'+59170011001', Lead_score:85,  Lead_categoria:'HOT',  Nivel_interaccion:'Alta',   etiqueta_fuente:'Facebook Ads', value:48000, Valor_lead:'48000', stage:'interesado', createdAt:'2026-06-03T01:00:00.000Z', updatedAt:'2026-06-08T01:00:00.000Z'},
@@ -2752,6 +2772,8 @@ function debugStatusIds() {
 loadConfig();
 loadChatsCfg();
 const fromCache = loadLeads();
+loadReqs();
+updateReqBadge();
 renderTable();
 updateStatusPanel();
 if (fromCache) {
@@ -2763,30 +2785,10 @@ if (fromCache) {
 
 
 // ══════════════════════════════════════════════════════════════════════════
-// REQUERIMIENTOS
+// REQUERIMIENTOS  (state + loadReqs declared at top — see STATE section)
 // ══════════════════════════════════════════════════════════════════════════
 
-let reqs = [];        // { id, leadId, Lead_id, cliente, pipeline, tipo, zona, presupuesto, habitaciones, estado, obs, createdAt, updatedAt }
-let editingReqId = null;
-
-function loadReqs() {
-  try { reqs = JSON.parse(localStorage.getItem('requerimientos') || '[]'); } catch(e) { reqs = []; }
-}
-
-function saveReqs() {
-  try { localStorage.setItem('requerimientos', JSON.stringify(reqs)); } catch(e) {}
-  updateReqBadge();
-}
-
-function updateReqBadge() {
-  const pending = reqs.filter(r => r.estado !== 'resuelto').length;
-  ['tab-badge-req','bnav-badge-req'].forEach(id => {
-    const el = document.getElementById(id);
-    if (!el) return;
-    el.textContent = pending;
-    el.style.display = pending ? (id.startsWith('bnav') ? 'block' : 'inline-flex') : 'none';
-  });
-}
+// saveReqs + updateReqBadge declared in STATE section above
 
 // Auto-create req when a lead enters OTRAS_SET
 function syncReqsFromOtras() {
@@ -2990,9 +2992,6 @@ function saveReq() {
   toast('Requerimiento guardado ✓', 'ok');
 }
 
-// Init on load
-loadReqs();
-updateReqBadge();
 </script>
 </body>
 </html>
