@@ -2903,6 +2903,7 @@ function renderReqs() {
       '<div class="req-obs" style="font-size:13px;color:var(--text);line-height:1.6;border-left:2px solid ' + color + '">' + resumen + '</div>' +
       (r.obs ? '<div class="req-obs">' + esc(r.obs) + '</div>' : '') +
       '<div class="req-card-actions">' +
+        '<button class="btn btn-sm" title="Copiar resumen" onclick="copyResumen(' + JSON.stringify(resumen) + ', this)" style="flex-shrink:0;padding:5px 10px">&#128203;</button>' +
         '<button class="btn btn-sm" style="flex:1" onclick="openReqModal(' + JSON.stringify(r.id) + ')">✏ Editar</button>' +
         '<select onchange="changeReqEstado(' + JSON.stringify(r.id) + ',this.value)" style="flex:1;font-size:11px;padding:5px 8px;background:var(--surface2);border:1px solid var(--border-bright);border-radius:7px;color:var(--text);cursor:pointer">' +
           ['pendiente','en_proceso','resuelto'].map(e =>
@@ -2976,6 +2977,34 @@ function closeReqModal() {
 
 function closeReqModalOnBg(e) {
   if (e.target === document.getElementById('req-modal-overlay')) closeReqModal();
+}
+
+function copyResumen(text, btn) {
+  navigator.clipboard.writeText(text).then(function() {
+    const orig = btn.innerHTML;
+    btn.innerHTML = '&#10003;';
+    btn.style.color = 'var(--accent)';
+    btn.style.borderColor = 'var(--accent)';
+    setTimeout(function() {
+      btn.innerHTML = orig;
+      btn.style.color = '';
+      btn.style.borderColor = '';
+    }, 1500);
+  }).catch(function() {
+    // Fallback for browsers without clipboard API
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    ta.style.position = 'fixed';
+    ta.style.opacity = '0';
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand('copy');
+    document.body.removeChild(ta);
+    const orig = btn.innerHTML;
+    btn.innerHTML = '&#10003;';
+    btn.style.color = 'var(--accent)';
+    setTimeout(function() { btn.innerHTML = orig; btn.style.color = ''; }, 1500);
+  });
 }
 
 function saveReq() {
