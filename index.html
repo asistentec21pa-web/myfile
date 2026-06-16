@@ -1900,10 +1900,10 @@ function renderVisitPanels() {
       const waLink   = phone ? ('whatsapp://send?phone=' + phone + '&text=' + msg) : '';
 
       if (waLink) {
-        return '<a class="vp-card" href="' + waLink + '" target="_blank" rel="noopener" style="text-decoration:none;display:flex;align-items:center;gap:10px;cursor:pointer" title="Abrir WhatsApp">' +
+        return '<a class="vp-card" href="' + waLink + '" target="_blank" rel="noopener" style="text-decoration:none;display:flex;align-items:center;gap:10px;cursor:pointer" title="Clic en nombre → Chat, Clic en card → WhatsApp">' +
           '<div class="vp-avatar" style="background:' + bgColor + ';color:' + accentColor + '">' + ini + '</div>' +
           '<div class="vp-info">' +
-            '<div class="vp-name" title="' + esc(l.name) + '">' + esc(l.name) + '</div>' +
+            '<div class="vp-name" style="color:var(--accent);cursor:pointer;font-weight:600" title="' + esc(l.name) + '" onclick="event.preventDefault();event.stopPropagation();goToChat(' + l.Lead_id + ')">' + esc(l.name) + '</div>' +
             '<div class="vp-tel">&#9990; ' + esc(tel) + '</div>' +
             '<span class="vp-pipe" style="background:' + bgColor + ';color:' + accentColor + ';border:1px solid ' + borderColor + '" title="' + esc(pipe) + '">' + esc(pipe) + '</span>' +
           '</div>' +
@@ -1914,7 +1914,7 @@ function renderVisitPanels() {
       return '<div class="vp-card" onclick="goToChat(' + l.Lead_id + ')" title="Sin tel\u00e9fono · Ver chat">' +
         '<div class="vp-avatar" style="background:' + bgColor + ';color:' + accentColor + ';opacity:0.7">' + ini + '</div>' +
         '<div class="vp-info">' +
-          '<div class="vp-name" title="' + esc(l.name) + '">' + esc(l.name) + '</div>' +
+          '<div class="vp-name" style="color:var(--accent);cursor:pointer;font-weight:600" title="' + esc(l.name) + '" onclick="goToChat(' + l.Lead_id + ')">' + esc(l.name) + '</div>' +
           '<div class="vp-tel" style="color:var(--danger);font-size:10px">&#9888; Sin tel\u00e9fono registrado</div>' +
           '<span class="vp-pipe" style="background:' + bgColor + ';color:' + accentColor + ';border:1px solid ' + borderColor + ';opacity:0.7">' + esc(pipe) + '</span>' +
         '</div>' +
