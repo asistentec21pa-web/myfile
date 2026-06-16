@@ -2903,7 +2903,7 @@ function renderReqs() {
       '<div class="req-obs" style="font-size:13px;color:var(--text);line-height:1.6;border-left:2px solid ' + color + '">' + resumen + '</div>' +
       (r.obs ? '<div class="req-obs">' + esc(r.obs) + '</div>' : '') +
       '<div class="req-card-actions">' +
-        '<button class="btn btn-sm" title="Copiar resumen" onclick="copyResumen(' + JSON.stringify(resumen) + ', this)" style="flex-shrink:0;padding:5px 10px">&#128203;</button>' +
+        '<button class="btn btn-sm req-copy-btn" title="Copiar resumen" data-req-id="' + r.id + '" onclick="copyReqResumen(this)" style="flex-shrink:0;padding:5px 10px">&#128203;</button>' +
         '<button class="btn btn-sm" style="flex:1" onclick="openReqModal(' + JSON.stringify(r.id) + ')">✏ Editar</button>' +
         '<select onchange="changeReqEstado(' + JSON.stringify(r.id) + ',this.value)" style="flex:1;font-size:11px;padding:5px 8px;background:var(--surface2);border:1px solid var(--border-bright);border-radius:7px;color:var(--text);cursor:pointer">' +
           ['pendiente','en_proceso','resuelto'].map(e =>
@@ -2979,7 +2979,17 @@ function closeReqModalOnBg(e) {
   if (e.target === document.getElementById('req-modal-overlay')) closeReqModal();
 }
 
-function copyResumen(text, btn) {
+function copyReqResumen(btn) {
+  // Get the resumen text from the DOM (sibling div with class req-obs)
+  const card = btn.closest('.req-card');
+  if (!card) { toast('Error al copiar', 'error'); return; }
+  
+  // First req-obs div contains the resumen, second contains the obs
+  const resumenDiv = card.querySelector('.req-obs');
+  const text = resumenDiv ? resumenDiv.textContent.trim() : '';
+  
+  if (!text) { toast('Sin resumen para copiar', 'error'); return; }
+  
   navigator.clipboard.writeText(text).then(function() {
     const orig = btn.innerHTML;
     btn.innerHTML = '&#10003;';
@@ -2990,6 +3000,7 @@ function copyResumen(text, btn) {
       btn.style.color = '';
       btn.style.borderColor = '';
     }, 1500);
+    toast('Resumen copiado', 'success');
   }).catch(function() {
     // Fallback for browsers without clipboard API
     const ta = document.createElement('textarea');
@@ -3004,6 +3015,7 @@ function copyResumen(text, btn) {
     btn.innerHTML = '&#10003;';
     btn.style.color = 'var(--accent)';
     setTimeout(function() { btn.innerHTML = orig; btn.style.color = ''; }, 1500);
+    toast('Resumen copiado', 'success');
   });
 }
 
