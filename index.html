@@ -464,9 +464,9 @@
   .vp-card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 10px 13px; display: flex; align-items: center; gap: 11px; cursor: pointer; transition: border-color 0.15s, background 0.15s; min-width: 0; overflow: hidden; box-sizing: border-box; }
   .vp-card:hover { background: var(--surface2); border-color: var(--border-bright); }
   .vp-avatar { width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600; flex-shrink: 0; }
-  .vp-info { flex: 1; min-width: 0; width: 0; overflow: hidden; }
-  .vp-name { font-size: 13px; font-weight: 500; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block; }
-  .vp-tel { font-size: 11px; color: var(--muted); font-family: var(--mono); margin-top: 2px; }
+  .vp-info { flex: 1; min-width: 0; overflow: hidden; }
+  .vp-name { font-size: 13px; font-weight: 500; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block; max-width: 100%; }
+  .vp-tel { font-size: 11px; color: var(--muted); font-family: var(--mono); margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block; }
   .vp-pipe { display: block; font-size: 10px; font-family: var(--mono); padding: 2px 7px; border-radius: 5px; margin-top: 5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; box-sizing: border-box; }
   .vp-arrow { color: var(--muted); font-size: 18px; flex-shrink: 0; line-height: 1; }
   .vp-empty { padding: 20px; text-align: center; color: var(--muted); font-size: 12px; font-family: var(--mono); background: var(--surface); border: 1px solid var(--border); border-radius: 10px; }
@@ -1822,7 +1822,7 @@ function renderMobileCards() {
     return '<div class="mobile-lead-card">' +
       '<div class="mobile-card-top">' +
         '<div class="mobile-card-avatar" style="background:'+bgMap[tCat]+';color:'+cScore+'">'+ini+'</div>' +
-        '<div style="flex:1;min-width:0;width:0;overflow:hidden;cursor:pointer" onclick="goToChat('+l.Lead_id+')">' +
+        '<div style="flex:1;min-width:0;overflow:hidden;cursor:pointer" onclick="goToChat('+l.Lead_id+')">' +
           '<div class="mobile-card-name" style="color:var(--accent)">'+esc(l.name)+'</div>' +
           '<div class="mobile-card-tel">'+esc(l.Telefono||'—')+'</div>' +
         '</div>' +
