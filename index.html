@@ -601,8 +601,8 @@
   .mobile-card-name { font-size: 14px; font-weight: 600; color: var(--text); }
   .mobile-card-tel { font-size: 11px; color: var(--muted); font-family: var(--mono); margin-top: 1px; }
   .mobile-card-badges { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
-  .mobile-card-row { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
-  .mobile-card-score-wrap { display: flex; align-items: center; gap: 6px; flex: 0 1 auto; min-width: 0; }
+  .mobile-card-row { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; overflow: hidden; }
+  .mobile-card-score-wrap { display: flex; align-items: center; gap: 6px; flex: 0 0 auto; min-width: 60px; max-width: 120px; }
   .mobile-card-score-bar { flex: 1; height: 5px; background: rgba(255,255,255,0.08); border-radius: 3px; overflow: hidden; }
   .mobile-card-score-fill { height: 100%; border-radius: 3px; transition: width 0.5s ease, background 0.4s ease; }
   .mobile-card-score-num { font-family: var(--mono); font-size: 12px; font-weight: 600; min-width: 28px; text-align: right; }
@@ -612,9 +612,11 @@
 
   /* Mobile badge size reduction */
   @media(max-width:640px) {
-    .badge { font-size: 10px; padding: 2px 6px; }
+    .badge { font-size: 10px; padding: 2px 6px; white-space: nowrap; }
     .mobile-card-score-wrap { flex: 0 0 auto; }
     .mobile-card-score-num { min-width: 24px; font-size: 11px; }
+    .mobile-lead-card { overflow: hidden; }
+    .mobile-card-name { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   }
 
   /* ── CHATS SORT BAR ── */
@@ -1690,15 +1692,15 @@ const OTRAS_SET     = new Set(['106888144','105257084','82099375','79521935']);
 
 function visitaBadge(statusId) {
   const sid = statusId != null && statusId !== '' ? String(statusId).trim() : '';
-  if (!sid || sid === 'null') return '<span style="color:var(--muted);font-size:11px">&#8212;</span>';
-  if (AGENDADA_SET.has(sid))  return '<span style="font-size:11px;font-weight:500;padding:2px 8px;border-radius:20px;color:#27500A;background:#EAF3DE;border:1px solid #C0DD97;white-space:nowrap">&#128197; Agendada</span>';
-  if (INTENCION_SET.has(sid)) return '<span style="font-size:11px;font-weight:500;padding:2px 8px;border-radius:20px;color:#7a5300;background:#FDF3D0;border:1px solid #e0b84a;white-space:nowrap">&#128065; Intenci&#243;n</span>';
-  if (OTRAS_SET.has(sid))     return '<span style="font-size:11px;font-weight:500;padding:2px 8px;border-radius:20px;color:#0c4a6e;background:#e0f2fe;border:1px solid #7dd3fc;white-space:nowrap">&#128269; Otras opciones</span>';
-  return '<span style="color:var(--muted);font-size:11px">&#8212;</span>';
+  if (!sid || sid === 'null') return '';
+  if (AGENDADA_SET.has(sid))  return '<span style="font-size:11px;font-weight:500;padding:2px 8px;border-radius:20px;color:#27500A;background:#EAF3DE;border:1px solid #C0DD97;white-space:nowrap;flex-shrink:0">&#128197; Agendada</span>';
+  if (INTENCION_SET.has(sid)) return '<span style="font-size:11px;font-weight:500;padding:2px 8px;border-radius:20px;color:#7a5300;background:#FDF3D0;border:1px solid #e0b84a;white-space:nowrap;flex-shrink:0">&#128065; Intenci&#243;n</span>';
+  if (OTRAS_SET.has(sid))     return '<span style="font-size:11px;font-weight:500;padding:2px 8px;border-radius:20px;color:#0c4a6e;background:#e0f2fe;border:1px solid #7dd3fc;white-space:nowrap;flex-shrink:0">&#128269; Otras opciones</span>';
+  return '';
 }
 
 function nivelBadge(nivel) {
-  if (!nivel) return '<span style="color:var(--muted);font-size:11px">—</span>';
+  if (!nivel) return '';
   const n = String(nivel).toLowerCase();
   const cfg = {
     'alta':  { color:'var(--accent)',  bg:'rgba(79,255,176,0.08)',  border:'rgba(79,255,176,0.25)'  },
@@ -1706,7 +1708,7 @@ function nivelBadge(nivel) {
     'baja':  { color:'var(--cold)',    bg:'rgba(0,200,255,0.08)',   border:'rgba(0,200,255,0.25)'   },
   };
   const s = cfg[n] || { color:'var(--muted)', bg:'transparent', border:'var(--border)' };
-  return '<span style="font-size:11px;font-weight:500;padding:2px 8px;border-radius:20px;color:'+s.color+';background:'+s.bg+';border:1px solid '+s.border+'">' + nivel + '</span>';
+  return '<span style="font-size:11px;font-weight:500;padding:2px 8px;border-radius:20px;color:'+s.color+';background:'+s.bg+';border:1px solid '+s.border+';white-space:nowrap;flex-shrink:0">' + nivel + '</span>';
 }
 
 function buildRow(l) {
@@ -1818,11 +1820,11 @@ function renderMobileCards() {
     return '<div class="mobile-lead-card">' +
       '<div class="mobile-card-top">' +
         '<div class="mobile-card-avatar" style="background:'+bgMap[tCat]+';color:'+cScore+'">'+ini+'</div>' +
-        '<div style="flex:1;min-width:0;cursor:pointer" onclick="goToChat('+l.Lead_id+')">' +
+        '<div style="flex:1;min-width:0;overflow:hidden;cursor:pointer" onclick="goToChat('+l.Lead_id+')">' +
           '<div class="mobile-card-name" style="color:var(--accent)">'+esc(l.name)+'</div>' +
           '<div class="mobile-card-tel">'+esc(l.Telefono||'—')+'</div>' +
         '</div>' +
-        '<span class="badge badge-'+tCat+'">'+tempLabel[tCat]+'</span>' +
+        '<span class="badge badge-'+tCat+'" style="flex-shrink:0;white-space:nowrap">'+tempLabel[tCat]+'</span>' +
       '</div>' +
       '<div class="mobile-card-row">' +
         '<div class="mobile-card-score-wrap">' +
