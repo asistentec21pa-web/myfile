@@ -1905,9 +1905,12 @@ function renderVisitPanels() {
 
   function buildPanel(title, icon, accentColor, bgColor, borderColor, data) {
     const cards = data.length ? data.map(l => {
-      const ini = initials(l.name);
       const tel = l.Telefono || '—';
       const pipe = l.Pipeline_nombre || '—';
+      // Fallback: if name is empty, whitespace-only, or a lone symbol, show phone or generic label instead
+      const cleanName = String(l.name || '').trim().replace(/^[.\-_,;:]+$/, '');
+      const displayName = cleanName.length >= 2 ? cleanName : ('Lead ' + (tel !== '—' ? tel : ('#' + (l.Lead_id || l.id || '?'))));
+      const ini = initials(displayName);
       // Normalize phone — handle null, 'null', empty, dashes
       const rawTel   = (l.Telefono != null && l.Telefono !== undefined) ? String(l.Telefono).trim() : '';
       const rawPhone = (rawTel && rawTel !== 'null' && rawTel !== '—' && rawTel !== '-')
@@ -1920,7 +1923,7 @@ function renderVisitPanels() {
         return '<a class="vp-card" href="' + waLink + '" target="_blank" rel="noopener" style="text-decoration:none;display:flex;align-items:center;gap:10px;cursor:pointer;min-width:0;width:100%;box-sizing:border-box;overflow:hidden" title="Clic en nombre → Chat, Clic en card → WhatsApp">' +
           '<div class="vp-avatar" style="background:' + bgColor + ';color:' + accentColor + '">' + ini + '</div>' +
           '<div class="vp-info">' +
-            '<div class="vp-name" style="color:var(--accent);cursor:pointer;font-weight:600" title="' + esc(l.name) + '" onclick="event.preventDefault();event.stopPropagation();goToChat(' + l.Lead_id + ')">' + esc(l.name) + '</div>' +
+            '<div class="vp-name" style="color:var(--accent);cursor:pointer;font-weight:600" title="' + esc(displayName) + '" onclick="event.preventDefault();event.stopPropagation();goToChat(' + l.Lead_id + ')">' + esc(displayName) + '</div>' +
             '<div class="vp-tel">&#9990; ' + esc(tel) + '</div>' +
             '<span class="vp-pipe" style="background:' + bgColor + ';color:' + accentColor + ';border:1px solid ' + borderColor + '" title="' + esc(pipe) + '">' + esc(pipe) + '</span>' +
           '</div>' +
@@ -1931,7 +1934,7 @@ function renderVisitPanels() {
       return '<div class="vp-card" onclick="goToChat(' + l.Lead_id + ')" title="Sin tel\u00e9fono · Ver chat">' +
         '<div class="vp-avatar" style="background:' + bgColor + ';color:' + accentColor + ';opacity:0.7">' + ini + '</div>' +
         '<div class="vp-info">' +
-          '<div class="vp-name" style="color:var(--accent);cursor:pointer;font-weight:600" title="' + esc(l.name) + '" onclick="goToChat(' + l.Lead_id + ')">' + esc(l.name) + '</div>' +
+          '<div class="vp-name" style="color:var(--accent);cursor:pointer;font-weight:600" title="' + esc(displayName) + '" onclick="goToChat(' + l.Lead_id + ')">' + esc(displayName) + '</div>' +
           '<div class="vp-tel" style="color:var(--danger);font-size:10px">&#9888; Sin tel\u00e9fono registrado</div>' +
           '<span class="vp-pipe" style="background:' + bgColor + ';color:' + accentColor + ';border:1px solid ' + borderColor + ';opacity:0.7">' + esc(pipe) + '</span>' +
         '</div>' +
