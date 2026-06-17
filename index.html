@@ -1917,7 +1917,7 @@ function renderVisitPanels() {
       const waLink   = phone ? ('whatsapp://send?phone=' + phone + '&text=' + msg) : '';
 
       if (waLink) {
-        return '<a class="vp-card" href="' + waLink + '" target="_blank" rel="noopener" style="text-decoration:none;display:flex;align-items:center;gap:10px;cursor:pointer" title="Clic en nombre → Chat, Clic en card → WhatsApp">' +
+        return '<a class="vp-card" href="' + waLink + '" target="_blank" rel="noopener" style="text-decoration:none;display:flex;align-items:center;gap:10px;cursor:pointer;min-width:0;width:100%;box-sizing:border-box;overflow:hidden" title="Clic en nombre → Chat, Clic en card → WhatsApp">' +
           '<div class="vp-avatar" style="background:' + bgColor + ';color:' + accentColor + '">' + ini + '</div>' +
           '<div class="vp-info">' +
             '<div class="vp-name" style="color:var(--accent);cursor:pointer;font-weight:600" title="' + esc(l.name) + '" onclick="event.preventDefault();event.stopPropagation();goToChat(' + l.Lead_id + ')">' + esc(l.name) + '</div>' +
