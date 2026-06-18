@@ -873,7 +873,7 @@
 <header>
   <div class="logo">
     <div class="logo-dot"></div>
-    Lead Scoring Dashboard - Asistente C21 Pedro Arias <span style="font-size:9px;color:var(--muted);font-family:var(--mono);font-weight:400;margin-left:6px;opacity:0.5">build-statusid-otras-fix</span>
+    Lead Scoring Dashboard - Asistente C21 Pedro Arias <span style="font-size:9px;color:var(--muted);font-family:var(--mono);font-weight:400;margin-left:6px;opacity:0.5">build-req-whatsapp-fix</span>
   </div>
   <div class="header-right">
     <div class="sync-status">
@@ -2952,7 +2952,7 @@ function renderReqs() {
       '<div class="req-card-top">' +
         '<div class="req-avatar" style="background:' + color + '22;color:' + color + '">' + ini + '</div>' +
         '<div style="flex:1;min-width:0">' +
-          '<div class="req-card-name">' + esc(r.cliente) + '</div>' +
+          '<div class="req-card-name" style="cursor:pointer;color:var(--accent)" title="Enviar resumen por WhatsApp" onclick="sendReqWhatsApp(this)">' + esc(r.cliente) + ' &#128242;</div>' +
           '<div class="req-card-pipe">' + esc(r.pipeline||'—') + (date ? ' &nbsp;·&nbsp; ' + date : '') + '</div>' +
         '</div>' +
         '<span class="req-chip ' + reqEstadoClass(r.estado) + '">' + reqEstadoLabel(r.estado) + '</span>' +
@@ -3034,6 +3034,21 @@ function closeReqModal() {
 
 function closeReqModalOnBg(e) {
   if (e.target === document.getElementById('req-modal-overlay')) closeReqModal();
+}
+
+const REQ_WHATSAPP_NUMBER = '59160344979';
+
+function sendReqWhatsApp(nameEl) {
+  const card = nameEl.closest('.req-card');
+  if (!card) { toast('Error al enviar', 'error'); return; }
+
+  const resumenDiv = card.querySelector('.req-obs');
+  const text = resumenDiv ? resumenDiv.textContent.trim() : '';
+
+  if (!text) { toast('Sin resumen para enviar', 'error'); return; }
+
+  const url = 'https://wa.me/' + REQ_WHATSAPP_NUMBER + '?text=' + encodeURIComponent(text);
+  window.open(url, '_blank', 'noopener');
 }
 
 function copyReqResumen(btn) {
