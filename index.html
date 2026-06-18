@@ -873,7 +873,7 @@
 <header>
   <div class="logo">
     <div class="logo-dot"></div>
-    Lead Scoring Dashboard - Asistente C21 Pedro Arias <span style="font-size:9px;color:var(--muted);font-family:var(--mono);font-weight:400;margin-left:6px;opacity:0.5">build-toolbar-overflow-fix</span>
+    Lead Scoring Dashboard - Asistente C21 Pedro Arias <span style="font-size:9px;color:var(--muted);font-family:var(--mono);font-weight:400;margin-left:6px;opacity:0.5">build-status-selector-fix</span>
   </div>
   <div class="header-right">
     <div class="sync-status">
@@ -1464,6 +1464,15 @@
         </select>
       </div>
       <div class="field-group full"><label class="field-label">NOTAS</label><input type="text" id="f-notes" placeholder="Notas adicionales..."></div>
+      <div class="field-group full">
+        <label class="field-label">ESTADO DE VISITA</label>
+        <select id="f-status-visita">
+          <option value="">Ninguno</option>
+          <option value="agendada">📅 Visita agendada</option>
+          <option value="intencion">👁 Intención de visita</option>
+          <option value="otras">🔍 Buscan más/otras opciones</option>
+        </select>
+      </div>
     </div>
     <div class="form-actions">
       <button class="btn" onclick="closeModal()">Cancelar</button>
@@ -2319,6 +2328,11 @@ function openModal(mode, id) {
     document.getElementById('f-etiqueta-fuente').value = l.etiqueta_fuente||'Facebook Ads';
     document.getElementById('f-stage').value           = l.stage||'prospecto';
     document.getElementById('f-notes').value           = l.notes||'';
+    const sid = String(l.Status_id || '').trim();
+    document.getElementById('f-status-visita').value =
+      AGENDADA_SET.has(sid)  ? 'agendada'  :
+      INTENCION_SET.has(sid) ? 'intencion' :
+      OTRAS_SET.has(sid)     ? 'otras'     : '';
   } else {
     document.getElementById('f-name').value            = '';
     document.getElementById('f-telefono').value        = '';
@@ -2329,6 +2343,7 @@ function openModal(mode, id) {
     document.getElementById('f-etiqueta-fuente').value = 'Facebook Ads';
     document.getElementById('f-stage').value           = 'prospecto';
     document.getElementById('f-notes').value           = '';
+    document.getElementById('f-status-visita').value   = '';
   }
   document.getElementById('modal-overlay').classList.add('open');
 }
@@ -2343,9 +2358,16 @@ function closeModalOnBg(e) {
 }
 
 async function saveLead() {
+  const statusVisita = document.getElementById('f-status-visita').value;
+  const statusMap = {
+    agendada:  [...AGENDADA_SET][0]   || '',
+    intencion: [...INTENCION_SET][0]  || '',
+    otras:     [...OTRAS_SET][0]      || '',
+    '':        ''
+  };
   const lead = {
     id:               editingId || Date.now(),
-    Lead_id:          Date.now(),
+    Lead_id:          editingId ? (leads.find(l=>Number(l.id)===Number(editingId))?.Lead_id || Date.now()) : Date.now(),
     name:             document.getElementById('f-name').value.trim(),
     Telefono:         document.getElementById('f-telefono').value.trim(),
     Pipeline_id:      parseInt(document.getElementById('f-pipeline-id').value)||0,
@@ -2356,6 +2378,7 @@ async function saveLead() {
     etiqueta_fuente:  document.getElementById('f-etiqueta-fuente').value.trim()||'Facebook Ads',
     Lead_categoria:   '',
     Nivel_interaccion: '',
+    Status_id:        statusMap[statusVisita] || '',
     stage:            document.getElementById('f-stage').value,
     notes:            document.getElementById('f-notes').value.trim(),
     createdAt:        new Date().toISOString(),
