@@ -553,6 +553,10 @@
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
     scrollbar-width: none;
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+    box-sizing: border-box;
   }
   .mobile-sort-bar::-webkit-scrollbar { display: none; }
   .mobile-sort-label { font-size: 10px; color: var(--muted); font-family: var(--mono); white-space: nowrap; flex-shrink: 0; }
@@ -602,7 +606,7 @@
   .mobile-card-tel { font-size: 11px; color: var(--muted); font-family: var(--mono); margin-top: 1px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .mobile-card-badges { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
   .mobile-card-row { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; width: 100%; min-width: 0; box-sizing: border-box; }
-  .mobile-card-score-wrap { display: flex; align-items: center; gap: 6px; flex: 0 1 auto; min-width: 0; }
+  .mobile-card-score-wrap { display: flex; align-items: center; gap: 6px; min-width: 0; overflow: hidden; }
   .mobile-card-score-bar { flex: 1; height: 5px; background: rgba(255,255,255,0.08); border-radius: 3px; overflow: hidden; }
   .mobile-card-score-fill { height: 100%; border-radius: 3px; transition: width 0.5s ease, background 0.4s ease; }
   .mobile-card-score-num { font-family: var(--mono); font-size: 12px; font-weight: 600; min-width: 28px; text-align: right; }
@@ -616,7 +620,6 @@
   /* Mobile badge size reduction */
   @media(max-width:640px) {
     .badge { font-size: 10px; padding: 2px 6px; }
-    .mobile-card-score-wrap { flex: 0 0 auto; }
     .mobile-card-score-num { min-width: 24px; font-size: 11px; }
   }
 
@@ -863,7 +866,7 @@
 <header>
   <div class="logo">
     <div class="logo-dot"></div>
-    Lead Scoring Dashboard - Asistente C21 Pedro Arias <span style="font-size:9px;color:var(--muted);font-family:var(--mono);font-weight:400;margin-left:6px;opacity:0.5">build-revert-minimal-fix</span>
+    Lead Scoring Dashboard - Asistente C21 Pedro Arias <span style="font-size:9px;color:var(--muted);font-family:var(--mono);font-weight:400;margin-left:6px;opacity:0.5">build-sortbar-scroll-fix</span>
   </div>
   <div class="header-right">
     <div class="sync-status">
@@ -1693,15 +1696,15 @@ const OTRAS_SET     = new Set(['106888144','105257084','82099375','79521935']);
 
 function visitaBadge(statusId) {
   const sid = statusId != null && statusId !== '' ? String(statusId).trim() : '';
-  if (!sid || sid === 'null') return '<span style="color:var(--muted);font-size:11px">&#8212;</span>';
-  if (AGENDADA_SET.has(sid))  return '<span style="font-size:11px;font-weight:500;padding:2px 8px;border-radius:20px;color:#27500A;background:#EAF3DE;border:1px solid #C0DD97;white-space:nowrap">&#128197; Agendada</span>';
-  if (INTENCION_SET.has(sid)) return '<span style="font-size:11px;font-weight:500;padding:2px 8px;border-radius:20px;color:#7a5300;background:#FDF3D0;border:1px solid #e0b84a;white-space:nowrap">&#128065; Intenci&#243;n</span>';
-  if (OTRAS_SET.has(sid))     return '<span style="font-size:11px;font-weight:500;padding:2px 8px;border-radius:20px;color:#0c4a6e;background:#e0f2fe;border:1px solid #7dd3fc;white-space:nowrap">&#128269; Otras opciones</span>';
+  if (!sid || sid === 'null') return '<span style="color:var(--muted);font-size:11px;display:inline-block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:100%">&#8212;</span>';
+  if (AGENDADA_SET.has(sid))  return '<span style="font-size:11px;font-weight:500;padding:2px 8px;border-radius:20px;color:#27500A;background:#EAF3DE;border:1px solid #C0DD97;white-space:nowrap;display:inline-block;overflow:hidden;text-overflow:ellipsis;max-width:100%;box-sizing:border-box">&#128197; Agendada</span>';
+  if (INTENCION_SET.has(sid)) return '<span style="font-size:11px;font-weight:500;padding:2px 8px;border-radius:20px;color:#7a5300;background:#FDF3D0;border:1px solid #e0b84a;white-space:nowrap;display:inline-block;overflow:hidden;text-overflow:ellipsis;max-width:100%;box-sizing:border-box">&#128065; Intenci&#243;n</span>';
+  if (OTRAS_SET.has(sid))     return '<span style="font-size:11px;font-weight:500;padding:2px 8px;border-radius:20px;color:#0c4a6e;background:#e0f2fe;border:1px solid #7dd3fc;white-space:nowrap;display:inline-block;overflow:hidden;text-overflow:ellipsis;max-width:100%;box-sizing:border-box">&#128269; Otras</span>';
   return '<span style="color:var(--muted);font-size:11px">&#8212;</span>';
 }
 
 function nivelBadge(nivel) {
-  if (!nivel) return '<span style="color:var(--muted);font-size:11px">—</span>';
+  if (!nivel) return '<span style="color:var(--muted);font-size:11px;display:inline-block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:100%">—</span>';
   const n = String(nivel).toLowerCase();
   const cfg = {
     'alta':  { color:'var(--accent)',  bg:'rgba(79,255,176,0.08)',  border:'rgba(79,255,176,0.25)'  },
@@ -1709,7 +1712,7 @@ function nivelBadge(nivel) {
     'baja':  { color:'var(--cold)',    bg:'rgba(0,200,255,0.08)',   border:'rgba(0,200,255,0.25)'   },
   };
   const s = cfg[n] || { color:'var(--muted)', bg:'transparent', border:'var(--border)' };
-  return '<span style="font-size:11px;font-weight:500;padding:2px 8px;border-radius:20px;color:'+s.color+';background:'+s.bg+';border:1px solid '+s.border+'">' + nivel + '</span>';
+  return '<span style="font-size:11px;font-weight:500;padding:2px 8px;border-radius:20px;color:'+s.color+';background:'+s.bg+';border:1px solid '+s.border+';display:inline-block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:100%;box-sizing:border-box">' + nivel + '</span>';
 }
 
 function buildRow(l) {
