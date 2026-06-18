@@ -864,7 +864,7 @@
 <header>
   <div class="logo">
     <div class="logo-dot"></div>
-    Lead Scoring Dashboard - Asistente C21 Pedro Arias <span style="font-size:9px;color:var(--muted);font-family:var(--mono);font-weight:400;margin-left:6px;opacity:0.5">build-025906-namefix</span>
+    Lead Scoring Dashboard - Asistente C21 Pedro Arias <span style="font-size:9px;color:var(--muted);font-family:var(--mono);font-weight:400;margin-left:6px;opacity:0.5">build-030336-diag</span>
   </div>
   <div class="header-right">
     <div class="sync-status">
@@ -1916,6 +1916,7 @@ function renderVisitPanels() {
     // Count actual letters (any unicode letter) — names like "L." or "." or "-" have 0-1 real letters
     const letterCount = (cleanName.match(/[a-zA-Z\u00C0-\u017F]/g) || []).length;
     const displayName = letterCount >= 2 ? cleanName : ('Lead ' + (tel !== '—' ? tel : ('#' + (l.Lead_id || l.id || '?'))));
+    console.log('%c[NAME-CALC]', 'background:#0ea5e9;color:#fff;padding:2px 6px;border-radius:4px', 'raw=' + JSON.stringify(l.name), 'cleanName=' + JSON.stringify(cleanName), 'letterCount=' + letterCount, 'displayName=' + JSON.stringify(displayName));
     const ini = initials(displayName);
     const rawTel   = (l.Telefono != null) ? String(l.Telefono).trim() : '';
     const rawPhone = (rawTel && rawTel !== 'null' && rawTel !== '—' && rawTel !== '-') ? rawTel.replace(/[^\d+]/g, '') : '';
