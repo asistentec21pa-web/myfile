@@ -1905,6 +1905,7 @@ function renderVisitPanels() {
 
   // DOM-based card builder — immune to HTML-string parsing edge cases
   function buildCardEl(l, accentColor, bgColor, borderColor) {
+    console.log('%c[DOM-BUILD-v2] buildCardEl ejecutando para:', 'background:#4fffb0;color:#000;padding:2px 6px;border-radius:4px', l.name);
     const tel = l.Telefono || '—';
     const pipe = l.Pipeline_nombre || '—';
     const cleanName = String(l.name || '').trim().replace(/^[.\-_,;:]+$/, '');
