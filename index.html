@@ -596,19 +596,22 @@
     box-sizing: border-box;
   }
   .mobile-lead-card:active { background: var(--surface2); border-color: var(--border-bright); }
-  .mobile-card-top { display: flex; align-items: center; gap: 11px; }
+  .mobile-card-top { display: flex; align-items: center; gap: 8px; width: 100%; min-width: 0; overflow: hidden; box-sizing: border-box; }
   .mobile-card-avatar { width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; flex-shrink: 0; }
-  .mobile-card-name { font-size: 14px; font-weight: 600; color: var(--text); }
-  .mobile-card-tel { font-size: 11px; color: var(--muted); font-family: var(--mono); margin-top: 1px; }
+  .mobile-card-name { font-size: 14px; font-weight: 600; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .mobile-card-tel { font-size: 11px; color: var(--muted); font-family: var(--mono); margin-top: 1px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .mobile-card-badges { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
-  .mobile-card-row { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+  .mobile-card-row { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; width: 100%; min-width: 0; box-sizing: border-box; }
   .mobile-card-score-wrap { display: flex; align-items: center; gap: 6px; flex: 0 1 auto; min-width: 0; }
   .mobile-card-score-bar { flex: 1; height: 5px; background: rgba(255,255,255,0.08); border-radius: 3px; overflow: hidden; }
   .mobile-card-score-fill { height: 100%; border-radius: 3px; transition: width 0.5s ease, background 0.4s ease; }
   .mobile-card-score-num { font-family: var(--mono); font-size: 12px; font-weight: 600; min-width: 28px; text-align: right; }
   .mobile-card-pipe { font-size: 9px; font-family: var(--mono); color: var(--accent2); background: rgba(0,200,255,0.08); border: 1px solid rgba(0,200,255,0.2); border-radius: 4px; padding: 2px 6px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%; box-sizing: border-box; }
-  .mobile-card-actions { display: flex; gap: 5px; padding-top: 6px; border-top: 1px solid var(--border); }
-  .mobile-card-actions .btn { flex: 1; justify-content: center; font-size: 11px; padding: 6px 4px; min-width: 0; }
+  .mobile-card-actions { display: flex; gap: 5px; padding-top: 6px; border-top: 1px solid var(--border); width: 100%; box-sizing: border-box; }
+  .mobile-card-actions .btn { justify-content: center; font-size: 11px; padding: 6px 4px; min-width: 0; box-sizing: border-box; }
+  .mobile-card-actions .btn-wa,
+  .mobile-card-actions .btn-edit { flex: 1; min-width: 0; }
+  .mobile-card-actions .btn-danger { flex: 0 0 auto !important; width: 38px !important; min-width: 38px !important; flex-shrink: 0; padding: 6px 0 !important; }
 
   /* Mobile badge size reduction */
   @media(max-width:640px) {
@@ -1822,7 +1825,7 @@ function renderMobileCards() {
           '<div class="mobile-card-name" style="color:var(--accent)">'+esc(l.name)+'</div>' +
           '<div class="mobile-card-tel">'+esc(l.Telefono||'—')+'</div>' +
         '</div>' +
-        '<span class="badge badge-'+tCat+'">'+tempLabel[tCat]+'</span>' +
+        '<span class="badge badge-'+tCat+'" style="flex-shrink:0;white-space:nowrap">'+tempLabel[tCat]+'</span>' +
       '</div>' +
       '<div class="mobile-card-row">' +
         '<div class="mobile-card-score-wrap">' +
@@ -1834,8 +1837,8 @@ function renderMobileCards() {
       '</div>' +
       '<div class="mobile-card-pipe" title="'+esc(l.Pipeline_nombre||'')+'">'+esc(l.Pipeline_nombre||'—')+'</div>' +
       '<div class="mobile-card-actions">' +
-        (waLink ? '<a href="'+waLink+'" style="flex:1;display:flex;align-items:center;justify-content:center;gap:6px;padding:7px;border-radius:7px;background:rgba(37,211,102,0.1);border:1px solid rgba(37,211,102,0.3);color:#25D366;text-decoration:none;font-size:12px;font-weight:500">📲 WhatsApp</a>' : '') +
-        '<button class="btn btn-sm" style="flex:1" onclick="openModal(\'edit\','+l.id+')">✏ Editar</button>' +
+        (waLink ? '<a href="'+waLink+'" class="btn-wa" style="flex:1;min-width:0;display:flex;align-items:center;justify-content:center;gap:6px;padding:7px;border-radius:7px;background:rgba(37,211,102,0.1);border:1px solid rgba(37,211,102,0.3);color:#25D366;text-decoration:none;font-size:12px;font-weight:500;box-sizing:border-box">📲 WhatsApp</a>' : '') +
+        '<button class="btn btn-sm btn-edit" onclick="openModal(\'edit\','+l.id+')">✏ Editar</button>' +
         '<button class="btn btn-sm btn-danger" onclick="deleteLead('+l.id+')">✕</button>' +
       '</div>' +
     '</div>';
