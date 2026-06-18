@@ -864,7 +864,7 @@
 <header>
   <div class="logo">
     <div class="logo-dot"></div>
-    Lead Scoring Dashboard - Asistente C21 Pedro Arias <span style="font-size:9px;color:var(--muted);font-family:var(--mono);font-weight:400;margin-left:6px;opacity:0.5">build-153029-dom</span>
+    Lead Scoring Dashboard - Asistente C21 Pedro Arias <span style="font-size:9px;color:var(--muted);font-family:var(--mono);font-weight:400;margin-left:6px;opacity:0.5">build-025906-namefix</span>
   </div>
   <div class="header-right">
     <div class="sync-status">
@@ -1908,8 +1908,14 @@ function renderVisitPanels() {
     console.log('%c[DOM-BUILD-v2] buildCardEl ejecutando para:', 'background:#4fffb0;color:#000;padding:2px 6px;border-radius:4px', l.name);
     const tel = l.Telefono || '—';
     const pipe = l.Pipeline_nombre || '—';
-    const cleanName = String(l.name || '').trim().replace(/^[.\-_,;:]+$/, '');
-    const displayName = cleanName.length >= 2 ? cleanName : ('Lead ' + (tel !== '—' ? tel : ('#' + (l.Lead_id || l.id || '?'))));
+    let cleanName = String(l.name || '')
+      .replace(/[\u200B-\u200D\uFEFF\u00A0]/g, '') // strip zero-width / non-breaking space chars
+      .trim()
+      .replace(/[.\-_,;:]+$/, '')   // strip trailing symbols (e.g. "Lenny." -> "Lenny")
+      .trim();
+    // Count actual letters (any unicode letter) — names like "L." or "." or "-" have 0-1 real letters
+    const letterCount = (cleanName.match(/[a-zA-Z\u00C0-\u017F]/g) || []).length;
+    const displayName = letterCount >= 2 ? cleanName : ('Lead ' + (tel !== '—' ? tel : ('#' + (l.Lead_id || l.id || '?'))));
     const ini = initials(displayName);
     const rawTel   = (l.Telefono != null) ? String(l.Telefono).trim() : '';
     const rawPhone = (rawTel && rawTel !== 'null' && rawTel !== '—' && rawTel !== '-') ? rawTel.replace(/[^\d+]/g, '') : '';
