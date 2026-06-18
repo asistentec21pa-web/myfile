@@ -455,19 +455,19 @@
   .last-sync { font-family: var(--mono); font-size: 10px; color: var(--muted); }
 
   /* visit panels — card style */
-  .vp-section {}
-  .vp-header { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+  .vp-section { min-width: 0; width: 100%; box-sizing: border-box; overflow: hidden; }
+  .vp-header { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; min-width: 0; width: 100%; box-sizing: border-box; overflow: hidden; }
   .vp-icon { width: 30px; height: 30px; border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 15px; }
-  .vp-title { font-size: 12px; font-weight: 500; flex: 1; }
+  .vp-title { font-size: 12px; font-weight: 500; flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .vp-badge { font-size: 11px; font-weight: 600; padding: 2px 9px; border-radius: 20px; font-family: var(--mono); }
-  .vp-cards { display: flex; flex-direction: column; gap: 7px; max-height: 300px; overflow-y: auto; padding-right: 2px; }
-  .vp-card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 10px 13px; display: flex; align-items: center; gap: 11px; cursor: pointer; transition: border-color 0.15s, background 0.15s; }
+  .vp-cards { display: flex; flex-direction: column; gap: 7px; max-height: 300px; overflow-y: auto; padding-right: 2px; min-width: 0; width: 100%; box-sizing: border-box; }
+  .vp-card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 10px 13px; display: flex; align-items: center; gap: 11px; cursor: pointer; transition: border-color 0.15s, background 0.15s; min-width: 0; overflow: hidden; box-sizing: border-box; }
   .vp-card:hover { background: var(--surface2); border-color: var(--border-bright); }
   .vp-avatar { width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600; flex-shrink: 0; }
-  .vp-info { flex: 1; min-width: 0; }
-  .vp-name { font-size: 13px; font-weight: 500; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .vp-tel { font-size: 11px; color: var(--muted); font-family: var(--mono); margin-top: 2px; }
-  .vp-pipe { display: inline-block; font-size: 10px; font-family: var(--mono); padding: 2px 7px; border-radius: 5px; margin-top: 5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
+  .vp-info { flex: 1; min-width: 0; overflow: hidden; }
+  .vp-name { font-size: 13px; font-weight: 500; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block; max-width: 100%; }
+  .vp-tel { font-size: 11px; color: var(--muted); font-family: var(--mono); margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block; }
+  .vp-pipe { display: block; font-size: 10px; font-family: var(--mono); padding: 2px 7px; border-radius: 5px; margin-top: 5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; box-sizing: border-box; }
   .vp-arrow { color: var(--muted); font-size: 18px; flex-shrink: 0; line-height: 1; }
   .vp-empty { padding: 20px; text-align: center; color: var(--muted); font-size: 12px; font-family: var(--mono); background: var(--surface); border: 1px solid var(--border); border-radius: 10px; }
   @media(max-width:900px) { #visit-panels { grid-template-columns: 1fr !important; } }
@@ -585,24 +585,26 @@
     background: var(--surface);
     border: 1px solid var(--border);
     border-radius: 12px;
-    padding: 12px 12px;
+    padding: 12px;
     display: flex;
     flex-direction: column;
     gap: 8px;
     cursor: pointer;
     transition: border-color 0.15s, background 0.15s;
-    active-color: var(--surface2);
     width: 100%;
+    max-width: 100%;
     box-sizing: border-box;
+    overflow: hidden;
+    min-width: 0;
   }
   .mobile-lead-card:active { background: var(--surface2); border-color: var(--border-bright); }
-  .mobile-card-top { display: flex; align-items: center; gap: 11px; }
+  .mobile-card-top { display: flex; align-items: center; gap: 10px; width: 100%; min-width: 0; overflow: hidden; }
   .mobile-card-avatar { width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; flex-shrink: 0; }
-  .mobile-card-name { font-size: 14px; font-weight: 600; color: var(--text); }
-  .mobile-card-tel { font-size: 11px; color: var(--muted); font-family: var(--mono); margin-top: 1px; }
+  .mobile-card-name { font-size: 14px; font-weight: 600; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .mobile-card-tel { font-size: 11px; color: var(--muted); font-family: var(--mono); margin-top: 1px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .mobile-card-badges { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
-  .mobile-card-row { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
-  .mobile-card-score-wrap { display: flex; align-items: center; gap: 6px; flex: 0 1 auto; min-width: 0; }
+  .mobile-card-row { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; width: 100%; min-width: 0; box-sizing: border-box; }
+  .mobile-card-score-wrap { display: flex; align-items: center; gap: 6px; flex: 0 0 auto; min-width: 60px; max-width: 120px; }
   .mobile-card-score-bar { flex: 1; height: 5px; background: rgba(255,255,255,0.08); border-radius: 3px; overflow: hidden; }
   .mobile-card-score-fill { height: 100%; border-radius: 3px; transition: width 0.5s ease, background 0.4s ease; }
   .mobile-card-score-num { font-family: var(--mono); font-size: 12px; font-weight: 600; min-width: 28px; text-align: right; }
@@ -612,9 +614,11 @@
 
   /* Mobile badge size reduction */
   @media(max-width:640px) {
-    .badge { font-size: 10px; padding: 2px 6px; }
+    .badge { font-size: 10px; padding: 2px 6px; white-space: nowrap; }
     .mobile-card-score-wrap { flex: 0 0 auto; }
     .mobile-card-score-num { min-width: 24px; font-size: 11px; }
+    .mobile-lead-card { overflow: hidden; }
+    .mobile-card-name { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   }
 
   /* ── CHATS SORT BAR ── */
@@ -744,8 +748,8 @@
   /* ── MOBILE ── */
   @media(max-width:640px) {
     /* Layout base */
-    html, body { font-size: 13px; overflow-x: hidden; }
-    .page { padding: 10px 12px 80px; max-width: 100%; }
+    html, body { font-size: 13px; overflow-x: hidden; max-width: 100vw; }
+    .page { padding: 10px 12px 80px; max-width: 100%; overflow-x: hidden; }
     .n8n-page { padding: 10px 12px 80px; max-width: 100%; }
 
     /* Header compacto */
@@ -798,11 +802,11 @@
 
     /* Tabla → ocultar, mostrar cards */
     .table-wrap { display: none; }
-    #mobile-cards-wrap { display: flex; flex-direction: column; gap: 6px; width: 100%; box-sizing: border-box; padding: 0 2px; }
+    #mobile-cards-wrap { display: flex; flex-direction: column; gap: 6px; width: 100%; box-sizing: border-box; padding: 0; overflow: hidden; }
     #table-footer { display: none; }
 
     /* Content grid sin sidebar */
-    .content-grid { grid-template-columns: 1fr; gap: 0; }
+    .content-grid { grid-template-columns: 1fr; gap: 0; overflow: hidden; }
     .side-panel { display: none; } /* stats en panel lateral ocultos en móvil */
 
     /* Modal full-screen en móvil */
@@ -860,7 +864,7 @@
 <header>
   <div class="logo">
     <div class="logo-dot"></div>
-    Lead Scoring Dashboard - Asistente C21 Pedro Arias
+    Lead Scoring Dashboard - Asistente C21 Pedro Arias <span style="font-size:9px;color:var(--muted);font-family:var(--mono);font-weight:400;margin-left:6px;opacity:0.5">build-153029-dom</span>
   </div>
   <div class="header-right">
     <div class="sync-status">
@@ -901,7 +905,7 @@
   <div class="metrics" id="metrics-area"></div>
 
   <!-- VISIT PANELS -->
-  <div id="visit-panels" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:1.25rem;margin-bottom:1.75rem"></div>
+  <div id="visit-panels" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(300px,100%),1fr));gap:1.25rem;margin-bottom:1.75rem;width:100%;box-sizing:border-box;overflow:hidden"></div>
 
   <div class="content-grid">
     <div>
@@ -1690,15 +1694,15 @@ const OTRAS_SET     = new Set(['106888144','105257084','82099375','79521935']);
 
 function visitaBadge(statusId) {
   const sid = statusId != null && statusId !== '' ? String(statusId).trim() : '';
-  if (!sid || sid === 'null') return '<span style="color:var(--muted);font-size:11px">&#8212;</span>';
-  if (AGENDADA_SET.has(sid))  return '<span style="font-size:11px;font-weight:500;padding:2px 8px;border-radius:20px;color:#27500A;background:#EAF3DE;border:1px solid #C0DD97;white-space:nowrap">&#128197; Agendada</span>';
-  if (INTENCION_SET.has(sid)) return '<span style="font-size:11px;font-weight:500;padding:2px 8px;border-radius:20px;color:#7a5300;background:#FDF3D0;border:1px solid #e0b84a;white-space:nowrap">&#128065; Intenci&#243;n</span>';
-  if (OTRAS_SET.has(sid))     return '<span style="font-size:11px;font-weight:500;padding:2px 8px;border-radius:20px;color:#0c4a6e;background:#e0f2fe;border:1px solid #7dd3fc;white-space:nowrap">&#128269; Otras opciones</span>';
-  return '<span style="color:var(--muted);font-size:11px">&#8212;</span>';
+  if (!sid || sid === 'null') return '';
+  if (AGENDADA_SET.has(sid))  return '<span style="font-size:11px;font-weight:500;padding:2px 8px;border-radius:20px;color:#27500A;background:#EAF3DE;border:1px solid #C0DD97;white-space:nowrap;flex-shrink:0">&#128197; Agendada</span>';
+  if (INTENCION_SET.has(sid)) return '<span style="font-size:11px;font-weight:500;padding:2px 8px;border-radius:20px;color:#7a5300;background:#FDF3D0;border:1px solid #e0b84a;white-space:nowrap;flex-shrink:0">&#128065; Intenci&#243;n</span>';
+  if (OTRAS_SET.has(sid))     return '<span style="font-size:11px;font-weight:500;padding:2px 8px;border-radius:20px;color:#0c4a6e;background:#e0f2fe;border:1px solid #7dd3fc;white-space:nowrap;flex-shrink:0">&#128269; Otras opciones</span>';
+  return '';
 }
 
 function nivelBadge(nivel) {
-  if (!nivel) return '<span style="color:var(--muted);font-size:11px">—</span>';
+  if (!nivel) return '';
   const n = String(nivel).toLowerCase();
   const cfg = {
     'alta':  { color:'var(--accent)',  bg:'rgba(79,255,176,0.08)',  border:'rgba(79,255,176,0.25)'  },
@@ -1706,7 +1710,7 @@ function nivelBadge(nivel) {
     'baja':  { color:'var(--cold)',    bg:'rgba(0,200,255,0.08)',   border:'rgba(0,200,255,0.25)'   },
   };
   const s = cfg[n] || { color:'var(--muted)', bg:'transparent', border:'var(--border)' };
-  return '<span style="font-size:11px;font-weight:500;padding:2px 8px;border-radius:20px;color:'+s.color+';background:'+s.bg+';border:1px solid '+s.border+'">' + nivel + '</span>';
+  return '<span style="font-size:11px;font-weight:500;padding:2px 8px;border-radius:20px;color:'+s.color+';background:'+s.bg+';border:1px solid '+s.border+';white-space:nowrap;flex-shrink:0">' + nivel + '</span>';
 }
 
 function buildRow(l) {
@@ -1818,17 +1822,17 @@ function renderMobileCards() {
     return '<div class="mobile-lead-card">' +
       '<div class="mobile-card-top">' +
         '<div class="mobile-card-avatar" style="background:'+bgMap[tCat]+';color:'+cScore+'">'+ini+'</div>' +
-        '<div style="flex:1;min-width:0;cursor:pointer" onclick="goToChat('+l.Lead_id+')">' +
+        '<div style="flex:1;min-width:0;overflow:hidden;cursor:pointer" onclick="goToChat('+l.Lead_id+')">' +
           '<div class="mobile-card-name" style="color:var(--accent)">'+esc(l.name)+'</div>' +
           '<div class="mobile-card-tel">'+esc(l.Telefono||'—')+'</div>' +
         '</div>' +
-        '<span class="badge badge-'+tCat+'">'+tempLabel[tCat]+'</span>' +
       '</div>' +
       '<div class="mobile-card-row">' +
         '<div class="mobile-card-score-wrap">' +
           '<div class="mobile-card-score-bar"><div class="mobile-card-score-fill" style="width:'+scoreVal+'%;background:'+cScore+'"></div></div>' +
           '<span class="mobile-card-score-num" style="color:'+cScore+'">'+scoreVal+'</span>' +
         '</div>' +
+        '<span class="badge badge-'+tCat+'" style="flex-shrink:0;white-space:nowrap">'+tempLabel[tCat]+'</span>' +
         (nivelBadge(l.Nivel_interaccion)) +
         (visitaBadge(l.Status_id)) +
       '</div>' +
@@ -1899,57 +1903,150 @@ function renderVisitPanels() {
     return (name||'').split(' ').map(w=>w[0]||'').join('').substring(0,2).toUpperCase();
   }
 
-  function buildPanel(title, icon, accentColor, bgColor, borderColor, data) {
-    const cards = data.length ? data.map(l => {
-      const ini = initials(l.name);
-      const tel = l.Telefono || '—';
-      const pipe = l.Pipeline_nombre || '—';
-      // Normalize phone — handle null, 'null', empty, dashes
-      const rawTel   = (l.Telefono != null && l.Telefono !== undefined) ? String(l.Telefono).trim() : '';
-      const rawPhone = (rawTel && rawTel !== 'null' && rawTel !== '—' && rawTel !== '-')
-        ? rawTel.replace(/[^\d+]/g, '') : '';
-      const phone    = rawPhone.length >= 7 ? rawPhone : '';
-      const msg      = waMessage(l.name);
-      const waLink   = phone ? ('whatsapp://send?phone=' + phone + '&text=' + msg) : '';
+  // DOM-based card builder — immune to HTML-string parsing edge cases
+  function buildCardEl(l, accentColor, bgColor, borderColor) {
+    const tel = l.Telefono || '—';
+    const pipe = l.Pipeline_nombre || '—';
+    const cleanName = String(l.name || '').trim().replace(/^[.\-_,;:]+$/, '');
+    const displayName = cleanName.length >= 2 ? cleanName : ('Lead ' + (tel !== '—' ? tel : ('#' + (l.Lead_id || l.id || '?'))));
+    const ini = initials(displayName);
+    const rawTel   = (l.Telefono != null) ? String(l.Telefono).trim() : '';
+    const rawPhone = (rawTel && rawTel !== 'null' && rawTel !== '—' && rawTel !== '-') ? rawTel.replace(/[^\d+]/g, '') : '';
+    const phone    = rawPhone.length >= 7 ? rawPhone : '';
+    const hasPhone = !!phone;
+    const leadId   = l.Lead_id;
 
-      if (waLink) {
-        return '<a class="vp-card" href="' + waLink + '" target="_blank" rel="noopener" style="text-decoration:none;display:flex;align-items:center;gap:10px;cursor:pointer" title="Clic en nombre → Chat, Clic en card → WhatsApp">' +
-          '<div class="vp-avatar" style="background:' + bgColor + ';color:' + accentColor + '">' + ini + '</div>' +
-          '<div class="vp-info">' +
-            '<div class="vp-name" style="color:var(--accent);cursor:pointer;font-weight:600" title="' + esc(l.name) + '" onclick="event.preventDefault();event.stopPropagation();goToChat(' + l.Lead_id + ')">' + esc(l.name) + '</div>' +
-            '<div class="vp-tel">&#9990; ' + esc(tel) + '</div>' +
-            '<span class="vp-pipe" style="background:' + bgColor + ';color:' + accentColor + ';border:1px solid ' + borderColor + '" title="' + esc(pipe) + '">' + esc(pipe) + '</span>' +
-          '</div>' +
-          '<span style="font-size:18px;flex-shrink:0">&#128242;</span>' +
-        '</a>';
-      }
-      // No phone found — go to chat and show warning
-      return '<div class="vp-card" onclick="goToChat(' + l.Lead_id + ')" title="Sin tel\u00e9fono · Ver chat">' +
-        '<div class="vp-avatar" style="background:' + bgColor + ';color:' + accentColor + ';opacity:0.7">' + ini + '</div>' +
-        '<div class="vp-info">' +
-          '<div class="vp-name" style="color:var(--accent);cursor:pointer;font-weight:600" title="' + esc(l.name) + '" onclick="goToChat(' + l.Lead_id + ')">' + esc(l.name) + '</div>' +
-          '<div class="vp-tel" style="color:var(--danger);font-size:10px">&#9888; Sin tel\u00e9fono registrado</div>' +
-          '<span class="vp-pipe" style="background:' + bgColor + ';color:' + accentColor + ';border:1px solid ' + borderColor + ';opacity:0.7">' + esc(pipe) + '</span>' +
-        '</div>' +
-        '<span style="font-size:13px;color:var(--muted);flex-shrink:0">&#128172;</span>' +
-      '</div>';
-    }).join('')
-    : `<div class="vp-empty">Sin leads en esta etapa</div>`;
+    const root = document.createElement(hasPhone ? 'a' : 'div');
+    root.className = 'vp-card';
+    root.style.textDecoration = 'none';
+    root.style.display = 'flex';
+    root.style.alignItems = 'center';
+    root.style.gap = '10px';
+    root.style.cursor = 'pointer';
+    root.style.minWidth = '0';
+    root.style.width = '100%';
+    root.style.boxSizing = 'border-box';
+    root.style.overflow = 'hidden';
 
-    return `<div class="vp-section">
-      <div class="vp-header">
-        <div class="vp-icon" style="background:${bgColor};color:${accentColor}">${icon}</div>
-        <span class="vp-title" style="color:${accentColor}">${title}</span>
-        <span class="vp-badge" style="background:${bgColor};color:${accentColor}">${data.length}</span>
-      </div>
-      <div class="vp-cards">${cards}</div>
-    </div>`;
+    if (hasPhone) {
+      root.href = 'whatsapp://send?phone=' + phone + '&text=' + waMessage(l.name);
+      root.target = '_blank';
+      root.rel = 'noopener';
+      root.title = 'Clic en nombre \u2192 Chat, Clic en card \u2192 WhatsApp';
+    } else {
+      root.title = 'Sin tel\u00e9fono \u00b7 Ver chat';
+      root.addEventListener('click', function() { goToChat(leadId); });
+    }
+
+    const avatar = document.createElement('div');
+    avatar.className = 'vp-avatar';
+    avatar.style.background = bgColor;
+    avatar.style.color = accentColor;
+    if (!hasPhone) avatar.style.opacity = '0.7';
+    avatar.textContent = ini;
+
+    const info = document.createElement('div');
+    info.className = 'vp-info';
+
+    const nameEl = document.createElement('div');
+    nameEl.className = 'vp-name';
+    nameEl.style.color = 'var(--accent)';
+    nameEl.style.cursor = 'pointer';
+    nameEl.style.fontWeight = '600';
+    nameEl.title = displayName;
+    nameEl.textContent = displayName;
+    nameEl.addEventListener('click', function(e) {
+      e.preventDefault(); e.stopPropagation();
+      goToChat(leadId);
+    });
+
+    const telEl = document.createElement('div');
+    telEl.className = 'vp-tel';
+    if (hasPhone) {
+      telEl.textContent = '\u260E ' + tel;
+    } else {
+      telEl.style.color = 'var(--danger)';
+      telEl.style.fontSize = '10px';
+      telEl.textContent = '\u26A0 Sin tel\u00e9fono registrado';
+    }
+
+    const pipeEl = document.createElement('span');
+    pipeEl.className = 'vp-pipe';
+    pipeEl.style.background = bgColor;
+    pipeEl.style.color = accentColor;
+    pipeEl.style.border = '1px solid ' + borderColor;
+    if (!hasPhone) pipeEl.style.opacity = '0.7';
+    pipeEl.title = pipe;
+    pipeEl.textContent = pipe;
+
+    info.appendChild(nameEl);
+    info.appendChild(telEl);
+    info.appendChild(pipeEl);
+
+    const iconEl = document.createElement('span');
+    iconEl.style.fontSize = hasPhone ? '18px' : '13px';
+    iconEl.style.flexShrink = '0';
+    if (!hasPhone) iconEl.style.color = 'var(--muted)';
+    iconEl.textContent = hasPhone ? '\uD83D\uDCF2' : '\uD83D\uDCAC';
+
+    root.appendChild(avatar);
+    root.appendChild(info);
+    root.appendChild(iconEl);
+    return root;
   }
 
-  document.getElementById('visit-panels').innerHTML =
-    buildPanel('Leads con visita agendada',        '📅',         'var(--accent)',  'rgba(79,255,176,0.1)',   'rgba(79,255,176,0.3)',   agendada)  +
-    buildPanel('Leads con intención de visita',  '&#128065;',  '#c9911a',       'rgba(201,145,26,0.1)',   'rgba(201,145,26,0.35)',  intencion) +
-    buildPanel('Buscan más/otras opciones',       '&#128269;',  '#0ea5e9',       'rgba(14,165,233,0.1)',   'rgba(14,165,233,0.35)',  otras);
+  function buildPanelEl(title, icon, accentColor, bgColor, borderColor, data) {
+    const section = document.createElement('div');
+    section.className = 'vp-section';
+
+    const header = document.createElement('div');
+    header.className = 'vp-header';
+
+    const iconEl = document.createElement('div');
+    iconEl.className = 'vp-icon';
+    iconEl.style.background = bgColor;
+    iconEl.style.color = accentColor;
+    iconEl.textContent = icon;
+
+    const titleEl = document.createElement('span');
+    titleEl.className = 'vp-title';
+    titleEl.style.color = accentColor;
+    titleEl.textContent = title;
+
+    const badgeEl = document.createElement('span');
+    badgeEl.className = 'vp-badge';
+    badgeEl.style.background = bgColor;
+    badgeEl.style.color = accentColor;
+    badgeEl.textContent = String(data.length);
+
+    header.appendChild(iconEl);
+    header.appendChild(titleEl);
+    header.appendChild(badgeEl);
+
+    const cardsWrap = document.createElement('div');
+    cardsWrap.className = 'vp-cards';
+
+    if (data.length) {
+      data.forEach(function(l) {
+        cardsWrap.appendChild(buildCardEl(l, accentColor, bgColor, borderColor));
+      });
+    } else {
+      const empty = document.createElement('div');
+      empty.className = 'vp-empty';
+      empty.textContent = 'Sin leads en esta etapa';
+      cardsWrap.appendChild(empty);
+    }
+
+    section.appendChild(header);
+    section.appendChild(cardsWrap);
+    return section;
+  }
+
+  const panelsContainer = document.getElementById('visit-panels');
+  panelsContainer.innerHTML = ''; // clear safely
+  panelsContainer.appendChild(buildPanelEl('Leads con visita agendada',     '\uD83D\uDCC5', 'var(--accent)', 'rgba(79,255,176,0.1)',  'rgba(79,255,176,0.3)',  agendada));
+  panelsContainer.appendChild(buildPanelEl('Leads con intenci\u00f3n de visita', '\uD83D\uDC41', '#c9911a',       'rgba(201,145,26,0.1)',  'rgba(201,145,26,0.35)', intencion));
+  panelsContainer.appendChild(buildPanelEl('Buscan m\u00e1s/otras opciones',      '\uD83D\uDD0D', '#0ea5e9',       'rgba(14,165,233,0.1)',  'rgba(14,165,233,0.35)', otras));
 }
 
 // ── SCORE DETALLE POPUP ────────────────────────────────────────────────────
