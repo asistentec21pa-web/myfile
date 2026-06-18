@@ -455,16 +455,16 @@
   .last-sync { font-family: var(--mono); font-size: 10px; color: var(--muted); }
 
   /* visit panels — card style */
-  .vp-section { min-width: 0; width: 100%; box-sizing: border-box; overflow: hidden; }
+  .vp-section { min-width: 0; width: 100%; box-sizing: border-box; }
   .vp-header { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; min-width: 0; width: 100%; box-sizing: border-box; overflow: hidden; }
   .vp-icon { width: 30px; height: 30px; border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 15px; }
   .vp-title { font-size: 12px; font-weight: 500; flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .vp-badge { font-size: 11px; font-weight: 600; padding: 2px 9px; border-radius: 20px; font-family: var(--mono); }
   .vp-cards { display: flex; flex-direction: column; gap: 7px; max-height: 300px; overflow-y: auto; padding-right: 2px; min-width: 0; width: 100%; box-sizing: border-box; }
-  .vp-card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 10px 13px; display: flex; align-items: center; gap: 11px; cursor: pointer; transition: border-color 0.15s, background 0.15s; min-width: 0; overflow: hidden; box-sizing: border-box; }
+  .vp-card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 10px 13px; display: flex; align-items: center; gap: 11px; cursor: pointer; transition: border-color 0.15s, background 0.15s; min-width: 0; box-sizing: border-box; }
   .vp-card:hover { background: var(--surface2); border-color: var(--border-bright); }
   .vp-avatar { width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600; flex-shrink: 0; }
-  .vp-info { flex: 1; min-width: 0; overflow: hidden; }
+  .vp-info { flex: 1; min-width: 0; }
   .vp-name { font-size: 13px; font-weight: 500; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block; max-width: 100%; }
   .vp-tel { font-size: 11px; color: var(--muted); font-family: var(--mono); margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block; }
   .vp-pipe { display: block; font-size: 10px; font-family: var(--mono); padding: 2px 7px; border-radius: 5px; margin-top: 5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; box-sizing: border-box; }
@@ -864,7 +864,7 @@
 <header>
   <div class="logo">
     <div class="logo-dot"></div>
-    Lead Scoring Dashboard - Asistente C21 Pedro Arias <span style="font-size:9px;color:var(--muted);font-family:var(--mono);font-weight:400;margin-left:6px;opacity:0.5">build-030336-diag</span>
+    Lead Scoring Dashboard - Asistente C21 Pedro Arias <span style="font-size:9px;color:var(--muted);font-family:var(--mono);font-weight:400;margin-left:6px;opacity:0.5">build-031257-noclip</span>
   </div>
   <div class="header-right">
     <div class="sync-status">
@@ -2055,6 +2055,16 @@ function renderVisitPanels() {
   panelsContainer.appendChild(buildPanelEl('Leads con visita agendada',     '\uD83D\uDCC5', 'var(--accent)', 'rgba(79,255,176,0.1)',  'rgba(79,255,176,0.3)',  agendada));
   panelsContainer.appendChild(buildPanelEl('Leads con intenci\u00f3n de visita', '\uD83D\uDC41', '#c9911a',       'rgba(201,145,26,0.1)',  'rgba(201,145,26,0.35)', intencion));
   panelsContainer.appendChild(buildPanelEl('Buscan m\u00e1s/otras opciones',      '\uD83D\uDD0D', '#0ea5e9',       'rgba(14,165,233,0.1)',  'rgba(14,165,233,0.35)', otras));
+
+  // Force explicit reflow/repaint — guards against rare Chrome paint glitches
+  // where text inserted via appendChild doesn't get painted until next interaction.
+  requestAnimationFrame(function() {
+    panelsContainer.style.transform = 'translateZ(0)';
+    void panelsContainer.offsetHeight; // force layout
+    requestAnimationFrame(function() {
+      panelsContainer.style.transform = '';
+    });
+  });
 }
 
 // ── SCORE DETALLE POPUP ────────────────────────────────────────────────────
