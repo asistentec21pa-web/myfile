@@ -873,7 +873,7 @@
 <header>
   <div class="logo">
     <div class="logo-dot"></div>
-    Lead Scoring Dashboard - Asistente C21 Pedro Arias <span style="font-size:9px;color:var(--muted);font-family:var(--mono);font-weight:400;margin-left:6px;opacity:0.5">build-req-whatsapp-fix</span>
+    Lead Scoring Dashboard - Asistente C21 Pedro Arias <span style="font-size:9px;color:var(--muted);font-family:var(--mono);font-weight:400;margin-left:6px;opacity:0.5">build-days-createdat</span>
   </div>
   <div class="header-right">
     <div class="sync-status">
@@ -1911,18 +1911,36 @@ window.addEventListener('resize', () => renderTable());
 const INTENCION_VISITA_IDS  = INTENCION_SET;
 const VISITA_AGENDADA_IDS   = AGENDADA_SET;
 
+// ── DAYS SINCE CREATED ────────────────────────────────────────────────────
+// Calculates days since the lead's createdAt date (first contact)
+function daysSinceEntry(leadId, group) {
+  const l = leads.find(x => String(x.Lead_id) === String(leadId) || String(x.id) === String(leadId));
+  if (!l || !l.createdAt) return null;
+  const diffMs = Date.now() - new Date(l.createdAt).getTime();
+  return Math.floor(diffMs / 86400000);
+}
+
 function renderVisitPanels() {
   const toSid = l => { const v = l.Status_id != null ? l.Status_id : l.status_id; return v != null && v !== '' ? String(v).trim() : ''; };
   const intencion = leads.filter(l => INTENCION_VISITA_IDS.has(toSid(l)));
   const agendada  = leads.filter(l => VISITA_AGENDADA_IDS.has(toSid(l)));
   const otras     = leads.filter(l => OTRAS_SET.has(toSid(l)));
 
+
+
   function initials(name) {
     return (name||'').split(' ').map(w=>w[0]||'').join('').substring(0,2).toUpperCase();
   }
 
-  function buildPanel(title, icon, accentColor, bgColor, borderColor, data) {
+  function buildPanel(title, icon, accentColor, bgColor, borderColor, data, group) {
     const cards = data.length ? data.map(l => {
+      // Days counter badge
+      const days = (group != null) ? daysSinceEntry(l.Lead_id, group) : null;
+      const daysBadge = (days === null || days === 0)
+        ? '<span style="font-size:10px;color:var(--muted);font-family:var(--mono);flex-shrink:0">hoy</span>'
+        : '<span style="font-size:10px;font-family:var(--mono);font-weight:600;padding:1px 6px;border-radius:10px;flex-shrink:0;background:' +
+            (days > 7 ? 'rgba(255,80,80,0.12)' : days > 3 ? 'rgba(255,179,64,0.12)' : 'rgba(79,255,176,0.08)') +
+          ';color:' + (days > 7 ? 'var(--danger)' : days > 3 ? 'var(--warn)' : 'var(--accent)') + '">' + days + ' d</span>';
       const tel = l.Telefono || '—';
       const pipe = l.Pipeline_nombre || '—';
       // Fallback: if name is empty, whitespace-only, dot, or has invisible unicode chars, show phone instead
@@ -1950,6 +1968,7 @@ function renderVisitPanels() {
             '<div class="vp-tel">&#9990; ' + esc(tel) + '</div>' +
             '<span class="vp-pipe" style="background:' + bgColor + ';color:' + accentColor + ';border:1px solid ' + borderColor + '" title="' + esc(pipe) + '">' + esc(pipe) + '</span>' +
           '</div>' +
+          daysBadge +
           '<span style="font-size:18px;flex-shrink:0">&#128242;</span>' +
         '</a>';
       }
@@ -1961,6 +1980,7 @@ function renderVisitPanels() {
           '<div class="vp-tel" style="color:var(--danger);font-size:10px">&#9888; Sin tel\u00e9fono registrado</div>' +
           '<span class="vp-pipe" style="background:' + bgColor + ';color:' + accentColor + ';border:1px solid ' + borderColor + ';opacity:0.7">' + esc(pipe) + '</span>' +
         '</div>' +
+        daysBadge +
         '<span style="font-size:13px;color:var(--muted);flex-shrink:0">&#128172;</span>' +
       '</div>';
     }).join('')
@@ -1977,9 +1997,9 @@ function renderVisitPanels() {
   }
 
   document.getElementById('visit-panels').innerHTML =
-    buildPanel('Leads con visita agendada',        '📅',         'var(--accent)',  'rgba(79,255,176,0.1)',   'rgba(79,255,176,0.3)',   agendada)  +
-    buildPanel('Leads con intención de visita',  '&#128065;',  '#c9911a',       'rgba(201,145,26,0.1)',   'rgba(201,145,26,0.35)',  intencion) +
-    buildPanel('Buscan más/otras opciones',       '&#128269;',  '#0ea5e9',       'rgba(14,165,233,0.1)',   'rgba(14,165,233,0.35)',  otras);
+    buildPanel('Leads con visita agendada',        '📅',         'var(--accent)',  'rgba(79,255,176,0.1)',   'rgba(79,255,176,0.3)',   agendada,  'agendada')  +
+    buildPanel('Leads con intención de visita',  '&#128065;',  '#c9911a',       'rgba(201,145,26,0.1)',   'rgba(201,145,26,0.35)',  intencion, 'intencion') +
+    buildPanel('Buscan más/otras opciones',       '&#128269;',  '#0ea5e9',       'rgba(14,165,233,0.1)',   'rgba(14,165,233,0.35)',  otras,     'otras');
 }
 
 // ── SCORE DETALLE POPUP ────────────────────────────────────────────────────
