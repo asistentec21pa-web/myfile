@@ -884,7 +884,7 @@
 <header>
   <div class="logo">
     <div class="logo-dot"></div>
-    Lead Scoring Dashboard - Asistente C21 Pedro Arias <span style="font-size:9px;color:var(--muted);font-family:var(--mono);font-weight:400;margin-left:6px;opacity:0.5">build-tags-vp</span>
+    Lead Scoring Dashboard - Asistente C21 Pedro Arias <span style="font-size:9px;color:var(--muted);font-family:var(--mono);font-weight:400;margin-left:6px;opacity:0.5">build-tags-preserve</span>
   </div>
   <div class="header-right">
     <div class="sync-status">
@@ -2259,6 +2259,11 @@ async function fetchFromN8N() {
         return (v !== null && v !== undefined && String(v).trim() !== '' && String(v).trim() !== 'null') ? String(v).trim() : '';
       })(),
       lead_score_detalle:  Array.isArray(l.lead_score_detalle) ? l.lead_score_detalle : (Array.isArray(l.Lead_score_detalle) ? l.Lead_score_detalle : []),
+      // Preserve local tags — find existing lead by Lead_id and keep its tags
+      tags: (function(){
+        const existing = leads.find(x => String(x.Lead_id) === String(l.Lead_id || l.lead_id || l.id || i+1));
+        return (existing && existing.tags && existing.tags.length) ? existing.tags : (l.tags || []);
+      })(),
       stage:               l.stage              || l.etapa               || 'prospecto',
       createdAt:           l.createdAt          || new Date().toISOString(),
       updatedAt:           l.updatedAt          || new Date().toISOString()
