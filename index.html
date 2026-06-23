@@ -454,6 +454,17 @@
 
   .last-sync { font-family: var(--mono); font-size: 10px; color: var(--muted); }
 
+  /* ── TAGS / ETIQUETAS ─────────────────────────────────────────────────── */
+  .tag-pill { display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:20px;font-size:11px;font-weight:500;white-space:nowrap;cursor:default;border:1px solid transparent; }
+  .tag-pill .tag-del { cursor:pointer;opacity:0.6;font-size:10px;margin-left:2px;line-height:1; }
+  .tag-pill .tag-del:hover { opacity:1; }
+  .tag-manager-chip { display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:20px;font-size:12px;font-weight:500;cursor:pointer;border:1.5px solid;transition:opacity 0.15s; }
+  .tag-manager-chip:hover { opacity:0.8; }
+  #tag-picker-wrap { display:flex;flex-wrap:wrap;gap:6px;margin-top:4px; }
+  .tag-option-chip { display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:500;cursor:pointer;border:1.5px solid;transition:box-shadow 0.15s,opacity 0.15s; }
+  .tag-option-chip:hover { opacity:0.85; }
+  .tag-option-chip.selected { box-shadow:0 0 0 2px #fff; }
+
   /* visit panels — card style */
   .vp-section {}
   .vp-header { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
@@ -873,7 +884,7 @@
 <header>
   <div class="logo">
     <div class="logo-dot"></div>
-    Lead Scoring Dashboard - Asistente C21 Pedro Arias <span style="font-size:9px;color:var(--muted);font-family:var(--mono);font-weight:400;margin-left:6px;opacity:0.5">build-days-createdat</span>
+    Lead Scoring Dashboard - Asistente C21 Pedro Arias <span style="font-size:9px;color:var(--muted);font-family:var(--mono);font-weight:400;margin-left:6px;opacity:0.5">build-tags-system</span>
   </div>
   <div class="header-right">
     <div class="sync-status">
@@ -948,6 +959,7 @@
               <th onclick="sortBy('Nivel_interaccion')">INTERACCIÓN <span id="sh-Nivel_interaccion"></span></th>
               <th>ESTADO</th>
               <th>ESTADO VISITA</th>
+              <th>ETIQUETAS</th>
               <th>FUENTE</th>
               <th onclick="sortBy('value')">VALOR EST. <span id="sh-value"></span></th>
               <th>ACCIONES</th>
@@ -1474,6 +1486,15 @@
         </select>
       </div>
     </div>
+    <div class="field-group full" style="margin-top:8px">
+      <label class="field-label">ETIQUETAS</label>
+      <div id="tag-picker-wrap"></div>
+      <div style="display:flex;gap:6px;margin-top:8px;align-items:center">
+        <input type="text" id="f-new-tag-name" placeholder="Nueva etiqueta..." style="flex:1;font-size:12px">
+        <input type="color" id="f-new-tag-color" value="#4fffb0" style="width:36px;height:32px;border-radius:6px;border:1px solid var(--border-bright);cursor:pointer;padding:2px;background:var(--surface)">
+        <button class="btn btn-sm" onclick="addTagFromModal()" style="flex-shrink:0">+ Agregar</button>
+      </div>
+    </div>
     <div class="form-actions">
       <button class="btn" onclick="closeModal()">Cancelar</button>
       <button class="btn btn-primary" onclick="saveLead()">Guardar & Enviar a n8n</button>
@@ -1743,6 +1764,7 @@ function buildRow(l) {
     <td>${nivelBadge(l.Nivel_interaccion)}</td>
     <td><span class="badge badge-${tCat}">${tempLabel[tCat]||tCat}</span></td>
     <td>${visitaBadge(l.Status_id)}</td>
+    <td style="line-height:1.8">${renderTagPills(l.tags||[])}</td>
     <td style="font-size:11px;color:var(--muted)">${esc(l.etiqueta_fuente||'—')}</td>
     <td style="font-family:var(--mono);font-size:12px">$${Number(l.Valor_lead||l.value||0).toLocaleString()}</td>
     <td onclick="event.stopPropagation()">
@@ -1855,6 +1877,7 @@ function renderMobileCards() {
         (visitaBadge(l.Status_id)) +
       '</div>' +
       '<div class="mobile-card-pipe" title="'+esc(l.Pipeline_nombre||'')+'">'+esc(l.Pipeline_nombre||'—')+'</div>' +
+      (l.tags && l.tags.length ? '<div style="display:flex;flex-wrap:wrap;gap:4px;margin-top:4px">' + renderTagPills(l.tags) + '</div>' : '') +
       '<div class="mobile-card-actions">' +
         (waLink ? '<a href="'+waLink+'" class="btn-wa" style="flex:1;min-width:0;display:flex;align-items:center;justify-content:center;gap:6px;padding:7px;border-radius:7px;background:rgba(37,211,102,0.1);border:1px solid rgba(37,211,102,0.3);color:#25D366;text-decoration:none;font-size:12px;font-weight:500;box-sizing:border-box">📲 WhatsApp</a>' : '') +
         '<button class="btn btn-sm btn-edit" onclick="openModal(\'edit\','+l.id+')">✏ Editar</button>' +
@@ -2353,6 +2376,7 @@ function openModal(mode, id) {
       AGENDADA_SET.has(sid)  ? 'agendada'  :
       INTENCION_SET.has(sid) ? 'intencion' :
       OTRAS_SET.has(sid)     ? 'otras'     : '';
+    renderTagPicker(l.tags || []);
   } else {
     document.getElementById('f-name').value            = '';
     document.getElementById('f-telefono').value        = '';
@@ -2364,6 +2388,7 @@ function openModal(mode, id) {
     document.getElementById('f-stage').value           = 'prospecto';
     document.getElementById('f-notes').value           = '';
     document.getElementById('f-status-visita').value   = '';
+    renderTagPicker([]);
   }
   document.getElementById('modal-overlay').classList.add('open');
 }
@@ -2398,6 +2423,7 @@ async function saveLead() {
     etiqueta_fuente:  document.getElementById('f-etiqueta-fuente').value.trim()||'Facebook Ads',
     Lead_categoria:   '',
     Nivel_interaccion: '',
+    tags:             getSelectedTagsFromModal(),
     Status_id:        statusMap[statusVisita] || '',
     stage:            document.getElementById('f-stage').value,
     notes:            document.getElementById('f-notes').value.trim(),
@@ -2859,6 +2885,107 @@ function debugStatusIds() {
     '</div>';
   pop.onclick = e => { if(e.target === pop) pop.remove(); };
   document.body.appendChild(pop);
+}
+
+// ── ETIQUETAS / TAGS SYSTEM ───────────────────────────────────────────────
+let _allTags = [];       // { id, name, color } — global tag library
+let _selectedTags = [];  // ids selected in current modal
+
+function loadTags() {
+  try { _allTags = JSON.parse(localStorage.getItem('ls_tags') || '[]'); }
+  catch(e) { _allTags = []; }
+}
+function saveTags() {
+  localStorage.setItem('ls_tags', JSON.stringify(_allTags));
+}
+
+// Returns HTML pill string for a tag or array of tag ids
+function renderTagPills(tagIds) {
+  if (!tagIds || !tagIds.length) return '';
+  loadTags();
+  return (Array.isArray(tagIds) ? tagIds : [tagIds]).map(id => {
+    const t = _allTags.find(x => x.id === id);
+    if (!t) return '';
+    const txt = hexToRgb(t.color);
+    const bg  = 'rgba(' + txt + ',0.15)';
+    const bdr = 'rgba(' + txt + ',0.4)';
+    return '<span class="tag-pill" style="background:' + bg + ';border-color:' + bdr + ';color:' + t.color + '">' + esc(t.name) + '</span>';
+  }).join('');
+}
+
+function hexToRgb(hex) {
+  const h = hex.replace('#','');
+  const r = parseInt(h.substring(0,2),16);
+  const g = parseInt(h.substring(2,4),16);
+  const b = parseInt(h.substring(4,6),16);
+  return r+','+g+','+b;
+}
+
+// Render tag picker inside modal
+function renderTagPicker(selectedIds) {
+  loadTags();
+  _selectedTags = selectedIds ? [...selectedIds] : [];
+  const wrap = document.getElementById('tag-picker-wrap');
+  if (!wrap) return;
+  if (!_allTags.length) {
+    wrap.innerHTML = '<span style="font-size:11px;color:var(--muted);font-family:var(--mono)">Sin etiquetas creadas aún</span>';
+    return;
+  }
+  wrap.innerHTML = _allTags.map(t => {
+    const sel = _selectedTags.includes(t.id);
+    const txt = hexToRgb(t.color);
+    const bg  = sel ? 'rgba(' + txt + ',0.25)' : 'rgba(' + txt + ',0.08)';
+    const bdr = 'rgba(' + txt + ',0.5)';
+    return '<span class="tag-option-chip' + (sel ? ' selected' : '') + '"' +
+      ' style="background:' + bg + ';border-color:' + bdr + ';color:' + t.color + '"' +
+      ' onclick="toggleTagInModal(\'' + t.id + '\')" title="Clic para seleccionar/deseleccionar">' +
+      esc(t.name) +
+      '<span class="tag-del" onclick="event.stopPropagation();deleteTagFromLibrary(\'' + t.id + '\')" title="Eliminar etiqueta">✕</span>' +
+    '</span>';
+  }).join('');
+}
+
+function toggleTagInModal(tagId) {
+  const idx = _selectedTags.indexOf(tagId);
+  if (idx > -1) _selectedTags.splice(idx, 1);
+  else _selectedTags.push(tagId);
+  renderTagPicker(_selectedTags);
+}
+
+function addTagFromModal() {
+  const nameEl  = document.getElementById('f-new-tag-name');
+  const colorEl = document.getElementById('f-new-tag-color');
+  const name = (nameEl.value || '').trim();
+  if (!name) { toast('Escribe un nombre para la etiqueta', 'warn'); return; }
+  loadTags();
+  if (_allTags.find(t => t.name.toLowerCase() === name.toLowerCase())) {
+    toast('Ya existe una etiqueta con ese nombre', 'warn'); return;
+  }
+  const newTag = { id: 'tag_' + Date.now(), name, color: colorEl.value || '#4fffb0' };
+  _allTags.push(newTag);
+  saveTags();
+  _selectedTags.push(newTag.id);
+  nameEl.value = '';
+  colorEl.value = '#4fffb0';
+  renderTagPicker(_selectedTags);
+  toast('Etiqueta "' + name + '" creada', 'ok');
+}
+
+function deleteTagFromLibrary(tagId) {
+  loadTags();
+  _allTags = _allTags.filter(t => t.id !== tagId);
+  saveTags();
+  // Remove from all leads
+  leads.forEach(l => { if (l.tags) l.tags = l.tags.filter(id => id !== tagId); });
+  saveLeads();
+  _selectedTags = _selectedTags.filter(id => id !== tagId);
+  renderTagPicker(_selectedTags);
+  renderTable();
+  toast('Etiqueta eliminada', 'ok');
+}
+
+function getSelectedTagsFromModal() {
+  return [..._selectedTags];
 }
 
 // ── INIT ─────────────────────────────────────────────────────────────────
