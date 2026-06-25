@@ -912,7 +912,7 @@
 <header>
   <div class="logo">
     <div class="logo-dot"></div>
-    Lead Scoring Dashboard - Asistente C21 Pedro Arias <span style="font-size:9px;color:var(--muted);font-family:var(--mono);font-weight:400;margin-left:6px;opacity:0.5">build-scoring-cfg</span>
+    Lead Scoring Dashboard - Asistente C21 Pedro Arias <span style="font-size:9px;color:var(--muted);font-family:var(--mono);font-weight:400;margin-left:6px;opacity:0.5">build-scoring-cfg-clean</span>
   </div>
   <div class="header-right">
     <div class="sync-status">
@@ -1142,8 +1142,9 @@
           <input type="number" id="scoring-cfg-interval" value="0" min="0" max="3600">
         </div>
       </div>
-      <div style="margin-top:8px">
+      <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap">
         <button class="btn btn-sm" onclick="testScoringWebhook()" style="border-color:var(--accent2);color:var(--accent2)">▶ Probar webhook</button>
+        <button class="btn btn-sm btn-primary" onclick="saveScoringConfig()">✓ Guardar Scoring</button>
       </div>
     </div>
   </div>
@@ -1358,15 +1359,7 @@
         <button class="btn btn-sm btn-primary" onclick="fetchScoringData()">↻ Sincronizar</button>
       </div>
     </div>
-    <div style="display:flex;gap:1rem;margin-bottom:1rem;flex-wrap:wrap">
-      <div class="n8n-section" style="flex:1;min-width:200px;padding:0.75rem 1rem">
-        <label class="field-label">WEBHOOK URL (GET)</label>
-        <input type="text" id="scoring-webhook-url" placeholder="https://tu-n8n.com/webhook/scoring" style="font-size:11px">
-      </div>
-      <div style="display:flex;align-items:flex-end;padding-bottom:2px">
-        <button class="btn btn-sm" onclick="saveScoringCfg()">Guardar URL</button>
-      </div>
-    </div>
+
     <div id="scoring-stats" style="display:flex;gap:8px;margin-bottom:1rem;flex-wrap:wrap"></div>
     <div id="scoring-cards-wrap" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:1rem"></div>
   </div>
@@ -3027,14 +3020,8 @@ function loadScoringCfg() {
   try { return JSON.parse(localStorage.getItem('ls_scoring_cfg') || '{}'); } catch(e) { return {}; }
 }
 function saveScoringCfg() {
-  const url = document.getElementById('scoring-webhook-url').value.trim();
-  const existing = loadScoringCfg();
-  const updated = { ...existing, url };
-  localStorage.setItem('ls_scoring_cfg', JSON.stringify(updated));
-  // Sync back to config tab fields
-  const cfgUrl = document.getElementById('scoring-cfg-url');
-  if (cfgUrl) cfgUrl.value = url;
-  toast('URL de Scoring guardada', 'ok');
+  // Kept for backward compatibility — delegates to saveScoringConfig
+  saveScoringConfig();
 }
 
 function initScoringCfg() {
@@ -3050,6 +3037,19 @@ function initScoringCfg() {
   const saved = localStorage.getItem('ls_scoring_leads');
   if (saved) { try { scoringLeads = JSON.parse(saved); } catch(e) {} }
   renderScoringCards();
+}
+
+function saveScoringConfig() {
+  const url      = (document.getElementById('scoring-cfg-url')?.value || '').trim();
+  const interval = parseInt(document.getElementById('scoring-cfg-interval')?.value || '0') || 0;
+  const updated  = { ...loadScoringCfg(), url, interval };
+  localStorage.setItem('ls_scoring_cfg', JSON.stringify(updated));
+  // Sync URL to scoring tab if field exists
+  const el = document.getElementById('scoring-webhook-url');
+  if (el) el.value = url;
+  startScoringAutoSync(updated);
+  toast('Configuración de Scoring guardada' + (interval > 0 ? ' — Auto-sync cada ' + interval + 's' : ''), 'ok');
+  addLog('Scoring configurado: ' + (url ? url.substring(0,40)+'...' : 'sin URL') + (interval > 0 ? ' | cada '+interval+'s' : ''), 'ok');
 }
 
 async function testScoringWebhook() {
@@ -3069,7 +3069,7 @@ async function testScoringWebhook() {
 
 async function fetchScoringData() {
   const cfg = loadScoringCfg();
-  if (!cfg.url) { toast('Configura la URL del webhook primero', 'error'); return; }
+  if (!cfg.url) { toast('Configura la URL del webhook en la tab Configuración n8n', 'error'); switchTab('n8n'); return; }
   try {
     toast('Sincronizando Scoring IA...', 'ok');
     const res = await fetch(cfg.url);
