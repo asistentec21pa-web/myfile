@@ -912,7 +912,7 @@
 <header>
   <div class="logo">
     <div class="logo-dot"></div>
-    Lead Scoring Dashboard - Asistente C21 Pedro Arias <span style="font-size:9px;color:var(--muted);font-family:var(--mono);font-weight:400;margin-left:6px;opacity:0.5">build-scoring-cfg-clean</span>
+    Lead Scoring Dashboard - Asistente C21 Pedro Arias <span style="font-size:9px;color:var(--muted);font-family:var(--mono);font-weight:400;margin-left:6px;opacity:0.5">build-scoring-post</span>
   </div>
   <div class="header-right">
     <div class="sync-status">
@@ -1134,16 +1134,22 @@
     <div class="n8n-section-body">
       <div class="form-grid-2">
         <div class="field-group">
-          <label class="field-label">WEBHOOK URL (GET)</label>
-          <input type="text" id="scoring-cfg-url" placeholder="https://tu-n8n.com/webhook/scoring">
+          <label class="field-label">WEBHOOK URL (GET) — Leer scoring</label>
+          <input type="text" id="scoring-cfg-url" placeholder="https://tu-n8n.com/webhook/scoring-get">
         </div>
+        <div class="field-group">
+          <label class="field-label">WEBHOOK URL (POST) — Actualizar leads</label>
+          <input type="text" id="scoring-cfg-post-url" placeholder="https://tu-n8n.com/webhook/scoring-update">
+        </div>
+      </div>
+      <div class="form-grid-2" style="margin-top:8px">
         <div class="field-group">
           <label class="field-label">AUTO-SYNC (segundos, 0 = desactivado)</label>
           <input type="number" id="scoring-cfg-interval" value="0" min="0" max="3600">
         </div>
       </div>
       <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap">
-        <button class="btn btn-sm" onclick="testScoringWebhook()" style="border-color:var(--accent2);color:var(--accent2)">▶ Probar webhook</button>
+        <button class="btn btn-sm" onclick="testScoringWebhook()" style="border-color:var(--accent2);color:var(--accent2)">▶ Probar GET</button>
         <button class="btn btn-sm btn-primary" onclick="saveScoringConfig()">✓ Guardar Scoring</button>
       </div>
     </div>
@@ -1357,6 +1363,7 @@
           <option value="FRIO">🔵 Frío</option>
         </select>
         <button class="btn btn-sm btn-primary" onclick="fetchScoringData()">↻ Sincronizar</button>
+        <button class="btn btn-sm" onclick="pushScoringUpdate()" style="border-color:var(--warn);color:var(--warn)">⬆ Actualizar BD</button>
       </div>
     </div>
 
@@ -1761,8 +1768,10 @@ function switchTab(name) {
     initWaTemplateEditor();
     const sc = loadScoringCfg();
     const su = document.getElementById('scoring-cfg-url');
+    const sp = document.getElementById('scoring-cfg-post-url');
     const si = document.getElementById('scoring-cfg-interval');
     if (su && sc.url) su.value = sc.url;
+    if (sp && sc.postUrl) sp.value = sc.postUrl;
     if (si) si.value = sc.interval || 0;
   }
   if (name === 'req')   { loadReqs(); renderReqs(); }
@@ -3030,8 +3039,10 @@ function initScoringCfg() {
   if (el && cfg.url) el.value = cfg.url;
   // Also populate the n8n config tab fields
   const cfgUrl = document.getElementById('scoring-cfg-url');
+  const cfgPost = document.getElementById('scoring-cfg-post-url');
   const cfgInt = document.getElementById('scoring-cfg-interval');
   if (cfgUrl && cfg.url) cfgUrl.value = cfg.url;
+  if (cfgPost && cfg.postUrl) cfgPost.value = cfg.postUrl;
   if (cfgInt) cfgInt.value = cfg.interval || 0;
   if (cfg.interval > 0) startScoringAutoSync(cfg);
   const saved = localStorage.getItem('ls_scoring_leads');
@@ -3041,15 +3052,41 @@ function initScoringCfg() {
 
 function saveScoringConfig() {
   const url      = (document.getElementById('scoring-cfg-url')?.value || '').trim();
+  const postUrl  = (document.getElementById('scoring-cfg-post-url')?.value || '').trim();
   const interval = parseInt(document.getElementById('scoring-cfg-interval')?.value || '0') || 0;
-  const updated  = { ...loadScoringCfg(), url, interval };
+  const updated  = { ...loadScoringCfg(), url, postUrl, interval };
   localStorage.setItem('ls_scoring_cfg', JSON.stringify(updated));
-  // Sync URL to scoring tab if field exists
-  const el = document.getElementById('scoring-webhook-url');
-  if (el) el.value = url;
   startScoringAutoSync(updated);
   toast('Configuración de Scoring guardada' + (interval > 0 ? ' — Auto-sync cada ' + interval + 's' : ''), 'ok');
-  addLog('Scoring configurado: ' + (url ? url.substring(0,40)+'...' : 'sin URL') + (interval > 0 ? ' | cada '+interval+'s' : ''), 'ok');
+  addLog('Scoring configurado: GET ' + (url ? url.substring(0,35)+'...' : 'sin URL') + (postUrl ? ' | POST OK' : '') + (interval > 0 ? ' | cada '+interval+'s' : ''), 'ok');
+}
+
+async function pushScoringUpdate() {
+  const cfg = loadScoringCfg();
+  if (!cfg.postUrl) {
+    toast('Configura el Webhook POST en la tab Configuración n8n', 'error');
+    switchTab('n8n');
+    return;
+  }
+  if (!scoringLeads.length) {
+    toast('No hay datos de Scoring para enviar. Sincroniza primero.', 'error');
+    return;
+  }
+  try {
+    toast('Enviando ' + scoringLeads.length + ' leads a n8n...', 'ok');
+    const res = await fetch(cfg.postUrl, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ leads: scoringLeads, total: scoringLeads.length, timestamp: new Date().toISOString() })
+    });
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const resp = await res.json().catch(() => ({}));
+    toast('✓ Base de datos actualizada correctamente', 'ok');
+    addLog('Scoring POST enviado: ' + scoringLeads.length + ' leads → ' + cfg.postUrl.substring(0,40), 'ok');
+  } catch(e) {
+    toast('Error al actualizar BD: ' + e.message, 'error');
+    addLog('Error Scoring POST: ' + e.message, 'error');
+  }
 }
 
 async function testScoringWebhook() {
