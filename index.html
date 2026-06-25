@@ -3205,7 +3205,9 @@ function renderScoringCards() {
       '<div class="sc-header">' +
         '<div class="sc-avatar" style="background:' + cls.bg + ';color:' + cls.text + '">' + ini + '</div>' +
         '<div style="flex:1;min-width:0">' +
-          '<div class="sc-name">' + esc(l.nombre_cliente || '—') + '</div>' +
+          '<div class="sc-name" ' +
+            (dashLead ? 'style="color:var(--accent);cursor:pointer" onclick="goToChat(' + dashLead.Lead_id + ')" title="Ver chat de ' + esc(l.nombre_cliente || '') + '"' : 'style="color:var(--text)"') +
+          '>' + esc(l.nombre_cliente || '—') + (dashLead ? ' &#128172;' : '') + '</div>' +
           '<div class="sc-meta">' +
             (rawTel ? '<span>📞 +' + rawTel + '</span>' : '') +
             '<span>💬 ' + (l.msgs_cliente || 0) + ' msgs</span>' +
