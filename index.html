@@ -912,7 +912,7 @@
 <header>
   <div class="logo">
     <div class="logo-dot"></div>
-    Lead Scoring Dashboard - Asistente C21 Pedro Arias <span style="font-size:9px;color:var(--muted);font-family:var(--mono);font-weight:400;margin-left:6px;opacity:0.5">build-scoring-tab</span>
+    Lead Scoring Dashboard - Asistente C21 Pedro Arias <span style="font-size:9px;color:var(--muted);font-family:var(--mono);font-weight:400;margin-left:6px;opacity:0.5">build-scoring-crossref</span>
   </div>
   <div class="header-right">
     <div class="sync-status">
@@ -3103,9 +3103,26 @@ function renderScoringCards() {
       '<span class="sc-signal neg">⚠️ ' + esc(s) + '</span>').join('');
 
     // WhatsApp link for suggested message
-    const rawTel = String(l.telefono || l.Telefono || '').replace(/[^\d+]/g,'');
+    // Cross-reference with dashboard leads using lead_id
+    const dashLead = leads.find(x =>
+      String(x.Lead_id) === String(l.lead_id) ||
+      String(x.id)      === String(l.lead_id)
+    );
+    const rawTel = String(
+      l.telefono || l.Telefono ||
+      dashLead?.Telefono || ''
+    ).replace(/[^\d+]/g,'');
+    const pipelineNombre = dashLead?.Pipeline_nombre || l.pipeline_nombre || '';
+    const dashTags = dashLead?.tags || [];
     const waMsg  = l.mensaje_sugerido ? encodeURIComponent(l.mensaje_sugerido) : '';
     const waLink = rawTel.length >= 7 ? 'whatsapp://send?phone=' + rawTel + (waMsg ? '&text=' + waMsg : '') : '';
+
+    // Pipeline pill
+    const pipelinePill = pipelineNombre
+      ? '<span style="font-size:10px;font-family:var(--mono);padding:2px 7px;border-radius:4px;background:rgba(0,200,255,0.08);border:1px solid rgba(0,200,255,0.2);color:var(--accent2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;display:inline-block">' + esc(pipelineNombre) + '</span>'
+      : '';
+    // Tags from dashboard
+    const tagsPills = dashTags.length ? renderTagPills(dashTags) : '';
 
     return '<div class="scoring-card ' + prioClass + '">' +
 
@@ -3115,10 +3132,13 @@ function renderScoringCards() {
         '<div style="flex:1;min-width:0">' +
           '<div class="sc-name">' + esc(l.nombre_cliente || '—') + '</div>' +
           '<div class="sc-meta">' +
+            (rawTel ? '<span>📞 +' + rawTel + '</span>' : '') +
             '<span>💬 ' + (l.msgs_cliente || 0) + ' msgs</span>' +
             '<span>⏱ ' + (l.dias_inactivo || 0) + 'd inactivo</span>' +
             (l.contactar_hoy ? '<span style="color:var(--accent);font-weight:600">📞 CONTACTAR HOY</span>' : '') +
           '</div>' +
+          (pipelinePill ? '<div style="margin-top:4px">' + pipelinePill + '</div>' : '') +
+          (tagsPills ? '<div style="display:flex;flex-wrap:wrap;gap:4px;margin-top:4px">' + tagsPills + '</div>' : '') +
         '</div>' +
         (l.es_prioritario ? '<span style="font-size:16px" title="Lead prioritario">⭐</span>' : '') +
       '</div>' +
