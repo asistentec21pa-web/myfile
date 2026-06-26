@@ -912,7 +912,7 @@
 <header>
   <div class="logo">
     <div class="logo-dot"></div>
-    Lead Scoring Dashboard - Asistente C21 Pedro Arias <span style="font-size:9px;color:var(--muted);font-family:var(--mono);font-weight:400;margin-left:6px;opacity:0.5">build-discard-system</span>
+    Lead Scoring Dashboard - Asistente C21 Pedro Arias <span style="font-size:9px;color:var(--muted);font-family:var(--mono);font-weight:400;margin-left:6px;opacity:0.5">build-discard-visible</span>
   </div>
   <div class="header-right">
     <div class="sync-status">
@@ -976,8 +976,8 @@
           <option value="">Todas las fuentes</option>
         </select>
         <span style="font-size:12px;color:var(--muted);font-family:var(--mono);background:rgba(0,200,255,0.08);border:1px solid rgba(0,200,255,0.15);border-radius:6px;padding:5px 10px">📣 Facebook Ads</span>
+        <button class="btn btn-sm" id="btn-show-discarded" onclick="toggleShowDiscarded()" title="Ver leads descartados" style="border-color:var(--muted);color:var(--muted)">🗑 <span id="discarded-label">Descartados</span> <span id="discarded-count" style="display:none;background:rgba(255,179,64,0.2);padding:0 5px;border-radius:8px;font-size:10px">0</span></button>
         <div class="toolbar-right">
-          <button class="btn btn-sm" id="btn-show-discarded" onclick="toggleShowDiscarded()" title="Ver leads descartados" style="border-color:var(--muted);color:var(--muted)">🗑 Descartados <span id="discarded-count" style="display:none">0</span></button>
           <button class="btn btn-sm" onclick="exportJSON()">↓ JSON</button>
           <button class="btn btn-sm" onclick="exportCSV()">↓ CSV</button>
         </div>
@@ -2612,6 +2612,7 @@ function discardLead(id) {
 function updateDiscardedCount() {
   const count = leads.filter(l => l.discarded).length;
   const badge = document.getElementById('discarded-count');
+  const label = document.getElementById('discarded-label');
   const btn   = document.getElementById('btn-show-discarded');
   if (badge) {
     badge.textContent = count;
@@ -2622,14 +2623,12 @@ function updateDiscardedCount() {
     btn.style.color       = _showDiscarded ? 'var(--danger)' : (count > 0 ? 'var(--warn)' : 'var(--muted)');
     btn.title = _showDiscarded ? 'Ver activos' : ('Ver descartados (' + count + ')');
   }
+  if (label) label.textContent = _showDiscarded ? '← Activos' : 'Descartados';
 }
 
 function toggleShowDiscarded() {
   _showDiscarded = !_showDiscarded;
-  const btn = document.getElementById('btn-show-discarded');
-  if (btn) btn.innerHTML = (_showDiscarded ? '← Activos' : '🗑 Descartados') +
-    ' <span id="discarded-count" style="' + (leads.filter(l=>l.discarded).length > 0 ? '' : 'display:none') + '">' +
-    leads.filter(l=>l.discarded).length + '</span>';
+  updateDiscardedCount();
   renderTable();
 }
 
