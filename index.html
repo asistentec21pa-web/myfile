@@ -912,7 +912,7 @@
 <header>
   <div class="logo">
     <div class="logo-dot"></div>
-    Lead Scoring Dashboard - Asistente C21 Pedro Arias <span style="font-size:9px;color:var(--muted);font-family:var(--mono);font-weight:400;margin-left:6px;opacity:0.5">build-discard-visible</span>
+    Lead Scoring Dashboard - Asistente C21 Pedro Arias <span style="font-size:9px;color:var(--muted);font-family:var(--mono);font-weight:400;margin-left:6px;opacity:0.5">build-scoring-discard-toggle</span>
   </div>
   <div class="header-right">
     <div class="sync-status">
@@ -1365,6 +1365,7 @@
         </select>
         <button class="btn btn-sm btn-primary" onclick="fetchScoringData()">↻ Sincronizar</button>
         <button class="btn btn-sm" onclick="pushScoringUpdate()" style="border-color:var(--warn);color:var(--warn)">⬆ Actualizar BD</button>
+        <button class="btn btn-sm" id="btn-scoring-discarded" onclick="toggleScoringDiscarded()" style="border-color:var(--muted);color:var(--muted)">🗑 <span id="scoring-discarded-label">Descartados</span> <span id="scoring-discarded-count" style="display:none;background:rgba(255,179,64,0.2);padding:0 5px;border-radius:8px;font-size:10px">0</span></button>
       </div>
     </div>
 
@@ -2635,6 +2636,8 @@ function toggleShowDiscarded() {
 // Discard from scoring IA tab (keeps in dashboard, removes from scoring view)
 let _scoringDiscarded = new Set(JSON.parse(localStorage.getItem('ls_scoring_discarded') || '[]'));
 
+let _showScoringDiscarded = false;
+
 function discardScoringLead(leadId, btn) {
   _scoringDiscarded.add(String(leadId));
   localStorage.setItem('ls_scoring_discarded', JSON.stringify([..._scoringDiscarded]));
@@ -2643,23 +2646,39 @@ function discardScoringLead(leadId, btn) {
     card.style.transition = 'opacity 0.3s, transform 0.3s';
     card.style.opacity = '0';
     card.style.transform = 'scale(0.95)';
-    setTimeout(() => {
-      scoringLeads = scoringLeads.filter(l => String(l.lead_id) !== String(leadId));
-      renderScoringCards();
-    }, 300);
+    setTimeout(() => renderScoringCards(), 300);
   }
+  updateScoringDiscardedBtn();
   toast('Lead descartado de Scoring IA', 'warn');
-  addLog('Scoring: lead ' + leadId + ' descartado de vista IA', 'warn');
+  addLog('Scoring: lead ' + leadId + ' descartado', 'warn');
 }
 
-function recoverAllScoringDiscarded() {
-  _scoringDiscarded.clear();
-  localStorage.removeItem('ls_scoring_discarded');
-  // Reload from localStorage
-  const saved = localStorage.getItem('ls_scoring_leads');
-  if (saved) { try { scoringLeads = JSON.parse(saved); } catch(e) {} }
+function recoverScoringLead(leadId) {
+  _scoringDiscarded.delete(String(leadId));
+  localStorage.setItem('ls_scoring_discarded', JSON.stringify([..._scoringDiscarded]));
+  updateScoringDiscardedBtn();
   renderScoringCards();
-  toast('Todos los leads de Scoring recuperados', 'ok');
+  toast('Lead recuperado en Scoring IA', 'ok');
+  addLog('Scoring: lead ' + leadId + ' recuperado', 'ok');
+}
+
+function toggleScoringDiscarded() {
+  _showScoringDiscarded = !_showScoringDiscarded;
+  updateScoringDiscardedBtn();
+  renderScoringCards();
+}
+
+function updateScoringDiscardedBtn() {
+  const count = _scoringDiscarded.size;
+  const badge = document.getElementById('scoring-discarded-count');
+  const label = document.getElementById('scoring-discarded-label');
+  const btn   = document.getElementById('btn-scoring-discarded');
+  if (badge) { badge.textContent = count; badge.style.display = count > 0 ? '' : 'none'; }
+  if (label) label.textContent = _showScoringDiscarded ? '← Activos' : 'Descartados';
+  if (btn) {
+    btn.style.borderColor = _showScoringDiscarded ? 'var(--danger)' : (count > 0 ? 'var(--warn)' : 'var(--muted)');
+    btn.style.color       = _showScoringDiscarded ? 'var(--danger)' : (count > 0 ? 'var(--warn)' : 'var(--muted)');
+  }
 }
 
 function deleteLead(id) {
@@ -3267,7 +3286,7 @@ function renderScoringCards() {
   const fClas = (document.getElementById('scoring-filter-clas')?.value || '');
 
   let data = [...scoringLeads]
-    .filter(l => !_scoringDiscarded.has(String(l.lead_id)))
+    .filter(l => _showScoringDiscarded ? _scoringDiscarded.has(String(l.lead_id)) : !_scoringDiscarded.has(String(l.lead_id)))
     .sort((a,b) => (Number(b.score)||0) - (Number(a.score)||0));
 
   if (q)     data = data.filter(l => (l.nombre_cliente||'').toLowerCase().includes(q) || (l.resumen||'').toLowerCase().includes(q) || (l.tipo_propiedad_buscada||'').toLowerCase().includes(q));
@@ -3276,27 +3295,11 @@ function renderScoringCards() {
 
   renderScoringStats(data);
 
-  // Show recover button if there are discarded leads
-  const discardedCount = _scoringDiscarded.size;
-  let recoverBtn = document.getElementById('scoring-recover-btn');
-  if (discardedCount > 0) {
-    if (!recoverBtn) {
-      recoverBtn = document.createElement('button');
-      recoverBtn.id = 'scoring-recover-btn';
-      recoverBtn.className = 'btn btn-sm';
-      recoverBtn.style.cssText = 'border-color:var(--warn);color:var(--warn);margin-bottom:0.5rem';
-      recoverBtn.onclick = recoverAllScoringDiscarded;
-      const statsEl = document.getElementById('scoring-stats');
-      statsEl.parentNode.insertBefore(recoverBtn, statsEl);
-    }
-    recoverBtn.textContent = '↩ Recuperar ' + discardedCount + ' descartado' + (discardedCount > 1 ? 's' : '');
-  } else if (recoverBtn) {
-    recoverBtn.remove();
-  }
+  updateScoringDiscardedBtn();
 
   if (!data.length) {
     wrap.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:3rem;color:var(--muted);font-family:var(--mono);font-size:13px">' +
-      (scoringLeads.length ? '🔍 Sin resultados para el filtro aplicado' : '🤖 Sin datos. Configura el webhook y sincroniza.') +
+      (_showScoringDiscarded ? '📭 No hay leads descartados en Scoring IA' : (scoringLeads.length ? '🔍 Sin resultados para el filtro aplicado' : '🤖 Sin datos. Configura el webhook y sincroniza.')) +
     '</div>';
     return;
   }
@@ -3391,7 +3394,10 @@ function renderScoringCards() {
 
       // Action buttons
       '<div class="sc-actions">' +
-        '<button class="btn btn-sm" onclick="discardScoringLead(\'' + l.lead_id + '\', this)" title="Descartar de Scoring" style="flex:0 0 auto;border-color:var(--warn);color:var(--warn)">🚫 Descartar</button>' +
+        (_showScoringDiscarded
+          ? '<button class="btn btn-sm" onclick="recoverScoringLead(\'' + l.lead_id + '\')" style="flex:0 0 auto;border-color:var(--accent);color:var(--accent)">↩ Recuperar</button>'
+          : '<button class="btn btn-sm" onclick="discardScoringLead(\'' + l.lead_id + '\', this)" style="flex:0 0 auto;border-color:var(--warn);color:var(--warn)">🚫 Descartar</button>'
+        ) +
         (waLink ? '<a href="' + waLink + '" target="_blank" rel="noopener" style="flex:1;display:flex;align-items:center;justify-content:center;gap:5px;padding:7px;border-radius:7px;background:rgba(37,211,102,0.1);border:1px solid rgba(37,211,102,0.3);color:#25D366;text-decoration:none;font-size:12px;font-weight:500">📲 WhatsApp</a>' : '') +
         '<button class="btn btn-sm" style="flex:1" onclick="copyScoringMsg(' + JSON.stringify(l.mensaje_sugerido || '') + ', this)">📋 Copiar mensaje</button>' +
       '</div>' +
@@ -3529,6 +3535,7 @@ renderTable();
 updateStatusPanel();
 initScoringCfg();
 updateDiscardedCount();
+updateScoringDiscardedBtn();
 if (fromCache) {
   updateSyncStatus('ok');
   addLog('leads cargados desde cache local (' + leads.length + ')', 'ok');
