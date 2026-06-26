@@ -3282,15 +3282,28 @@ function renderScoringCards() {
   const wrap = document.getElementById('scoring-cards-wrap');
   if (!wrap) return;
   const q     = (document.getElementById('scoring-search')?.value || '').toLowerCase();
-  const fPrio = (document.getElementById('scoring-filter-prio')?.value || '');
-  const fClas = (document.getElementById('scoring-filter-clas')?.value || '');
+  const fPrio = (document.getElementById('scoring-filter-prio')?.value || '').toUpperCase();
+  const fClas = (document.getElementById('scoring-filter-clas')?.value || '').toUpperCase();
+
+  // Priority weight for sorting: ALTA=3, MEDIA=2, BAJA=1, unknown=0
+  function prioWeight(p) {
+    const s = String(p||'').toUpperCase();
+    if (s.includes('ALTA'))  return 3;
+    if (s.includes('MEDIA')) return 2;
+    if (s.includes('BAJA'))  return 1;
+    return 0;
+  }
 
   let data = [...scoringLeads]
     .filter(l => _showScoringDiscarded ? _scoringDiscarded.has(String(l.lead_id)) : !_scoringDiscarded.has(String(l.lead_id)))
-    .sort((a,b) => (Number(b.score)||0) - (Number(a.score)||0));
+    .sort((a,b) => {
+      // Primary: priority (high first), Secondary: score (high first)
+      const pd = prioWeight(b.prioridad_contacto) - prioWeight(a.prioridad_contacto);
+      return pd !== 0 ? pd : (Number(b.score)||0) - (Number(a.score)||0);
+    });
 
   if (q)     data = data.filter(l => (l.nombre_cliente||'').toLowerCase().includes(q) || (l.resumen||'').toLowerCase().includes(q) || (l.tipo_propiedad_buscada||'').toLowerCase().includes(q));
-  if (fPrio) data = data.filter(l => String(l.prioridad_contacto||'').toUpperCase() === fPrio);
+  if (fPrio) data = data.filter(l => String(l.prioridad_contacto||'').toUpperCase().includes(fPrio.replace('_PRIORIDAD','')) );
   if (fClas) data = data.filter(l => String(l.clasificacion||'').toUpperCase() === fClas);
 
   renderScoringStats(data);
