@@ -912,7 +912,7 @@
 <header>
   <div class="logo">
     <div class="logo-dot"></div>
-    Lead Scoring Dashboard - Asistente C21 Pedro Arias <span style="font-size:9px;color:var(--muted);font-family:var(--mono);font-weight:400;margin-left:6px;opacity:0.5">build-scoring-post</span>
+    Lead Scoring Dashboard - Asistente C21 Pedro Arias <span style="font-size:9px;color:var(--muted);font-family:var(--mono);font-weight:400;margin-left:6px;opacity:0.5">build-discard-system</span>
   </div>
   <div class="header-right">
     <div class="sync-status">
@@ -977,6 +977,7 @@
         </select>
         <span style="font-size:12px;color:var(--muted);font-family:var(--mono);background:rgba(0,200,255,0.08);border:1px solid rgba(0,200,255,0.15);border-radius:6px;padding:5px 10px">📣 Facebook Ads</span>
         <div class="toolbar-right">
+          <button class="btn btn-sm" id="btn-show-discarded" onclick="toggleShowDiscarded()" title="Ver leads descartados" style="border-color:var(--muted);color:var(--muted)">🗑 Descartados <span id="discarded-count" style="display:none">0</span></button>
           <button class="btn btn-sm" onclick="exportJSON()">↓ JSON</button>
           <button class="btn btn-sm" onclick="exportCSV()">↓ CSV</button>
         </div>
@@ -1809,6 +1810,9 @@ function getFiltered() {
   const fs = document.getElementById('f-src').value;
   const fp = document.getElementById('f-pipeline').value;
   return leads.filter(l => {
+    // Show/hide discarded leads based on toggle
+    if (l.discarded && !_showDiscarded) return false;
+    if (!l.discarded && _showDiscarded) return false;
     if (q && !l.name.toLowerCase().includes(q) && !(l.Telefono||'').toLowerCase().includes(q) && !(l.email||'').toLowerCase().includes(q) && !(l.Pipeline_nombre||'').toLowerCase().includes(q)) return false;
     if (ft && getTemp(l.Lead_score, l.Lead_categoria) !== ft) return false;
     if (fs && l.etiqueta_fuente !== fs) return false;
@@ -1880,8 +1884,9 @@ function buildRow(l) {
     <td style="line-height:1.8">${renderTagPills(l.tags||[])}</td>
     <td style="font-size:11px;color:var(--muted)">${esc(l.etiqueta_fuente||'—')}</td>
     <td style="font-family:var(--mono);font-size:12px">$${Number(l.Valor_lead||l.value||0).toLocaleString()}</td>
-    <td onclick="event.stopPropagation()">
+    <td onclick="event.stopPropagation()" style="white-space:nowrap">
       <button class="btn btn-sm" onclick="pushToN8N(leads.find(x=>x.id===${l.id}))">↑</button>
+      <button class="btn btn-sm" onclick="discardLead(${l.id})" title="${l.discarded ? 'Recuperar' : 'Descartar'}" style="border-color:${l.discarded ? 'var(--accent)' : 'var(--warn)'};color:${l.discarded ? 'var(--accent)' : 'var(--warn)'}">${l.discarded ? '↩' : '🚫'}</button>
       <button class="btn btn-sm btn-danger" onclick="deleteLead(${l.id})">✕</button>
     </td>
   </tr>`;
@@ -1994,6 +1999,7 @@ function renderMobileCards() {
       '<div class="mobile-card-actions">' +
         (waLink ? '<a href="'+waLink+'" class="btn-wa" style="flex:1;min-width:0;display:flex;align-items:center;justify-content:center;gap:6px;padding:7px;border-radius:7px;background:rgba(37,211,102,0.1);border:1px solid rgba(37,211,102,0.3);color:#25D366;text-decoration:none;font-size:12px;font-weight:500;box-sizing:border-box">📲 WhatsApp</a>' : '') +
         '<button class="btn btn-sm btn-edit" onclick="openModal(\'edit\','+l.id+')">✏ Editar</button>' +
+        '<button class="btn btn-sm" onclick="discardLead('+l.id+')" style="flex:0 0 auto;padding:6px 8px;border-color:'+(l.discarded?'var(--accent)':'var(--warn)')+';color:'+(l.discarded?'var(--accent)':'var(--warn)')+'">'+( l.discarded?'↩':'🚫')+'</button>' +
         '<button class="btn btn-sm btn-danger" onclick="deleteLead('+l.id+')">✕</button>' +
       '</div>' +
     '</div>';
@@ -2579,6 +2585,82 @@ async function saveLead() {
   renderTable();
   if (cfg.postUrl) await pushToN8N(lead);
   else toast('Lead guardado localmente (sin webhook POST configurado)', 'info');
+}
+
+// ── DISCARD SYSTEM ────────────────────────────────────────────────────────
+let _showDiscarded = false;
+
+function discardLead(id) {
+  const l = leads.find(x => String(x.id) === String(id));
+  if (!l) return;
+  if (l.discarded) {
+    // Recover
+    l.discarded = false;
+    toast('Lead ' + (l.name || 'sin nombre') + ' recuperado', 'ok');
+    addLog('Lead recuperado: ' + (l.name || '#'+id), 'ok');
+  } else {
+    // Discard
+    l.discarded = true;
+    toast('Lead ' + (l.name || 'sin nombre') + ' descartado', 'warn');
+    addLog('Lead descartado: ' + (l.name || '#'+id), 'warn');
+  }
+  saveLeads();
+  renderTable();
+  updateDiscardedCount();
+}
+
+function updateDiscardedCount() {
+  const count = leads.filter(l => l.discarded).length;
+  const badge = document.getElementById('discarded-count');
+  const btn   = document.getElementById('btn-show-discarded');
+  if (badge) {
+    badge.textContent = count;
+    badge.style.display = count > 0 ? '' : 'none';
+  }
+  if (btn) {
+    btn.style.borderColor = _showDiscarded ? 'var(--danger)' : (count > 0 ? 'var(--warn)' : 'var(--muted)');
+    btn.style.color       = _showDiscarded ? 'var(--danger)' : (count > 0 ? 'var(--warn)' : 'var(--muted)');
+    btn.title = _showDiscarded ? 'Ver activos' : ('Ver descartados (' + count + ')');
+  }
+}
+
+function toggleShowDiscarded() {
+  _showDiscarded = !_showDiscarded;
+  const btn = document.getElementById('btn-show-discarded');
+  if (btn) btn.innerHTML = (_showDiscarded ? '← Activos' : '🗑 Descartados') +
+    ' <span id="discarded-count" style="' + (leads.filter(l=>l.discarded).length > 0 ? '' : 'display:none') + '">' +
+    leads.filter(l=>l.discarded).length + '</span>';
+  renderTable();
+}
+
+// Discard from scoring IA tab (keeps in dashboard, removes from scoring view)
+let _scoringDiscarded = new Set(JSON.parse(localStorage.getItem('ls_scoring_discarded') || '[]'));
+
+function discardScoringLead(leadId, btn) {
+  _scoringDiscarded.add(String(leadId));
+  localStorage.setItem('ls_scoring_discarded', JSON.stringify([..._scoringDiscarded]));
+  const card = btn.closest('.scoring-card');
+  if (card) {
+    card.style.transition = 'opacity 0.3s, transform 0.3s';
+    card.style.opacity = '0';
+    card.style.transform = 'scale(0.95)';
+    setTimeout(() => {
+      scoringLeads = scoringLeads.filter(l => String(l.lead_id) !== String(leadId));
+      renderScoringCards();
+    }, 300);
+  }
+  toast('Lead descartado de Scoring IA', 'warn');
+  addLog('Scoring: lead ' + leadId + ' descartado de vista IA', 'warn');
+}
+
+function recoverAllScoringDiscarded() {
+  _scoringDiscarded.clear();
+  localStorage.removeItem('ls_scoring_discarded');
+  // Reload from localStorage
+  const saved = localStorage.getItem('ls_scoring_leads');
+  if (saved) { try { scoringLeads = JSON.parse(saved); } catch(e) {} }
+  renderScoringCards();
+  toast('Todos los leads de Scoring recuperados', 'ok');
 }
 
 function deleteLead(id) {
@@ -3185,13 +3267,33 @@ function renderScoringCards() {
   const fPrio = (document.getElementById('scoring-filter-prio')?.value || '');
   const fClas = (document.getElementById('scoring-filter-clas')?.value || '');
 
-  let data = [...scoringLeads].sort((a,b) => (Number(b.score)||0) - (Number(a.score)||0));
+  let data = [...scoringLeads]
+    .filter(l => !_scoringDiscarded.has(String(l.lead_id)))
+    .sort((a,b) => (Number(b.score)||0) - (Number(a.score)||0));
 
   if (q)     data = data.filter(l => (l.nombre_cliente||'').toLowerCase().includes(q) || (l.resumen||'').toLowerCase().includes(q) || (l.tipo_propiedad_buscada||'').toLowerCase().includes(q));
   if (fPrio) data = data.filter(l => String(l.prioridad_contacto||'').toUpperCase() === fPrio);
   if (fClas) data = data.filter(l => String(l.clasificacion||'').toUpperCase() === fClas);
 
   renderScoringStats(data);
+
+  // Show recover button if there are discarded leads
+  const discardedCount = _scoringDiscarded.size;
+  let recoverBtn = document.getElementById('scoring-recover-btn');
+  if (discardedCount > 0) {
+    if (!recoverBtn) {
+      recoverBtn = document.createElement('button');
+      recoverBtn.id = 'scoring-recover-btn';
+      recoverBtn.className = 'btn btn-sm';
+      recoverBtn.style.cssText = 'border-color:var(--warn);color:var(--warn);margin-bottom:0.5rem';
+      recoverBtn.onclick = recoverAllScoringDiscarded;
+      const statsEl = document.getElementById('scoring-stats');
+      statsEl.parentNode.insertBefore(recoverBtn, statsEl);
+    }
+    recoverBtn.textContent = '↩ Recuperar ' + discardedCount + ' descartado' + (discardedCount > 1 ? 's' : '');
+  } else if (recoverBtn) {
+    recoverBtn.remove();
+  }
 
   if (!data.length) {
     wrap.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:3rem;color:var(--muted);font-family:var(--mono);font-size:13px">' +
@@ -3290,6 +3392,7 @@ function renderScoringCards() {
 
       // Action buttons
       '<div class="sc-actions">' +
+        '<button class="btn btn-sm" onclick="discardScoringLead(\'' + l.lead_id + '\', this)" title="Descartar de Scoring" style="flex:0 0 auto;border-color:var(--warn);color:var(--warn)">🚫 Descartar</button>' +
         (waLink ? '<a href="' + waLink + '" target="_blank" rel="noopener" style="flex:1;display:flex;align-items:center;justify-content:center;gap:5px;padding:7px;border-radius:7px;background:rgba(37,211,102,0.1);border:1px solid rgba(37,211,102,0.3);color:#25D366;text-decoration:none;font-size:12px;font-weight:500">📲 WhatsApp</a>' : '') +
         '<button class="btn btn-sm" style="flex:1" onclick="copyScoringMsg(' + JSON.stringify(l.mensaje_sugerido || '') + ', this)">📋 Copiar mensaje</button>' +
       '</div>' +
@@ -3426,6 +3529,7 @@ updateReqBadge();
 renderTable();
 updateStatusPanel();
 initScoringCfg();
+updateDiscardedCount();
 if (fromCache) {
   updateSyncStatus('ok');
   addLog('leads cargados desde cache local (' + leads.length + ')', 'ok');
