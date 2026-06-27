@@ -1351,11 +1351,13 @@
       </div>
       <div style="margin-left:auto;display:flex;gap:8px;align-items:center;flex-wrap:wrap">
         <input type="text" id="scoring-search" placeholder="Buscar cliente..." style="font-size:12px;width:180px" oninput="renderScoringCards()">
-        <select id="scoring-filter-prio" onchange="renderScoringCards()" style="font-size:12px;width:140px">
+        <select id="scoring-filter-prio" onchange="renderScoringCards()" style="font-size:12px;width:160px">
           <option value="">Toda prioridad</option>
-          <option value="ALTA_PRIORIDAD">🔴 Alta prioridad</option>
-          <option value="MEDIA_PRIORIDAD">🟡 Media prioridad</option>
-          <option value="BAJA_PRIORIDAD">🔵 Baja prioridad</option>
+          <option value="HOY">📞 Contactar hoy</option>
+          <option value="ESTA_SEMANA">📅 Esta semana</option>
+          <option value="ALTA">🔴 Alta prioridad</option>
+          <option value="MEDIA">🟡 Media prioridad</option>
+          <option value="BAJA">🔵 Baja prioridad</option>
         </select>
         <select id="scoring-filter-clas" onchange="renderScoringCards()" style="font-size:12px;width:130px">
           <option value="">Toda clasificación</option>
@@ -3285,8 +3287,10 @@ function renderScoringCards() {
   const fPrio = (document.getElementById('scoring-filter-prio')?.value || '').toUpperCase();
   const fClas = (document.getElementById('scoring-filter-clas')?.value || '').toUpperCase();
 
-  // Priority weight for sorting: ALTA=3, MEDIA=2, BAJA=1, unknown=0
-  function prioWeight(p) {
+  // Priority weight: contactar_hoy=5, es_prioritario=4, ALTA=3, MEDIA=2, BAJA=1
+  function prioWeight(p, lead) {
+    if (lead && lead.contactar_hoy)   return 5;
+    if (lead && lead.es_prioritario)  return 4;
     const s = String(p||'').toUpperCase();
     if (s.includes('ALTA'))  return 3;
     if (s.includes('MEDIA')) return 2;
@@ -3297,13 +3301,19 @@ function renderScoringCards() {
   let data = [...scoringLeads]
     .filter(l => _showScoringDiscarded ? _scoringDiscarded.has(String(l.lead_id)) : !_scoringDiscarded.has(String(l.lead_id)))
     .sort((a,b) => {
-      // Primary: priority (high first), Secondary: score (high first)
-      const pd = prioWeight(b.prioridad_contacto) - prioWeight(a.prioridad_contacto);
+      const pd = prioWeight(b.prioridad_contacto, b) - prioWeight(a.prioridad_contacto, a);
       return pd !== 0 ? pd : (Number(b.score)||0) - (Number(a.score)||0);
     });
 
   if (q)     data = data.filter(l => (l.nombre_cliente||'').toLowerCase().includes(q) || (l.resumen||'').toLowerCase().includes(q) || (l.tipo_propiedad_buscada||'').toLowerCase().includes(q));
-  if (fPrio) data = data.filter(l => String(l.prioridad_contacto||'').toUpperCase().includes(fPrio.replace('_PRIORIDAD','')) );
+  if (fPrio) {
+    data = data.filter(l => {
+      if (fPrio === 'HOY')        return l.contactar_hoy === true;
+      if (fPrio === 'ESTA_SEMANA') return l.es_prioritario === true && !l.contactar_hoy;
+      // For ALTA, MEDIA, BAJA — check prioridad_contacto field
+      return String(l.prioridad_contacto||'').toUpperCase().includes(fPrio);
+    });
+  }
   if (fClas) data = data.filter(l => String(l.clasificacion||'').toUpperCase() === fClas);
 
   renderScoringStats(data);
