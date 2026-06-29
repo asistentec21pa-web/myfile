@@ -912,7 +912,7 @@
 <header>
   <div class="logo">
     <div class="logo-dot"></div>
-    Lead Scoring Dashboard - Asistente C21 Pedro Arias <span style="font-size:9px;color:var(--muted);font-family:var(--mono);font-weight:400;margin-left:6px;opacity:0.5">build-scoring-discard-toggle</span>
+    Lead Scoring Dashboard - Asistente C21 Pedro Arias <span style="font-size:9px;color:var(--muted);font-family:var(--mono);font-weight:400;margin-left:6px;opacity:0.5">build-scoring-real-json</span>
   </div>
   <div class="header-right">
     <div class="sync-status">
@@ -1350,25 +1350,114 @@
         <div style="font-size:11px;color:var(--muted);font-family:var(--mono);margin-top:3px">Análisis de clientes potenciales generado por IA</div>
       </div>
       <div style="margin-left:auto;display:flex;gap:8px;align-items:center;flex-wrap:wrap">
-        <input type="text" id="scoring-search" placeholder="Buscar cliente..." style="font-size:12px;width:180px" oninput="renderScoringCards()">
-        <select id="scoring-filter-prio" onchange="renderScoringCards()" style="font-size:12px;width:160px">
-          <option value="">Toda prioridad</option>
-          <option value="HOY">📞 Contactar hoy</option>
-          <option value="ESTA_SEMANA">📅 Esta semana</option>
-          <option value="ALTA">🔴 Alta prioridad</option>
-          <option value="MEDIA">🟡 Media prioridad</option>
-          <option value="BAJA">🔵 Baja prioridad</option>
-        </select>
-        <select id="scoring-filter-clas" onchange="renderScoringCards()" style="font-size:12px;width:130px">
-          <option value="">Toda clasificación</option>
-          <option value="CALIENTE">🔴 Caliente</option>
-          <option value="TIBIO">🟡 Tibio</option>
-          <option value="FRIO">🔵 Frío</option>
-        </select>
         <button class="btn btn-sm btn-primary" onclick="fetchScoringData()">↻ Sincronizar</button>
         <button class="btn btn-sm" onclick="pushScoringUpdate()" style="border-color:var(--warn);color:var(--warn)">⬆ Actualizar BD</button>
         <button class="btn btn-sm" id="btn-scoring-discarded" onclick="toggleScoringDiscarded()" style="border-color:var(--muted);color:var(--muted)">🗑 <span id="scoring-discarded-label">Descartados</span> <span id="scoring-discarded-count" style="display:none;background:rgba(255,179,64,0.2);padding:0 5px;border-radius:8px;font-size:10px">0</span></button>
       </div>
+    </div>
+
+    <!-- FILTROS -->
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:1rem;padding:10px 12px;background:var(--surface);border:1px solid var(--border);border-radius:10px;align-items:flex-end">
+      <div style="display:flex;flex-direction:column;gap:3px">
+        <label style="font-size:10px;color:var(--muted);font-family:var(--mono)">BUSCAR</label>
+        <input type="text" id="scoring-search" placeholder="Nombre, resumen..." style="font-size:12px;width:160px" oninput="renderScoringCards()">
+      </div>
+      <div style="display:flex;flex-direction:column;gap:3px">
+        <label style="font-size:10px;color:var(--muted);font-family:var(--mono)">PRIORIDAD</label>
+        <select id="scoring-filter-prio" onchange="renderScoringCards()" style="font-size:12px;width:150px">
+          <option value="">Toda</option>
+          <option value="HOY">📞 Hoy</option>
+          <option value="ESTA_SEMANA">📅 Esta semana</option>
+          <option value="ESTE_MES">🗓 Este mes</option>
+          <option value="BAJA_PRIORIDAD">⬇ Baja prioridad</option>
+        </select>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:3px">
+        <label style="font-size:10px;color:var(--muted);font-family:var(--mono)">CLASIFICACIÓN</label>
+        <select id="scoring-filter-clas" onchange="renderScoringCards()" style="font-size:12px;width:140px">
+          <option value="">Toda</option>
+          <option value="CALIENTE">🔴 Caliente</option>
+          <option value="TIBIO">🟡 Tibio</option>
+          <option value="FRIO">🔵 Frío</option>
+          <option value="NO_CALIFICADO">⚫ No calificado</option>
+        </select>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:3px">
+        <label style="font-size:10px;color:var(--muted);font-family:var(--mono)">INTENCIÓN COMPRA</label>
+        <select id="scoring-filter-intencion" onchange="renderScoringCards()" style="font-size:12px;width:130px">
+          <option value="">Toda</option>
+          <option value="ALTA">🔥 Alta</option>
+          <option value="MEDIA">➡ Media</option>
+          <option value="BAJA">❄ Baja</option>
+          <option value="DESCONOCIDA">❓ Desconocida</option>
+        </select>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:3px">
+        <label style="font-size:10px;color:var(--muted);font-family:var(--mono)">ETAPA EMBUDO</label>
+        <select id="scoring-filter-etapa" onchange="renderScoringCards()" style="font-size:12px;width:160px">
+          <option value="">Toda</option>
+          <option value="LISTO_VISITA">✅ Listo para visita</option>
+          <option value="CERCA_VISITA">📅 Cerca de visita</option>
+          <option value="NECESITA_NURTURING">💬 Necesita nurturing</option>
+          <option value="INICIO">🆕 Inicio</option>
+          <option value="PERDIDO">❌ Perdido</option>
+        </select>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:3px">
+        <label style="font-size:10px;color:var(--muted);font-family:var(--mono)">OBJECIÓN</label>
+        <select id="scoring-filter-razon" onchange="renderScoringCards()" style="font-size:12px;width:150px">
+          <option value="">Toda</option>
+          <option value="PRECIO">💰 Precio</option>
+          <option value="TIEMPO">⏰ Tiempo</option>
+          <option value="PAREJA">👫 Pareja</option>
+          <option value="FINANCIAMIENTO">🏦 Financiamiento</option>
+          <option value="COMPARANDO">🔍 Comparando</option>
+          <option value="NINGUNA">✅ Ninguna</option>
+          <option value="DESCONOCIDA">❓ Desconocida</option>
+        </select>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:3px">
+        <label style="font-size:10px;color:var(--muted);font-family:var(--mono)">URGENCIA</label>
+        <select id="scoring-filter-urgencia" onchange="renderScoringCards()" style="font-size:12px;width:150px">
+          <option value="">Toda</option>
+          <option value="INMEDIATA">🔴 Inmediata</option>
+          <option value="3_MESES">🟡 3 meses</option>
+          <option value="6_MESES">🟠 6 meses</option>
+          <option value="MAS_DE_6_MESES">⚪ Más de 6 meses</option>
+          <option value="SIN_DEFINIR">❓ Sin definir</option>
+        </select>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:3px">
+        <label style="font-size:10px;color:var(--muted);font-family:var(--mono)">CAP. FINANCIERA</label>
+        <select id="scoring-filter-finanzas" onchange="renderScoringCards()" style="font-size:12px;width:130px">
+          <option value="">Toda</option>
+          <option value="CONFIRMADA">✅ Confirmada</option>
+          <option value="PROBABLE">🟡 Probable</option>
+          <option value="DUDOSA">⚠ Dudosa</option>
+          <option value="DESCONOCIDA">❓ Desconocida</option>
+        </select>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:3px">
+        <label style="font-size:10px;color:var(--muted);font-family:var(--mono)">QUIERE AGENDAR</label>
+        <select id="scoring-filter-agendar" onchange="renderScoringCards()" style="font-size:12px;width:120px">
+          <option value="">Todos</option>
+          <option value="SI">✅ Sí</option>
+          <option value="NO">❌ No</option>
+        </select>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:3px">
+        <label style="font-size:10px;color:var(--muted);font-family:var(--mono)">ALERTA INMEDIATA</label>
+        <select id="scoring-filter-alerta" onchange="renderScoringCards()" style="font-size:12px;width:120px">
+          <option value="">Todos</option>
+          <option value="SI">🚨 Con alerta</option>
+          <option value="NO">— Sin alerta</option>
+        </select>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:3px">
+        <label style="font-size:10px;color:var(--muted);font-family:var(--mono)">INACTIVO ≥ (días)</label>
+        <input type="number" id="scoring-filter-dias" placeholder="ej. 3" min="0" style="font-size:12px;width:80px" oninput="renderScoringCards()">
+      </div>
+      <button class="btn btn-sm" onclick="resetScoringFilters()" style="align-self:flex-end;color:var(--muted);border-color:var(--border)">✕ Limpiar</button>
     </div>
 
     <div id="scoring-stats" style="display:flex;gap:8px;margin-bottom:1rem;flex-wrap:wrap"></div>
@@ -3283,18 +3372,28 @@ function renderScoringStats(data) {
 function renderScoringCards() {
   const wrap = document.getElementById('scoring-cards-wrap');
   if (!wrap) return;
-  const q     = (document.getElementById('scoring-search')?.value || '').toLowerCase();
-  const fPrio = (document.getElementById('scoring-filter-prio')?.value || '').toUpperCase();
-  const fClas = (document.getElementById('scoring-filter-clas')?.value || '').toUpperCase();
+  const q        = (document.getElementById('scoring-search')?.value || '').toLowerCase();
+  const fPrio    = (document.getElementById('scoring-filter-prio')?.value || '').toUpperCase();
+  const fClas    = (document.getElementById('scoring-filter-clas')?.value || '').toUpperCase();
+  const fInten   = (document.getElementById('scoring-filter-intencion')?.value || '').toUpperCase();
+  const fEtapa   = (document.getElementById('scoring-filter-etapa')?.value || '').toUpperCase();
+  const fRazon   = (document.getElementById('scoring-filter-razon')?.value || '').toUpperCase();
+  const fUrgencia = (document.getElementById('scoring-filter-urgencia')?.value || '').toUpperCase();
+  const fFinanzas = (document.getElementById('scoring-filter-finanzas')?.value || '').toUpperCase();
+  const fAgendar  = (document.getElementById('scoring-filter-agendar')?.value || '').toUpperCase();
+  const fAlerta  = (document.getElementById('scoring-filter-alerta')?.value || '').toUpperCase();
+  const fDias    = parseInt(document.getElementById('scoring-filter-dias')?.value || '0') || 0;
 
   // Priority weight: contactar_hoy=5, es_prioritario=4, ALTA=3, MEDIA=2, BAJA=1
   function prioWeight(p, lead) {
-    if (lead && lead.contactar_hoy)   return 5;
-    if (lead && lead.es_prioritario)  return 4;
+    if (lead && lead.alerta_inmediata)  return 6;
+    if (lead && lead.contactar_hoy)     return 5;
+    if (lead && lead.es_prioritario)    return 4;
     const s = String(p||'').toUpperCase();
-    if (s.includes('ALTA'))  return 3;
-    if (s.includes('MEDIA')) return 2;
-    if (s.includes('BAJA'))  return 1;
+    if (s === 'HOY')             return 5;
+    if (s === 'ESTA_SEMANA')     return 4;
+    if (s === 'ESTE_MES')        return 3;
+    if (s === 'BAJA_PRIORIDAD')  return 1;
     return 0;
   }
 
@@ -3305,16 +3404,28 @@ function renderScoringCards() {
       return pd !== 0 ? pd : (Number(b.score)||0) - (Number(a.score)||0);
     });
 
-  if (q)     data = data.filter(l => (l.nombre_cliente||'').toLowerCase().includes(q) || (l.resumen||'').toLowerCase().includes(q) || (l.tipo_propiedad_buscada||'').toLowerCase().includes(q));
-  if (fPrio) {
+  if (q)       data = data.filter(l => (l.nombre_cliente||'').toLowerCase().includes(q) || (l.resumen||'').toLowerCase().includes(q) || (l.tipo_propiedad_buscada||'').toLowerCase().includes(q) || (l.caracteristicas_buscadas||'').toLowerCase().includes(q));
+  if (fPrio)   {
     data = data.filter(l => {
-      if (fPrio === 'HOY')        return l.contactar_hoy === true;
-      if (fPrio === 'ESTA_SEMANA') return l.es_prioritario === true && !l.contactar_hoy;
-      // For ALTA, MEDIA, BAJA — check prioridad_contacto field
-      return String(l.prioridad_contacto||'').toUpperCase().includes(fPrio);
+      const p = String(l.prioridad_contacto||'').toUpperCase();
+      if (fPrio === 'HOY')           return l.contactar_hoy === true || p === 'HOY';
+      if (fPrio === 'ESTA_SEMANA')   return p === 'ESTA_SEMANA';
+      if (fPrio === 'ESTE_MES')      return p === 'ESTE_MES';
+      if (fPrio === 'BAJA_PRIORIDAD') return p === 'BAJA_PRIORIDAD';
+      return p.includes(fPrio);
     });
   }
-  if (fClas) data = data.filter(l => String(l.clasificacion||'').toUpperCase() === fClas);
+  if (fClas)   data = data.filter(l => String(l.clasificacion||'').toUpperCase() === fClas);
+  if (fInten)  data = data.filter(l => String(l.intencion_compra||l.intencion_visita||'').toUpperCase() === fInten);
+  if (fEtapa)  data = data.filter(l => String(l.etapa_embudo||'').toUpperCase().includes(fEtapa));
+  if (fRazon)  data = data.filter(l => String(l.objecion_principal||l.razon_no_visita||'').toUpperCase().includes(fRazon));
+  if (fUrgencia) data = data.filter(l => String(l.urgencia||'').toUpperCase() === fUrgencia);
+  if (fFinanzas) data = data.filter(l => String(l.capacidad_financiera||'').toUpperCase() === fFinanzas);
+  if (fAgendar === 'SI') data = data.filter(l => l.quiere_agendar_visita === true);
+  if (fAgendar === 'NO') data = data.filter(l => !l.quiere_agendar_visita);
+  if (fAlerta === 'SI')  data = data.filter(l => l.alerta_inmediata === true);
+  if (fAlerta === 'NO')  data = data.filter(l => !l.alerta_inmediata);
+  if (fDias)   data = data.filter(l => (Number(l.dias_inactivo)||0) >= fDias);
 
   renderScoringStats(data);
 
@@ -3395,8 +3506,13 @@ function renderScoringCards() {
       '<div class="sc-badges">' +
         '<span class="sc-badge" style="color:' + cls.text + ';background:' + cls.bg + ';border-color:' + cls.bdr + '">' + labelClas(l.clasificacion) + '</span>' +
         '<span class="sc-badge" style="color:' + prio.text + ';background:' + prio.bg + ';border-color:' + prio.bdr + '">' + labelPrio(l.prioridad_contacto) + '</span>' +
-        (l.intencion_compra  ? '<span class="sc-badge" style="color:var(--muted);background:var(--surface2);border-color:var(--border)">Intención: ' + esc(l.intencion_compra) + '</span>' : '') +
+        (l.intencion_visita||l.intencion_compra ? '<span class="sc-badge" style="color:var(--muted);background:var(--surface2);border-color:var(--border)">Visita: ' + esc(l.intencion_visita||l.intencion_compra) + '</span>' : '') +
         (l.urgencia && l.urgencia !== 'SIN_DEFINIR' ? '<span class="sc-badge" style="color:var(--muted);background:var(--surface2);border-color:var(--border)">Urgencia: ' + esc(l.urgencia) + '</span>' : '') +
+        (l.capacidad_financiera && l.capacidad_financiera !== 'DESCONOCIDA' ? '<span class="sc-badge" style="color:var(--accent);background:rgba(79,255,176,0.08);border-color:rgba(79,255,176,0.25)">💰 ' + esc(l.capacidad_financiera) + '</span>' : '') +
+        (l.etapa_embudo ? '<span class="sc-badge" style="color:var(--accent2);background:rgba(0,200,255,0.08);border-color:rgba(0,200,255,0.2)">🔄 ' + esc(l.etapa_embudo) + '</span>' : '') +
+        (l.objecion_principal && l.objecion_principal !== 'DESCONOCIDA' ? '<span class="sc-badge" style="color:var(--danger);background:rgba(255,80,80,0.08);border-color:rgba(255,80,80,0.25)">⛔ ' + esc(l.objecion_principal) + '</span>' : '') +
+        (l.alerta_inmediata ? '<span class="sc-badge" style="color:#fff;background:rgba(255,80,80,0.7);border-color:var(--danger)">🚨 ALERTA</span>' : '') +
+        (l.quiere_agendar_visita ? '<span class="sc-badge" style="color:var(--accent);background:rgba(79,255,176,0.1);border-color:rgba(79,255,176,0.3)">📅 Quiere agendar</span>' : '') +
       '</div>' +
 
       // Property info
@@ -3427,6 +3543,20 @@ function renderScoringCards() {
 
     '</div>';
   }).join('');
+}
+
+function resetScoringFilters() {
+  ['scoring-search','scoring-filter-dias'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.value = '';
+  });
+  ['scoring-filter-prio','scoring-filter-clas','scoring-filter-intencion',
+   'scoring-filter-etapa','scoring-filter-razon','scoring-filter-urgencia',
+   'scoring-filter-finanzas','scoring-filter-agendar','scoring-filter-alerta'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.value = '';
+  });
+  renderScoringCards();
 }
 
 function copyScoringMsg(text, btn) {
