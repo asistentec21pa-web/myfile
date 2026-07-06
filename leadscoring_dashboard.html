@@ -934,7 +934,7 @@
 <header>
   <div class="logo">
     <div class="logo-dot"></div>
-    Lead Scoring Dashboard - Asistente C21 Pedro Arias <span style="font-size:9px;color:var(--muted);font-family:var(--mono);font-weight:400;margin-left:6px;opacity:0.5">build-vp-mobile-fix</span>
+    Lead Scoring Dashboard - Asistente C21 Pedro Arias <span style="font-size:9px;color:var(--muted);font-family:var(--mono);font-weight:400;margin-left:6px;opacity:0.5">build-debug-statusid</span>
   </div>
   <div class="header-right">
     <div class="sync-status">
@@ -3215,28 +3215,41 @@ function clearLeadsCache() {
 
 // ── DEBUG ────────────────────────────────────────────────────────────────
 function debugStatusIds() {
-  const sample = leads.slice(0, 5);
-  let msg = 'Total leads: ' + leads.length + '\n\n';
-  sample.forEach((l, i) => {
-    msg += 'Lead ' + (i+1) + ': ' + (l.name||'?') + '\n';
-    msg += '  Status_id: ' + JSON.stringify(l.Status_id) + ' (tipo: ' + typeof l.Status_id + ')\n';
-    msg += '  status_id: ' + JSON.stringify(l.status_id) + '\n';
-    msg += '  Keys: ' + Object.keys(l).join(', ') + '\n\n';
-  });
+  const uniqueSids = [...new Set(leads.map(l => l.Status_id).filter(Boolean))].sort();
 
-  const withStatus = leads.filter(l => l.Status_id && l.Status_id !== '');
-  msg += 'Leads con Status_id no vacío: ' + withStatus.length + '\n';
-  msg += 'Valores únicos: ' + [...new Set(leads.map(l=>l.Status_id))].join(', ');
+  const rows = leads.map(l => {
+    const sid = String(l.Status_id || '').trim();
+    const panel = AGENDADA_SET.has(sid)     ? '📅 Agendada'
+                : INTENCION_SET.has(sid)    ? '👁 Intención'
+                : POTENCIALES_SET.has(sid)  ? '⭐ Potencial'
+                : OTRAS_SET.has(sid)        ? '🔍 Otras'
+                : '—';
+    return '<tr style="border-bottom:1px solid var(--border)">' +
+      '<td style="padding:5px 8px;color:var(--accent)">' + esc(l.name||'?') + '</td>' +
+      '<td style="padding:5px 8px;font-family:var(--mono);font-size:11px;color:var(--warn)">' + (sid || '<em style="color:var(--muted)">vacío</em>') + '</td>' +
+      '<td style="padding:5px 8px;font-size:11px">' + panel + '</td>' +
+    '</tr>';
+  }).join('');
 
-  // Show in a modal-style overlay
   const pop = document.createElement('div');
-  pop.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.8);z-index:999;display:flex;align-items:center;justify-content:center';
-  pop.innerHTML = '<div style="background:var(--surface);border:1px solid var(--border-bright);border-radius:12px;padding:1.5rem;max-width:600px;width:90%;max-height:80vh;overflow-y:auto">' +
-    '<div style="display:flex;justify-content:space-between;margin-bottom:1rem"><strong>🔍 Debug Status_id</strong>' +
-    '<button onclick="this.parentElement.parentElement.remove()" style="background:none;border:none;color:var(--muted);font-size:18px;cursor:pointer">✕</button></div>' +
-    '<pre style="font-family:var(--mono);font-size:11px;color:var(--accent);white-space:pre-wrap;line-height:1.6">' + msg + '</pre>' +
-    '</div>';
-  pop.onclick = e => { if(e.target === pop) pop.remove(); };
+  pop.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:999;display:flex;align-items:center;justify-content:center';
+  pop.innerHTML = '<div style="background:var(--surface);border:1px solid var(--border-bright);border-radius:12px;padding:1.5rem;max-width:680px;width:95%;max-height:85vh;overflow-y:auto">' +
+    '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem">' +
+      '<strong>🔍 Debug Status_id — ' + leads.length + ' leads</strong>' +
+      '<button onclick="this.closest(\'div[style]\').remove()" style="background:none;border:none;color:var(--muted);font-size:18px;cursor:pointer">✕</button>' +
+    '</div>' +
+    '<div style="font-size:11px;color:var(--muted);font-family:var(--mono);margin-bottom:0.75rem">IDs únicos: <span style="color:var(--accent)">' + uniqueSids.join(' | ') + '</span></div>' +
+    '<input type="text" placeholder="Filtrar por nombre..." oninput="this.nextSibling.querySelectorAll(\'tr\').forEach(r=>{r.style.display=r.textContent.toLowerCase().includes(this.value.toLowerCase())?\'\':\' none\'})" style="width:100%;margin-bottom:8px;font-size:12px">' +
+    '<table style="width:100%;border-collapse:collapse">' +
+      '<thead><tr style="border-bottom:1px solid var(--border-bright)">' +
+        '<th style="padding:5px 8px;text-align:left;font-size:11px;color:var(--muted)">NOMBRE</th>' +
+        '<th style="padding:5px 8px;text-align:left;font-size:11px;color:var(--muted)">STATUS_ID</th>' +
+        '<th style="padding:5px 8px;text-align:left;font-size:11px;color:var(--muted)">PANEL</th>' +
+      '</tr></thead>' +
+      '<tbody>' + rows + '</tbody>' +
+    '</table>' +
+  '</div>';
+  pop.onclick = e => { if (e.target === pop) pop.remove(); };
   document.body.appendChild(pop);
 }
 
