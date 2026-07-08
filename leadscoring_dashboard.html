@@ -934,7 +934,7 @@
 <header>
   <div class="logo">
     <div class="logo-dot"></div>
-    Lead Scoring Dashboard - Asistente C21 Pedro Arias <span style="font-size:9px;color:var(--muted);font-family:var(--mono);font-weight:400;margin-left:6px;opacity:0.5">build-chat-back-fix</span>
+    Lead Scoring Dashboard - Asistente C21 Pedro Arias <span style="font-size:9px;color:var(--muted);font-family:var(--mono);font-weight:400;margin-left:6px;opacity:0.5">build-chat-back-mobile</span>
   </div>
   <div class="header-right">
     <div class="sync-status">
@@ -2870,7 +2870,7 @@ let _previousTab = 'dashboard'; // tab to return to when closing chat panel
 function closeChatPanel() {
   const panel = document.getElementById('chat-panel');
   panel.classList.remove('mobile-open');
-  if (!isMobile()) switchTab(_previousTab || 'dashboard');
+  switchTab(_previousTab || 'dashboard');
 }
 
 function goToChat(leadId) {
