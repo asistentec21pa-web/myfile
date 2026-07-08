@@ -934,7 +934,7 @@
 <header>
   <div class="logo">
     <div class="logo-dot"></div>
-    Lead Scoring Dashboard - Asistente C21 Pedro Arias <span style="font-size:9px;color:var(--muted);font-family:var(--mono);font-weight:400;margin-left:6px;opacity:0.5">build-debug-statusid</span>
+    Lead Scoring Dashboard - Asistente C21 Pedro Arias <span style="font-size:9px;color:var(--muted);font-family:var(--mono);font-weight:400;margin-left:6px;opacity:0.5">build-chat-back-fix</span>
   </div>
   <div class="header-right">
     <div class="sync-status">
@@ -2865,16 +2865,22 @@ function toast(msg, type='info') {
 }
 
 // ── GO TO CHAT (from dashboard) ─────────────────────────────────────────
+let _previousTab = 'dashboard'; // tab to return to when closing chat panel
+
 function closeChatPanel() {
   const panel = document.getElementById('chat-panel');
   panel.classList.remove('mobile-open');
-  // On desktop, go to dashboard; on mobile just close the slide panel
-  if (!isMobile()) switchTab('dashboard');
+  if (!isMobile()) switchTab(_previousTab || 'dashboard');
 }
 
 function goToChat(leadId) {
+  // Remember which tab we're coming from
+  const active = document.querySelector('.tab-panel.active');
+  if (active && active.id !== 'tab-chats') {
+    _previousTab = active.id.replace('tab-', '');
+  }
   switchTab('chats');
-  setTimeout(() => selectChatLead(leadId, true), 50); // true = force refresh
+  setTimeout(() => selectChatLead(leadId, true), 50);
 }
 
 // ── CHATS TAB ────────────────────────────────────────────────────────────
