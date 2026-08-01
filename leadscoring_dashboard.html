@@ -934,7 +934,7 @@
 <header>
   <div class="logo">
     <div class="logo-dot"></div>
-    Lead Scoring Dashboard - Asistente C21 Pedro Arias <span style="font-size:9px;color:var(--muted);font-family:var(--mono);font-weight:400;margin-left:6px;opacity:0.5">build-chat-back-mobile</span>
+    Lead Scoring Dashboard - Asistente C21 Pedro Arias <span style="font-size:9px;color:var(--muted);font-family:var(--mono);font-weight:400;margin-left:6px;opacity:0.5">build-1000-leads</span>
   </div>
   <div class="header-right">
     <div class="sync-status">
@@ -3169,23 +3169,29 @@ function fmtDate(iso) {
 // ── PERSISTENCIA localStorage ────────────────────────────────────────────
 function saveLeads() {
   try {
-    // Cap cache at 500 most recent leads to avoid localStorage quota errors
-    const toSave = leads.length > 500
-      ? leads.slice(0, 500)
+    // Cap cache at 1000 most recent leads to avoid localStorage quota errors
+    const toSave = leads.length > 1000
+      ? leads.slice(0, 1000)
       : leads;
     localStorage.setItem('ls_leads', JSON.stringify(toSave));
     localStorage.setItem('ls_leads_ts', new Date().toISOString());
     localStorage.setItem('ls_leads_total', String(leads.length));
-    if (leads.length > 500) {
-      addLog('Cache local limitado a 500 leads (total: ' + leads.length + ')', 'warn');
+    if (leads.length > 1000) {
+      addLog('Cache local limitado a 1000 leads (total: ' + leads.length + ')', 'warn');
     }
   } catch(e) {
-    // If still quota error, try saving only first 200
+    // If quota error, try saving only first 500
     try {
-      localStorage.setItem('ls_leads', JSON.stringify(leads.slice(0, 200)));
+      localStorage.setItem('ls_leads', JSON.stringify(leads.slice(0, 500)));
       localStorage.setItem('ls_leads_ts', new Date().toISOString());
-      addLog('Cache reducido a 200 leads por limite de almacenamiento', 'warn');
-    } catch(e2) { console.warn('No se pudo guardar leads:', e2); }
+      addLog('Cache reducido a 500 leads por limite de almacenamiento', 'warn');
+    } catch(e2) {
+      // Last resort: try 200
+      try {
+        localStorage.setItem('ls_leads', JSON.stringify(leads.slice(0, 200)));
+        addLog('Cache reducido a 200 leads por limite de almacenamiento', 'warn');
+      } catch(e3) { console.warn('No se pudo guardar leads:', e3); }
+    }
   }
 }
 
