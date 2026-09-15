@@ -930,7 +930,7 @@
 <header>
   <div class="logo">
     <div class="logo-dot"></div>
-    Lead Scoring Dashboard - Asistente C21 Pedro Arias <span style="font-size:9px;color:var(--muted);font-family:var(--mono);font-weight:400;margin-left:6px;opacity:0.5">build-panels-collapsed</span>
+    Lead Scoring Dashboard - Asistente C21 Pedro Arias <span style="font-size:9px;color:var(--muted);font-family:var(--mono);font-weight:400;margin-left:6px;opacity:0.5">build-scoring-pipeline-filter</span>
   </div>
   <div class="header-right">
     <div class="sync-status">
@@ -1474,6 +1474,12 @@
       <div style="display:flex;flex-direction:column;gap:3px">
         <label style="font-size:10px;color:var(--muted);font-family:var(--mono)">INACTIVO ≥ (días)</label>
         <input type="number" id="scoring-filter-dias" placeholder="ej. 3" min="0" style="font-size:12px;width:80px" oninput="renderScoringCards()">
+      </div>
+      <div style="display:flex;flex-direction:column;gap:3px">
+        <label style="font-size:10px;color:var(--muted);font-family:var(--mono)">PIPELINE</label>
+        <select id="scoring-filter-pipeline" onchange="renderScoringCards()" style="font-size:12px;width:160px">
+          <option value="">Todos</option>
+        </select>
       </div>
       <button class="btn btn-sm" onclick="resetScoringFilters()" style="align-self:flex-end;color:var(--muted);border-color:var(--border)">✕ Limpiar</button>
     </div>
@@ -3453,7 +3459,8 @@ function renderScoringCards() {
   const fUrgencia = (document.getElementById('scoring-filter-urgencia')?.value || '').toUpperCase();
   const fFinanzas = (document.getElementById('scoring-filter-finanzas')?.value || '').toUpperCase();
   const fAgendar  = (document.getElementById('scoring-filter-agendar')?.value || '').toUpperCase();
-  const fAlerta  = (document.getElementById('scoring-filter-alerta')?.value || '').toUpperCase();
+  const fAlerta    = (document.getElementById('scoring-filter-alerta')?.value || '').toUpperCase();
+  const fPipeline  = (document.getElementById('scoring-filter-pipeline')?.value || '');
   const fDias    = parseInt(document.getElementById('scoring-filter-dias')?.value || '0') || 0;
 
   // Priority weight: contactar_hoy=5, es_prioritario=4, ALTA=3, MEDIA=2, BAJA=1
@@ -3497,10 +3504,16 @@ function renderScoringCards() {
   if (fAgendar === 'NO') data = data.filter(l => !l.quiere_agendar_visita);
   if (fAlerta === 'SI')  data = data.filter(l => l.alerta_inmediata === true);
   if (fAlerta === 'NO')  data = data.filter(l => !l.alerta_inmediata);
+  if (fPipeline) {
+    data = data.filter(l => {
+      const dashLead = leads.find(x => String(x.Lead_id) === String(l.lead_id) || String(x.id) === String(l.lead_id));
+      return (dashLead?.Pipeline_nombre || '') === fPipeline;
+    });
+  }
   if (fDias)   data = data.filter(l => (Number(l.dias_inactivo)||0) >= fDias);
 
   renderScoringStats(data);
-
+  updateScoringPipelineFilter();
   updateScoringDiscardedBtn();
 
   if (!data.length) {
@@ -3617,6 +3630,21 @@ function renderScoringCards() {
   }).join('');
 }
 
+function updateScoringPipelineFilter() {
+  const sel = document.getElementById('scoring-filter-pipeline');
+  if (!sel) return;
+  const current = sel.value;
+  // Get unique pipelines from dashboard leads that match scoring leads
+  const scoringIds = new Set(scoringLeads.map(l => String(l.lead_id)));
+  const pipelines = [...new Set(
+    leads
+      .filter(l => scoringIds.has(String(l.Lead_id)) && l.Pipeline_nombre)
+      .map(l => l.Pipeline_nombre)
+  )].sort();
+  sel.innerHTML = '<option value="">Todos</option>' +
+    pipelines.map(p => `<option value="${esc(p)}"${p === current ? ' selected' : ''}>${esc(p)}</option>`).join('');
+}
+
 function resetScoringFilters() {
   ['scoring-search','scoring-filter-dias'].forEach(id => {
     const el = document.getElementById(id);
@@ -3624,7 +3652,7 @@ function resetScoringFilters() {
   });
   ['scoring-filter-prio','scoring-filter-clas','scoring-filter-intencion',
    'scoring-filter-etapa','scoring-filter-razon','scoring-filter-urgencia',
-   'scoring-filter-finanzas','scoring-filter-agendar','scoring-filter-alerta'].forEach(id => {
+   'scoring-filter-finanzas','scoring-filter-agendar','scoring-filter-alerta','scoring-filter-pipeline'].forEach(id => {
     const el = document.getElementById(id);
     if (el) el.value = '';
   });
