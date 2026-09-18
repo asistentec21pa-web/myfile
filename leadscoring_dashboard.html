@@ -930,7 +930,7 @@
 <header>
   <div class="logo">
     <div class="logo-dot"></div>
-    Lead Scoring Dashboard - Asistente C21 Pedro Arias <span style="font-size:9px;color:var(--muted);font-family:var(--mono);font-weight:400;margin-left:6px;opacity:0.5">build-scoring-pipeline-filter</span>
+    Lead Scoring Dashboard - Asistente C21 Pedro Arias <span style="font-size:9px;color:var(--muted);font-family:var(--mono);font-weight:400;margin-left:6px;opacity:0.5">build-lucia-number</span>
   </div>
   <div class="header-right">
     <div class="sync-status">
@@ -1768,8 +1768,24 @@ function waGreeting() {
 const WA_DEFAULT_TEMPLATE =
   'Sr {nombre}, {saludo}. ' +
   'Soy Pedro Arias Asesor inmobiliario de Century 21. ' +
-  'Se contactó con mi asistente Lucía al número de WhatsApp _______ por nuestro anuncio de Facebook recientemente_______. ' +
+  'Se contactó con mi asistente Lucía al número de WhatsApp {numero_lucia} por nuestro anuncio de Facebook recientemente_______. ' +
   'Tengo entendido que____';
+
+// Pipeline → número de WhatsApp de Lucía
+const LUCIA_NUMBERS = {
+  '76656596': '76656596',  // Embudo Leads B04-05
+  '76658858': '76658858',  // Embudo Leads Campañas
+  '75952084': '75952084',  // Leads Campañas
+};
+
+function getLuciaNumber(pipelineNombre) {
+  if (!pipelineNombre) return '________';
+  const str = String(pipelineNombre);
+  for (const [pipeId, num] of Object.entries(LUCIA_NUMBERS)) {
+    if (str.includes(pipeId)) return num;
+  }
+  return '________';
+}
 
 function loadWaTemplate() {
   try { return localStorage.getItem('wa_msg_template') || WA_DEFAULT_TEMPLATE; }
@@ -1793,7 +1809,7 @@ function resetWaTemplate() {
 
 function previewWaTemplate() {
   const tpl = (document.getElementById('wa-msg-template').value || '').trim();
-  const preview = applyWaTemplate(tpl, 'Juan Pérez');
+  const preview = applyWaTemplate(tpl, 'Juan Pérez', 'LEAD CAMPAÑAS (75952084)');
   const box = document.getElementById('wa-template-preview');
   box.textContent = preview;
   box.style.display = box.style.display === 'none' ? 'block' : 'none';
@@ -1811,15 +1827,16 @@ function showWaToast(msg, type) {
   el._t = setTimeout(() => { el.style.display = 'none'; }, 3000);
 }
 
-function applyWaTemplate(tpl, leadName) {
+function applyWaTemplate(tpl, leadName, pipelineNombre) {
   return (tpl || WA_DEFAULT_TEMPLATE)
-    .replace(/\{nombre\}/gi, leadName)
-    .replace(/\{saludo\}/gi, waGreeting());
+    .replace(/\{nombre\}/gi, leadName || '')
+    .replace(/\{saludo\}/gi, waGreeting())
+    .replace(/\{numero_lucia\}/gi, getLuciaNumber(pipelineNombre));
 }
 
 // Override waMessage to use template
-function waMessage(leadName) {
-  return encodeURIComponent(applyWaTemplate(loadWaTemplate(), leadName));
+function waMessage(leadName, pipelineNombre) {
+  return encodeURIComponent(applyWaTemplate(loadWaTemplate(), leadName, pipelineNombre));
 }
 
 // Init: load saved template into textarea when tab is shown
@@ -2095,7 +2112,7 @@ function renderMobileCards() {
     const ini      = (l.name||'').split(' ').map(w=>w[0]||'').join('').substring(0,2).toUpperCase();
     const bgMap    = {hot:'rgba(255,91,107,0.15)',warm:'rgba(255,179,64,0.15)',cold:'rgba(0,200,255,0.15)'};
     const phone    = (l.Telefono||'').replace(/[^\d+]/g,'');
-    const waLink   = phone ? 'whatsapp://send?phone=' + phone + '&text=' + waMessage(l.name) : '';
+    const waLink   = phone ? 'whatsapp://send?phone=' + phone + '&text=' + waMessage(l.name, l.Pipeline_nombre) : '';
     return '<div class="mobile-lead-card">' +
       '<div class="mobile-card-top">' +
         '<div class="mobile-card-avatar" style="background:'+bgMap[tCat]+';color:'+cScore+'">'+ini+'</div>' +
@@ -2239,7 +2256,7 @@ function renderVisitPanels() {
       const rawPhone = (rawTel && rawTel !== 'null' && rawTel !== '—' && rawTel !== '-')
         ? rawTel.replace(/[^\d+]/g, '') : '';
       const phone    = rawPhone.length >= 7 ? rawPhone : '';
-      const msg      = waMessage(l.name);
+      const msg      = waMessage(l.name, l.Pipeline_nombre);
       const waLink   = phone ? ('whatsapp://send?phone=' + phone + '&text=' + msg) : '';
 
       if (waLink) {
@@ -3063,7 +3080,7 @@ async function selectChatLead(leadId, forceRefresh) {
   if (chatWaBtn) {
     const p = (lead.Telefono||'').replace(/[^\d+]/g,'');
     if (p) {
-      chatWaBtn.href = 'whatsapp://send?phone=' + p + '&text=' + waMessage(lead.name);
+      chatWaBtn.href = 'whatsapp://send?phone=' + p + '&text=' + waMessage(lead.name, lead.Pipeline_nombre);
       chatWaBtn.style.display = 'inline-flex';
     } else {
       chatWaBtn.style.display = 'none';
@@ -3550,7 +3567,8 @@ function renderScoringCards() {
     const pipelineNombre = dashLead?.Pipeline_nombre || l.pipeline_nombre || '';
     const dashTags = dashLead?.tags || [];
     const waMsg  = l.mensaje_sugerido ? encodeURIComponent(l.mensaje_sugerido) : '';
-    const waLink = rawTel.length >= 7 ? 'whatsapp://send?phone=' + rawTel + (waMsg ? '&text=' + waMsg : '') : '';
+    const waMsgFallback = waMessage(l.nombre_cliente, pipelineNombre);
+    const waLink = rawTel.length >= 7 ? 'whatsapp://send?phone=' + rawTel + (waMsg ? '&text=' + waMsg : '&text=' + waMsgFallback) : '';
 
     // Pipeline pill
     const pipelinePill = pipelineNombre
