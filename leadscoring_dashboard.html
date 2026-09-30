@@ -456,7 +456,7 @@
 
   /* visit panels — card style */
   .vp-section {}
-  .vp-header { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; cursor: pointer; user-select: none; padding: 6px 4px; border-radius: 8px; transition: background 0.15s; }
+  .vp-header { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; cursor: pointer; user-select: none; padding: 10px 8px; border-radius: 8px; transition: background 0.15s; -webkit-tap-highlight-color: rgba(255,255,255,0.08); touch-action: manipulation; }
   .vp-header:hover { background: rgba(255,255,255,0.04); }
   .vp-section.collapsed .vp-cards { display: none; }
   .vp-chevron { font-size: 11px; color: var(--muted); margin-left: auto; transition: transform 0.2s; flex-shrink: 0; }
@@ -1946,7 +1946,7 @@ function renderVisitPanels() {
 
     const panelId = 'vp-' + title.replace(/[^a-z0-9]/gi, '');
     return `<div class="vp-section collapsed" id="${panelId}">
-      <div class="vp-header" onclick="toggleVpPanel('${panelId}')">
+      <div class="vp-header" data-panel="${panelId}">
         <div class="vp-icon" style="background:${bgColor};color:${accentColor}">${icon}</div>
         <span class="vp-title" style="color:${accentColor}">${title}</span>
         <span class="vp-badge" style="background:${bgColor};color:${accentColor}">${data.length}</span>
@@ -1956,17 +1956,37 @@ function renderVisitPanels() {
     </div>`;
   }
 
-  function toggleVpPanel(id) {
-    const el = document.getElementById(id);
-    if (el) el.classList.toggle('collapsed');
-  }
-
   document.getElementById('visit-panels').innerHTML =
     buildPanel('Leads con visita agendada',        '📅',         'var(--accent)',  'rgba(79,255,176,0.1)',   'rgba(79,255,176,0.3)',   agendada)  +
     buildPanel('Leads con intención de visita',  '&#128065;',  '#c9911a',       'rgba(201,145,26,0.1)',   'rgba(201,145,26,0.35)',  intencion) +
     buildPanel('Leads Clientes potenciales',     '&#11088;',   '#b8860b',       'rgba(184,134,11,0.1)',   'rgba(184,134,11,0.35)',  potenciales) +
     buildPanel('Buscan más/otras opciones',       '&#128269;',  '#0ea5e9',       'rgba(14,165,233,0.1)',   'rgba(14,165,233,0.35)',  otras);
 }
+
+
+function toggleVpPanel(id) {
+  const el = document.getElementById(id);
+  if (el) el.classList.toggle('collapsed');
+}
+
+// Event delegation for visit panels accordion (works on mobile and desktop)
+document.addEventListener('DOMContentLoaded', function() {
+  document.addEventListener('click', function(e) {
+    const header = e.target.closest('.vp-header');
+    if (header) {
+      const id = header.getAttribute('data-panel');
+      if (id) toggleVpPanel(id);
+    }
+  });
+  document.addEventListener('touchend', function(e) {
+    const header = e.target.closest('.vp-header');
+    if (header) {
+      e.preventDefault();
+      const id = header.getAttribute('data-panel');
+      if (id) toggleVpPanel(id);
+    }
+  }, { passive: false });
+});
 
 // ── SCORE DETALLE POPUP ────────────────────────────────────────────────────
 function showScoreDetalle(leadId) {
