@@ -456,7 +456,11 @@
 
   /* visit panels — card style */
   .vp-section {}
-  .vp-header { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+  .vp-header { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; cursor: pointer; user-select: none; padding: 6px 4px; border-radius: 8px; transition: background 0.15s; }
+  .vp-header:hover { background: rgba(255,255,255,0.04); }
+  .vp-section.collapsed .vp-cards { display: none; }
+  .vp-chevron { font-size: 11px; color: var(--muted); margin-left: auto; transition: transform 0.2s; flex-shrink: 0; }
+  .vp-section.collapsed .vp-chevron { transform: rotate(-90deg); }
   .vp-icon { width: 30px; height: 30px; border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 15px; }
   .vp-title { font-size: 12px; font-weight: 500; flex: 1; }
   .vp-badge { font-size: 11px; font-weight: 600; padding: 2px 9px; border-radius: 20px; font-family: var(--mono); }
@@ -1684,9 +1688,10 @@ let _vsData       = [];   // full filtered+sorted dataset
 const VS_PAGE     = 80;   // rows rendered per batch
 let _vsRendered   = 0;    // how many rows currently in DOM
 
-const INTENCION_SET = new Set(['106888064','105257100','89413287','81405567']);
-const AGENDADA_SET  = new Set(['106888152','105257104','81074171','79521939']);
-const OTRAS_SET     = new Set(['106888144','105257084','82099375','79521935']);
+const INTENCION_SET   = new Set(['106888064','105257100','89413287','81405567']);
+const AGENDADA_SET    = new Set(['106888152','105257104','81074171','79521939']);
+const OTRAS_SET       = new Set(['106888144','105257084','82099375','79521935']);
+const POTENCIALES_SET = new Set(['84628707','91779347','106888068','105257096']);
 
 function visitaBadge(statusId) {
   const sid = statusId != null && statusId !== '' ? String(statusId).trim() : '';
@@ -1891,9 +1896,10 @@ const VISITA_AGENDADA_IDS   = AGENDADA_SET;
 
 function renderVisitPanels() {
   const toSid = l => { const v = l.Status_id != null ? l.Status_id : l.status_id; return v != null && v !== '' ? String(v).trim() : ''; };
-  const intencion = leads.filter(l => INTENCION_VISITA_IDS.has(toSid(l)));
-  const agendada  = leads.filter(l => VISITA_AGENDADA_IDS.has(toSid(l)));
-  const otras     = leads.filter(l => OTRAS_SET.has(toSid(l)));
+  const intencion    = leads.filter(l => INTENCION_VISITA_IDS.has(toSid(l)));
+  const agendada     = leads.filter(l => VISITA_AGENDADA_IDS.has(toSid(l)));
+  const otras        = leads.filter(l => OTRAS_SET.has(toSid(l)));
+  const potenciales  = leads.filter(l => POTENCIALES_SET.has(toSid(l)));
 
   function initials(name) {
     return (name||'').split(' ').map(w=>w[0]||'').join('').substring(0,2).toUpperCase();
@@ -1907,8 +1913,10 @@ function renderVisitPanels() {
       // Normalize phone — handle null, 'null', empty, dashes
       const rawTel   = (l.Telefono != null && l.Telefono !== undefined) ? String(l.Telefono).trim() : '';
       const rawPhone = (rawTel && rawTel !== 'null' && rawTel !== '—' && rawTel !== '-')
+        ? rawTel.replace(/[\d+]/g, '') : '';
+      const rawPhone2 = (rawTel && rawTel !== 'null' && rawTel !== '—' && rawTel !== '-')
         ? rawTel.replace(/[^\d+]/g, '') : '';
-      const phone    = rawPhone.length >= 7 ? rawPhone : '';
+      const phone    = rawPhone2.length >= 7 ? rawPhone2 : '';
       const msg      = waMessage(l.name);
       const waLink   = phone ? ('whatsapp://send?phone=' + phone + '&text=' + msg) : '';
 
@@ -1936,19 +1944,27 @@ function renderVisitPanels() {
     }).join('')
     : `<div class="vp-empty">Sin leads en esta etapa</div>`;
 
-    return `<div class="vp-section">
-      <div class="vp-header">
+    const panelId = 'vp-' + title.replace(/[^a-z0-9]/gi, '');
+    return `<div class="vp-section collapsed" id="${panelId}">
+      <div class="vp-header" onclick="toggleVpPanel('${panelId}')">
         <div class="vp-icon" style="background:${bgColor};color:${accentColor}">${icon}</div>
         <span class="vp-title" style="color:${accentColor}">${title}</span>
         <span class="vp-badge" style="background:${bgColor};color:${accentColor}">${data.length}</span>
+        <span class="vp-chevron">&#9660;</span>
       </div>
       <div class="vp-cards">${cards}</div>
     </div>`;
   }
 
+  function toggleVpPanel(id) {
+    const el = document.getElementById(id);
+    if (el) el.classList.toggle('collapsed');
+  }
+
   document.getElementById('visit-panels').innerHTML =
     buildPanel('Leads con visita agendada',        '📅',         'var(--accent)',  'rgba(79,255,176,0.1)',   'rgba(79,255,176,0.3)',   agendada)  +
     buildPanel('Leads con intención de visita',  '&#128065;',  '#c9911a',       'rgba(201,145,26,0.1)',   'rgba(201,145,26,0.35)',  intencion) +
+    buildPanel('Leads Clientes potenciales',     '&#11088;',   '#b8860b',       'rgba(184,134,11,0.1)',   'rgba(184,134,11,0.35)',  potenciales) +
     buildPanel('Buscan más/otras opciones',       '&#128269;',  '#0ea5e9',       'rgba(14,165,233,0.1)',   'rgba(14,165,233,0.35)',  otras);
 }
 
