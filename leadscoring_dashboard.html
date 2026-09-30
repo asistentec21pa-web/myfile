@@ -856,6 +856,405 @@
 
   /* ── MOBILE CARDS WRAP oculto por defecto (desktop usa tabla) ── */
   #mobile-cards-wrap { display: none; }
+
+  /* ═══════════════════════════════════════════════════════════════
+     ANIMATIONS — SPECTACULAR VISUAL SYSTEM
+  ═══════════════════════════════════════════════════════════════ */
+
+  /* ── KEYFRAMES ── */
+  @keyframes fadeUp       { from{opacity:0;transform:translateY(18px)} to{opacity:1;transform:translateY(0)} }
+  @keyframes fadeDown     { from{opacity:0;transform:translateY(-12px)} to{opacity:1;transform:translateY(0)} }
+  @keyframes fadeIn2      { from{opacity:0} to{opacity:1} }
+  @keyframes scaleIn      { from{opacity:0;transform:scale(0.88)} to{opacity:1;transform:scale(1)} }
+  @keyframes slideRight   { from{opacity:0;transform:translateX(-20px)} to{opacity:1;transform:translateX(0)} }
+  @keyframes slideLeft    { from{opacity:0;transform:translateX(20px)} to{opacity:1;transform:translateX(0)} }
+  @keyframes glowPulse    { 0%,100%{box-shadow:0 0 0 0 rgba(79,255,176,0)} 50%{box-shadow:0 0 18px 4px rgba(79,255,176,0.22)} }
+  @keyframes shimmer      { 0%{background-position:-200% 0} 100%{background-position:200% 0} }
+  @keyframes countUp      { from{opacity:0;transform:translateY(8px) scale(0.9)} to{opacity:1;transform:translateY(0) scale(1)} }
+  @keyframes borderGlow   { 0%,100%{border-color:rgba(79,255,176,0.1)} 50%{border-color:rgba(79,255,176,0.4)} }
+  @keyframes float        { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-4px)} }
+  @keyframes sweepBar     { from{width:0} to{width:var(--target-w,100%)} }
+  @keyframes rotateDot    { to{transform:rotate(360deg)} }
+  @keyframes popIn        { 0%{opacity:0;transform:scale(0.7)} 60%{transform:scale(1.08)} 100%{opacity:1;transform:scale(1)} }
+  @keyframes underlineIn  { from{transform:scaleX(0)} to{transform:scaleX(1)} }
+  @keyframes bgScan       { 0%{background-position:0 0} 100%{background-position:0 80px} }
+  @keyframes orbitGlow    {
+    0%  { box-shadow: 4px 0 20px rgba(79,255,176,0.4), -4px 0 20px rgba(0,200,255,0.2); }
+    50% { box-shadow: -4px 0 20px rgba(79,255,176,0.2), 4px 0 20px rgba(0,200,255,0.4); }
+    100%{ box-shadow: 4px 0 20px rgba(79,255,176,0.4), -4px 0 20px rgba(0,200,255,0.2); }
+  }
+  @keyframes headerShine {
+    0%   { background-position: -300% center; }
+    100% { background-position: 300% center; }
+  }
+  @keyframes vpCardIn {
+    from { opacity:0; transform:translateY(10px) scale(0.97); }
+    to   { opacity:1; transform:translateY(0) scale(1); }
+  }
+  @keyframes tableRowIn {
+    from { opacity:0; transform:translateX(-8px); }
+    to   { opacity:1; transform:translateX(0); }
+  }
+  @keyframes metricGlow {
+    0%,100% { box-shadow: 0 2px 20px rgba(0,0,0,0.3); }
+    50%     { box-shadow: 0 4px 32px rgba(79,255,176,0.12); }
+  }
+  @keyframes scanline {
+    0%   { transform: translateY(-100%); }
+    100% { transform: translateY(100vh); }
+  }
+  @keyframes badgePop {
+    0%   { transform: scale(1); }
+    30%  { transform: scale(1.25); }
+    60%  { transform: scale(0.92); }
+    100% { transform: scale(1); }
+  }
+  @keyframes chevronBounce {
+    0%,100% { transform: rotate(0deg) translateY(0); }
+    50%     { transform: rotate(0deg) translateY(2px); }
+  }
+  @keyframes collapsedChevron {
+    0%,100% { transform: rotate(-90deg) translateX(0); }
+    50%     { transform: rotate(-90deg) translateX(2px); }
+  }
+  @keyframes logEntry {
+    from { opacity:0; transform: translateX(8px); }
+    to   { opacity:1; transform: translateX(0); }
+  }
+  @keyframes toastBounce {
+    0%   { transform: translateX(40px) scale(0.9); opacity:0; }
+    60%  { transform: translateX(-6px) scale(1.02); opacity:1; }
+    100% { transform: translateX(0) scale(1); opacity:1; }
+  }
+  @keyframes scoreFillAnim {
+    from { width: 0 !important; }
+  }
+
+  /* ── AMBIENT BACKGROUND GRID ── */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    background-image:
+      linear-gradient(rgba(79,255,176,0.015) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(79,255,176,0.015) 1px, transparent 1px);
+    background-size: 48px 48px;
+    animation: bgScan 6s linear infinite;
+  }
+
+  /* ── AMBIENT TOP GLOW ── */
+  body::after {
+    content: '';
+    position: fixed;
+    top: -80px; left: 50%;
+    transform: translateX(-50%);
+    width: 900px; height: 200px;
+    background: radial-gradient(ellipse at center, rgba(79,255,176,0.07) 0%, transparent 70%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  header, .tab-bar, .page, .n8n-page, .chats-layout {
+    position: relative;
+    z-index: 1;
+  }
+
+  /* ── HEADER LOGO ANIMATED SHINE ── */
+  .logo {
+    background: linear-gradient(
+      90deg,
+      var(--text) 0%,
+      var(--accent) 45%,
+      var(--accent2) 55%,
+      var(--text) 100%
+    );
+    background-size: 200% auto;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: headerShine 4s linear infinite;
+  }
+
+  /* ── LOGO DOT ORBIT ── */
+  .logo-dot {
+    animation: orbitGlow 3s ease-in-out infinite, float 3s ease-in-out infinite;
+  }
+
+  /* ── HEADER FADE DOWN ── */
+  header { animation: fadeDown 0.5s ease both; }
+
+  /* ── TAB BAR ── */
+  .tab-bar { animation: fadeDown 0.5s 0.05s ease both; }
+
+  /* ── TAB UNDERLINE SLIDE ── */
+  .tab-btn.active {
+    position: relative;
+  }
+  .tab-btn.active::after {
+    content: '';
+    position: absolute;
+    bottom: -1px; left: 0; right: 0; height: 2px;
+    background: var(--accent);
+    transform-origin: left;
+    animation: underlineIn 0.25s ease both;
+  }
+
+  /* ── METRIC CARDS ── */
+  .metric-card {
+    animation: fadeUp 0.5s ease both;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+  }
+  .metric-card:nth-child(1) { animation-delay: 0.08s; }
+  .metric-card:nth-child(2) { animation-delay: 0.14s; }
+  .metric-card:nth-child(3) { animation-delay: 0.20s; }
+  .metric-card:nth-child(4) { animation-delay: 0.26s; }
+  .metric-card:hover {
+    transform: translateY(-3px) scale(1.013);
+    box-shadow: 0 8px 32px rgba(0,0,0,0.35);
+  }
+  .metric-card.c-green:hover { border-color: rgba(79,255,176,0.35); box-shadow: 0 8px 32px rgba(79,255,176,0.1); }
+  .metric-card.c-blue:hover  { border-color: rgba(0,200,255,0.35);  box-shadow: 0 8px 32px rgba(0,200,255,0.1); }
+  .metric-card.c-warn:hover  { border-color: rgba(255,179,64,0.35); box-shadow: 0 8px 32px rgba(255,179,64,0.1); }
+  .metric-card.c-red:hover   { border-color: rgba(255,91,107,0.35); box-shadow: 0 8px 32px rgba(255,91,107,0.1); }
+
+  /* ── METRIC VALUE COUNT-UP FEEL ── */
+  .metric-value { animation: countUp 0.5s 0.3s ease both; }
+
+  /* ── METRIC TOP BAR SWEEP ── */
+  .metric-card::before {
+    transform-origin: left;
+    animation: underlineIn 0.6s 0.2s ease both;
+  }
+
+  /* ── SCORE BARS ANIMATE ── */
+  .score-fill { animation: scoreFillAnim 0.8s 0.4s ease both; }
+
+  /* ── TABLE ROWS ── */
+  tbody tr {
+    animation: tableRowIn 0.3s ease both;
+  }
+  tbody tr:nth-child(1)  { animation-delay: 0.04s; }
+  tbody tr:nth-child(2)  { animation-delay: 0.07s; }
+  tbody tr:nth-child(3)  { animation-delay: 0.10s; }
+  tbody tr:nth-child(4)  { animation-delay: 0.13s; }
+  tbody tr:nth-child(5)  { animation-delay: 0.16s; }
+  tbody tr:nth-child(6)  { animation-delay: 0.19s; }
+  tbody tr:nth-child(7)  { animation-delay: 0.22s; }
+  tbody tr:nth-child(8)  { animation-delay: 0.25s; }
+  tbody tr:nth-child(9)  { animation-delay: 0.28s; }
+  tbody tr:nth-child(10) { animation-delay: 0.31s; }
+
+  /* ── HOVER ROW GLOW ── */
+  tbody tr:hover td {
+    background: linear-gradient(90deg, rgba(79,255,176,0.04) 0%, var(--surface2) 40%) !important;
+  }
+
+  /* ── PANEL CARDS (side) ── */
+  .panel-card {
+    animation: slideLeft 0.45s ease both;
+    transition: box-shadow 0.2s ease, border-color 0.2s ease;
+  }
+  .panel-card:nth-child(1) { animation-delay: 0.12s; }
+  .panel-card:nth-child(2) { animation-delay: 0.20s; }
+  .panel-card:nth-child(3) { animation-delay: 0.28s; }
+  .panel-card:hover { box-shadow: 0 4px 24px rgba(0,0,0,0.25); border-color: var(--border-bright); }
+
+  /* ── DIST BARS SWEEP ── */
+  .dist-bar-fill {
+    animation: sweepBar 0.7s 0.5s ease both;
+  }
+
+  /* ── VISIT PANELS ── */
+  .vp-section {
+    animation: fadeUp 0.4s ease both;
+    transition: box-shadow 0.2s ease;
+  }
+  .vp-section:nth-child(1) { animation-delay: 0.08s; }
+  .vp-section:nth-child(2) { animation-delay: 0.15s; }
+  .vp-section:nth-child(3) { animation-delay: 0.22s; }
+  .vp-section:nth-child(4) { animation-delay: 0.29s; }
+
+  /* ── VP CARDS STAGGER ── */
+  .vp-card {
+    animation: vpCardIn 0.3s ease both;
+    transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+  }
+  .vp-card:nth-child(1) { animation-delay: 0.05s; }
+  .vp-card:nth-child(2) { animation-delay: 0.10s; }
+  .vp-card:nth-child(3) { animation-delay: 0.15s; }
+  .vp-card:nth-child(4) { animation-delay: 0.20s; }
+  .vp-card:nth-child(5) { animation-delay: 0.25s; }
+  .vp-card:hover {
+    transform: translateX(4px) scale(1.01);
+    box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+  }
+
+  /* ── VP HEADER HOVER ANIMATED ── */
+  .vp-header { transition: background 0.2s ease, transform 0.15s ease; }
+  .vp-header:hover { background: rgba(255,255,255,0.05) !important; transform: translateX(2px); }
+  .vp-header:active { transform: scale(0.98); }
+
+  /* ── CHEVRON BOUNCE WHEN OPEN ── */
+  .vp-chevron { animation: chevronBounce 2.5s ease-in-out infinite; }
+  .vp-section.collapsed .vp-chevron { animation: collapsedChevron 2.5s ease-in-out infinite; }
+
+  /* ── BADGE POP ON RENDER ── */
+  .vp-badge { animation: badgePop 0.5s 0.4s ease both; }
+  .tab-badge { animation: badgePop 0.4s 0.6s ease both; }
+
+  /* ── BUTTONS ── */
+  .btn {
+    transition: all 0.18s ease;
+    position: relative;
+    overflow: hidden;
+  }
+  .btn::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.06) 50%, transparent 100%);
+    background-size: 200% 100%;
+    background-position: -200% 0;
+    transition: background-position 0.5s ease;
+  }
+  .btn:hover::after { background-position: 200% 0; }
+  .btn:hover { transform: translateY(-1px); box-shadow: 0 4px 16px rgba(0,0,0,0.25); }
+  .btn:active { transform: translateY(0) scale(0.97); }
+  .btn-primary { animation: glowPulse 2.5s 1s ease-in-out infinite; }
+  .btn-primary:hover { box-shadow: 0 4px 24px rgba(79,255,176,0.3); }
+
+  /* ── MODAL ANIMATE ── */
+  .modal { animation: scaleIn 0.2s ease both; }
+  .modal-overlay { animation: fadeIn2 0.15s ease both; }
+
+  /* ── TOAST ── */
+  .toast { animation: toastBounce 0.35s ease both !important; }
+
+  /* ── LOG ENTRIES ── */
+  .log-entry { animation: logEntry 0.25s ease both; }
+  .log-entry:nth-child(1) { animation-delay: 0.02s; }
+  .log-entry:nth-child(2) { animation-delay: 0.06s; }
+  .log-entry:nth-child(3) { animation-delay: 0.10s; }
+  .log-entry:nth-child(4) { animation-delay: 0.14s; }
+  .log-entry:nth-child(5) { animation-delay: 0.18s; }
+
+  /* ── SPINNER ENHANCED ── */
+  .spinner {
+    border-top-color: var(--accent);
+    border-right-color: rgba(79,255,176,0.3);
+    animation: spin 0.6s cubic-bezier(0.55,0.15,0.45,0.85) infinite;
+  }
+
+  /* ── SYNC DOT PULSE ── */
+  .sync-dot.ok {
+    animation: glowPulse 2s ease-in-out infinite;
+  }
+  .sync-dot.loading {
+    animation: pulse 0.7s ease-in-out infinite, rotateDot 1.5s linear infinite;
+  }
+
+  /* ── N8N SECTIONS ── */
+  .n8n-section {
+    animation: fadeUp 0.4s ease both;
+    transition: box-shadow 0.2s ease, border-color 0.2s ease;
+  }
+  .n8n-section:nth-child(1) { animation-delay: 0.05s; }
+  .n8n-section:nth-child(2) { animation-delay: 0.12s; }
+  .n8n-section:nth-child(3) { animation-delay: 0.19s; }
+  .n8n-section:nth-child(4) { animation-delay: 0.26s; }
+  .n8n-section:hover { box-shadow: 0 4px 28px rgba(0,0,0,0.3); border-color: var(--border-bright); }
+
+  /* ── N8N ICON FLOAT ── */
+  .n8n-section-icon { animation: float 3s ease-in-out infinite; }
+  .n8n-section:nth-child(2) .n8n-section-icon { animation-delay: 0.5s; }
+  .n8n-section:nth-child(3) .n8n-section-icon { animation-delay: 1.0s; }
+  .n8n-section:nth-child(4) .n8n-section-icon { animation-delay: 1.5s; }
+
+  /* ── REQ CARDS ── */
+  .req-card {
+    animation: fadeUp 0.35s ease both;
+    transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+  }
+  .req-card:hover { transform: translateY(-2px); box-shadow: 0 6px 24px rgba(0,0,0,0.3); }
+
+  /* ── CHAT LEAD ITEMS ── */
+  .lead-item {
+    transition: background 0.15s ease, border-left-color 0.2s ease, transform 0.15s ease;
+    animation: slideRight 0.3s ease both;
+  }
+  .lead-item:hover { transform: translateX(2px); }
+  .lead-item:nth-child(1) { animation-delay: 0.03s; }
+  .lead-item:nth-child(2) { animation-delay: 0.07s; }
+  .lead-item:nth-child(3) { animation-delay: 0.11s; }
+  .lead-item:nth-child(4) { animation-delay: 0.15s; }
+  .lead-item:nth-child(5) { animation-delay: 0.19s; }
+
+  /* ── BUBBLE MESSAGES ── */
+  .msg-bubble {
+    animation: fadeUp 0.25s ease both;
+    transition: transform 0.15s ease;
+  }
+  .msg-bubble:hover { transform: scale(1.01); }
+
+  /* ── INPUT FOCUS GLOW ── */
+  input[type="text"]:focus,
+  input[type="number"]:focus,
+  input[type="password"]:focus,
+  select:focus,
+  textarea:focus {
+    box-shadow: 0 0 0 3px rgba(79,255,176,0.12);
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  /* ── TABLE HEADER HOVER ── */
+  th { transition: color 0.15s ease, background 0.15s ease; }
+  th:hover { background: rgba(255,255,255,0.03); }
+
+  /* ── SHIMMER SKELETON PLACEHOLDER ── */
+  .shimmer-line {
+    background: linear-gradient(90deg, var(--surface) 25%, var(--surface2) 50%, var(--surface) 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+    border-radius: 4px;
+  }
+
+  /* ── BADGE ANIMATE ── */
+  .badge {
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+  }
+  .badge:hover { transform: scale(1.08); }
+  .badge-hot  { animation: glowPulse 2s ease-in-out infinite; --glow: rgba(255,91,107,0.3); }
+
+  /* ── CODE BLOCK GLOW ── */
+  .code-block {
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  }
+  .code-block:hover { border-color: rgba(79,255,176,0.3); box-shadow: 0 0 20px rgba(79,255,176,0.05); }
+
+  /* ── TAB PANEL TRANSITION ── */
+  .tab-panel.active { animation: fadeIn2 0.2s ease both; }
+
+  /* ── SCORE RING IN POPUP ── */
+  .score-ring-track { transition: stroke-dashoffset 1s cubic-bezier(0.4,0,0.2,1); }
+
+  /* ── MOBILE CARD ANIMATE ── */
+  .mobile-lead-card {
+    animation: fadeUp 0.3s ease both;
+    transition: transform 0.18s ease, box-shadow 0.18s ease;
+  }
+  .mobile-lead-card:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,0.3); }
+
+  /* ── LOGO DOT AMBIENT ── */
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+
 </style>
 </head>
 <body>
@@ -3106,6 +3505,178 @@ function saveReq() {
   closeReqModal();
   toast('Requerimiento guardado ✓', 'ok');
 }
+
+
+// ══════════════════════════════════════════════════════════════
+//  ANIMATION UTILITIES
+// ══════════════════════════════════════════════════════════════
+
+// ── COUNT-UP for metric numbers ──
+function animateCountUp(el, target, duration = 700) {
+  if (!el || isNaN(target)) return;
+  const isFloat = String(target).includes('.');
+  const start   = performance.now();
+  const from    = 0;
+  function step(now) {
+    const p   = Math.min((now - start) / duration, 1);
+    const ease = 1 - Math.pow(1 - p, 3); // cubic ease-out
+    const val  = from + (target - from) * ease;
+    el.textContent = isFloat ? val.toFixed(1) : Math.round(val);
+    if (p < 1) requestAnimationFrame(step);
+  }
+  requestAnimationFrame(step);
+}
+
+// ── Patch renderMetrics to animate numbers ──
+const _origRenderMetrics = renderMetrics;
+window.renderMetrics = function() {
+  _origRenderMetrics();
+  requestAnimationFrame(() => {
+    document.querySelectorAll('.metric-value').forEach(el => {
+      const raw = el.textContent.replace(/[$k,]/g, '');
+      const num = parseFloat(raw);
+      if (!isNaN(num) && num > 0) {
+        const hasDollar = el.textContent.includes('$');
+        const hasK      = el.textContent.includes('k');
+        animateCountUp(el, num, 800);
+        if (hasDollar || hasK) {
+          setTimeout(() => {
+            const cur = parseFloat(el.textContent);
+            el.textContent = hasDollar ? '$' + Math.round(cur) + 'k' : el.textContent;
+          }, 820);
+        }
+      }
+    });
+  });
+};
+window.renderMetrics = (function(orig) {
+  return function() {
+    orig();
+    requestAnimationFrame(() => {
+      document.querySelectorAll('#metrics-area .metric-value').forEach(el => {
+        const txt = el.textContent.trim();
+        const raw = txt.replace(/[$k\s]/g, '');
+        const num = parseFloat(raw);
+        if (isNaN(num) || num <= 0) return;
+        const hasDollar = txt.includes('$');
+        const hasK      = txt.includes('k');
+        const suffix    = (hasDollar ? '$' : '') + '{N}' + (hasK ? 'k' : '');
+        const original  = txt;
+        animateCountUp({ set textContent(v) {
+          el.textContent = hasDollar
+            ? '$' + Math.round(parseFloat(v)) + (hasK ? 'k' : '')
+            : Math.round(parseFloat(v)) + (hasK ? 'k' : '');
+        }}, num, 900);
+      });
+    });
+  };
+})(renderMetrics);
+
+// ── Stagger-animate newly inserted elements ──
+function animateNewChildren(parentId, selector, baseDelay = 30) {
+  const parent = document.getElementById(parentId);
+  if (!parent) return;
+  const els = parent.querySelectorAll(selector);
+  els.forEach((el, i) => {
+    el.style.animationDelay = (i * baseDelay) + 'ms';
+    el.style.animationFillMode = 'both';
+  });
+}
+
+// ── Patch renderSide to animate dist bars ──
+const _origRenderSide = renderSide;
+window.renderSide = function() {
+  _origRenderSide();
+  requestAnimationFrame(() => {
+    document.querySelectorAll('.dist-bar-fill').forEach((bar, i) => {
+      const w = bar.style.width;
+      bar.style.setProperty('--target-w', w);
+      bar.style.width = '0';
+      bar.style.animationDelay = (i * 120 + 400) + 'ms';
+      bar.style.animationFillMode = 'both';
+      setTimeout(() => { bar.style.width = w; }, i * 120 + 400);
+    });
+  });
+};
+
+// ── Animate VP cards when panel opens ──
+const _origToggleVp = toggleVpPanel;
+window.toggleVpPanel = function(id) {
+  _origToggleVp(id);
+  const section = document.getElementById(id);
+  if (!section || section.classList.contains('collapsed')) return;
+  const cards = section.querySelectorAll('.vp-card');
+  cards.forEach((card, i) => {
+    card.style.animation = 'none';
+    card.offsetHeight; // reflow
+    card.style.animation = '';
+    card.style.animationDelay = (i * 55) + 'ms';
+    card.style.animationName  = 'vpCardIn';
+    card.style.animationDuration = '0.3s';
+    card.style.animationFillMode = 'both';
+  });
+};
+
+// ── Animate table rows after each render ──
+function reanimateTableRows() {
+  const rows = document.querySelectorAll('tbody tr');
+  rows.forEach((row, i) => {
+    row.style.animation = 'none';
+    row.offsetHeight;
+    row.style.animation = '';
+    row.style.animationName = 'tableRowIn';
+    row.style.animationDuration = '0.28s';
+    row.style.animationDelay = Math.min(i * 30, 300) + 'ms';
+    row.style.animationFillMode = 'both';
+  });
+}
+
+// ── Glowing cursor trail on accent elements ──
+(function() {
+  let trail = null;
+  document.addEventListener('mousemove', e => {
+    const target = e.target.closest('.metric-card, .vp-card, .panel-card, .btn-primary');
+    if (!target) { if (trail) { trail.style.opacity = '0'; } return; }
+    if (!trail) {
+      trail = document.createElement('div');
+      trail.style.cssText = 'position:fixed;pointer-events:none;width:200px;height:200px;border-radius:50%;background:radial-gradient(circle,rgba(79,255,176,0.08) 0%,transparent 70%);transform:translate(-50%,-50%);transition:opacity 0.3s;z-index:9999;';
+      document.body.appendChild(trail);
+    }
+    trail.style.left = e.clientX + 'px';
+    trail.style.top  = e.clientY + 'px';
+    trail.style.opacity = '1';
+  });
+})();
+
+// ── Score bars: re-animate on table render ──
+function reanimateScoreBars() {
+  document.querySelectorAll('.score-fill').forEach(bar => {
+    const w = bar.style.width;
+    bar.style.width = '0';
+    bar.offsetHeight;
+    bar.style.transition = 'width 0.7s cubic-bezier(0.4,0,0.2,1)';
+    requestAnimationFrame(() => { bar.style.width = w; });
+  });
+}
+
+// Hook into the existing render pipeline via MutationObserver
+const tableBody = document.createElement('tbody'); // placeholder
+const _observer = new MutationObserver(mutations => {
+  mutations.forEach(m => {
+    if (m.addedNodes.length && m.target && m.target.tagName === 'TBODY') {
+      reanimateTableRows();
+      reanimateScoreBars();
+    }
+  });
+});
+
+document.addEventListener('DOMContentLoaded', () => {
+  const tbody = document.querySelector('table tbody');
+  if (tbody) {
+    _observer.observe(tbody, { childList: true });
+  }
+});
+
 
 </script>
 </body>
