@@ -454,62 +454,19 @@
 
   .last-sync { font-family: var(--mono); font-size: 10px; color: var(--muted); }
 
-  /* ── SCORING IA CARDS ────────────────────────────────────────────────── */
-  .scoring-card { background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:1.1rem 1.2rem;display:flex;flex-direction:column;gap:10px;transition:border-color 0.15s; }
-  .scoring-card:hover { border-color:var(--border-bright); }
-  .scoring-card.prio-alta { border-left:3px solid var(--danger); }
-  .scoring-card.prio-media { border-left:3px solid var(--warn); }
-  .scoring-card.prio-baja { border-left:3px solid var(--cold); }
-  .sc-header { display:flex;align-items:flex-start;gap:10px; }
-  .sc-avatar { width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;flex-shrink:0; }
-  .sc-name { font-size:14px;font-weight:600;color:var(--text); }
-  .sc-meta { font-size:10px;color:var(--muted);font-family:var(--mono);margin-top:2px;display:flex;gap:8px;flex-wrap:wrap; }
-  .sc-score-row { display:flex;align-items:center;gap:8px; }
-  .sc-score-bar { flex:1;height:6px;background:var(--surface2);border-radius:3px;overflow:hidden; }
-  .sc-score-fill { height:100%;border-radius:3px;transition:width 0.3s; }
-  .sc-score-num { font-family:var(--mono);font-size:13px;font-weight:600;min-width:36px;text-align:right; }
-  .sc-badges { display:flex;flex-wrap:wrap;gap:5px; }
-  .sc-badge { font-size:10px;font-weight:500;padding:2px 8px;border-radius:20px;border:1px solid; }
-  .sc-signals { display:flex;gap:6px;flex-wrap:wrap; }
-  .sc-signal { font-size:10px;padding:2px 7px;border-radius:4px;font-family:var(--mono); }
-  .sc-signal.pos { background:rgba(79,255,176,0.1);color:var(--accent);border:1px solid rgba(79,255,176,0.25); }
-  .sc-signal.neg { background:rgba(255,80,80,0.1);color:var(--danger);border:1px solid rgba(255,80,80,0.25); }
-  .sc-resumen { font-size:12px;color:var(--muted);line-height:1.5;border-left:2px solid var(--border-bright);padding-left:8px; }
-  .sc-accion { font-size:12px;color:var(--text);background:var(--surface2);border-radius:7px;padding:7px 10px;line-height:1.4; }
-  .sc-msg { font-size:12px;color:var(--accent2);font-style:italic;line-height:1.4; }
-  .sc-actions { display:flex;gap:6px;padding-top:6px;border-top:1px solid var(--border); }
-  .scoring-stat-card { background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:8px 14px;min-width:90px;text-align:center; }
-  .scoring-stat-num { font-size:22px;font-weight:700;font-family:var(--mono); }
-  .scoring-stat-label { font-size:10px;color:var(--muted);font-family:var(--mono);margin-top:2px; }
-
-  /* ── TAGS / ETIQUETAS ─────────────────────────────────────────────────── */
-  .tag-pill { display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:20px;font-size:11px;font-weight:500;white-space:nowrap;cursor:default;border:1px solid transparent; }
-  .tag-pill .tag-del { cursor:pointer;opacity:0.6;font-size:10px;margin-left:2px;line-height:1; }
-  .tag-pill .tag-del:hover { opacity:1; }
-  .tag-manager-chip { display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:20px;font-size:12px;font-weight:500;cursor:pointer;border:1.5px solid;transition:opacity 0.15s; }
-  .tag-manager-chip:hover { opacity:0.8; }
-  #tag-picker-wrap { display:flex;flex-wrap:wrap;gap:6px;margin-top:4px; }
-  .tag-option-chip { display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:500;cursor:pointer;border:1.5px solid;transition:box-shadow 0.15s,opacity 0.15s; }
-  .tag-option-chip:hover { opacity:0.85; }
-  .tag-option-chip.selected { box-shadow:0 0 0 2px #fff; }
-
   /* visit panels — card style */
-  .vp-section { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
-  .vp-header { display: flex; align-items: center; gap: 10px; padding: 10px 14px; margin-bottom: 0; cursor: pointer; user-select: none; -webkit-tap-highlight-color: transparent; transition: background 0.15s; }
-  .vp-header:hover { background: var(--surface2); }
+  .vp-section {}
+  .vp-header { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
   .vp-icon { width: 30px; height: 30px; border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 15px; }
   .vp-title { font-size: 12px; font-weight: 500; flex: 1; }
   .vp-badge { font-size: 11px; font-weight: 600; padding: 2px 9px; border-radius: 20px; font-family: var(--mono); }
-  .vp-chevron { font-size: 12px; color: var(--muted); transition: transform 0.25s; flex-shrink: 0; }
-  .vp-section.collapsed .vp-chevron { transform: rotate(-90deg); }
-  .vp-cards { display: flex; flex-direction: column; gap: 7px; max-height: 600px; overflow-y: auto; padding: 0 12px 12px; transition: max-height 0.3s ease, opacity 0.25s ease; opacity: 1; }
-  .vp-section.collapsed .vp-cards { max-height: 0 !important; opacity: 0; padding-bottom: 0; overflow: hidden; }
+  .vp-cards { display: flex; flex-direction: column; gap: 7px; max-height: 300px; overflow-y: auto; padding-right: 2px; }
   .vp-card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 10px 13px; display: flex; align-items: center; gap: 11px; cursor: pointer; transition: border-color 0.15s, background 0.15s; }
   .vp-card:hover { background: var(--surface2); border-color: var(--border-bright); }
   .vp-avatar { width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600; flex-shrink: 0; }
   .vp-info { flex: 1; min-width: 0; }
-  .vp-name { font-size: 13px; font-weight: 500; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block; max-width: 100%; }
-  .vp-tel { font-size: 11px; color: var(--muted); font-family: var(--mono); margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .vp-name { font-size: 13px; font-weight: 500; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .vp-tel { font-size: 11px; color: var(--muted); font-family: var(--mono); margin-top: 2px; }
   .vp-pipe { display: inline-block; font-size: 10px; font-family: var(--mono); padding: 2px 7px; border-radius: 5px; margin-top: 5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
   .vp-arrow { color: var(--muted); font-size: 18px; flex-shrink: 0; line-height: 1; }
   .vp-empty { padding: 20px; text-align: center; color: var(--muted); font-size: 12px; font-family: var(--mono); background: var(--surface); border: 1px solid var(--border); border-radius: 10px; }
@@ -596,10 +553,6 @@
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
     scrollbar-width: none;
-    width: 100%;
-    min-width: 0;
-    max-width: 100%;
-    box-sizing: border-box;
   }
   .mobile-sort-bar::-webkit-scrollbar { display: none; }
   .mobile-sort-label { font-size: 10px; color: var(--muted); font-family: var(--mono); white-space: nowrap; flex-shrink: 0; }
@@ -643,26 +596,24 @@
     box-sizing: border-box;
   }
   .mobile-lead-card:active { background: var(--surface2); border-color: var(--border-bright); }
-  .mobile-card-top { display: flex; align-items: center; gap: 8px; width: 100%; min-width: 0; overflow: hidden; box-sizing: border-box; }
+  .mobile-card-top { display: flex; align-items: center; gap: 11px; }
   .mobile-card-avatar { width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; flex-shrink: 0; }
-  .mobile-card-name { font-size: 14px; font-weight: 600; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .mobile-card-tel { font-size: 11px; color: var(--muted); font-family: var(--mono); margin-top: 1px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .mobile-card-name { font-size: 14px; font-weight: 600; color: var(--text); }
+  .mobile-card-tel { font-size: 11px; color: var(--muted); font-family: var(--mono); margin-top: 1px; }
   .mobile-card-badges { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
-  .mobile-card-row { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; width: 100%; min-width: 0; box-sizing: border-box; }
-  .mobile-card-score-wrap { display: flex; align-items: center; gap: 6px; min-width: 0; overflow: hidden; }
+  .mobile-card-row { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+  .mobile-card-score-wrap { display: flex; align-items: center; gap: 6px; flex: 0 1 auto; min-width: 0; }
   .mobile-card-score-bar { flex: 1; height: 5px; background: rgba(255,255,255,0.08); border-radius: 3px; overflow: hidden; }
   .mobile-card-score-fill { height: 100%; border-radius: 3px; transition: width 0.5s ease, background 0.4s ease; }
   .mobile-card-score-num { font-family: var(--mono); font-size: 12px; font-weight: 600; min-width: 28px; text-align: right; }
   .mobile-card-pipe { font-size: 9px; font-family: var(--mono); color: var(--accent2); background: rgba(0,200,255,0.08); border: 1px solid rgba(0,200,255,0.2); border-radius: 4px; padding: 2px 6px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%; box-sizing: border-box; }
-  .mobile-card-actions { display: flex; gap: 5px; padding-top: 6px; border-top: 1px solid var(--border); width: 100%; box-sizing: border-box; }
-  .mobile-card-actions .btn { justify-content: center; font-size: 11px; padding: 6px 4px; min-width: 0; box-sizing: border-box; }
-  .mobile-card-actions .btn-wa,
-  .mobile-card-actions .btn-edit { flex: 1; min-width: 0; }
-  .mobile-card-actions .btn-danger { flex: 0 0 auto !important; width: 38px !important; min-width: 38px !important; flex-shrink: 0; padding: 6px 0 !important; }
+  .mobile-card-actions { display: flex; gap: 5px; padding-top: 6px; border-top: 1px solid var(--border); }
+  .mobile-card-actions .btn { flex: 1; justify-content: center; font-size: 11px; padding: 6px 4px; min-width: 0; }
 
   /* Mobile badge size reduction */
   @media(max-width:640px) {
     .badge { font-size: 10px; padding: 2px 6px; }
+    .mobile-card-score-wrap { flex: 0 0 auto; }
     .mobile-card-score-num { min-width: 24px; font-size: 11px; }
   }
 
@@ -766,12 +717,12 @@
   .fab {
     display: none;
     position: fixed;
-    bottom: 84px; right: 16px;
-    width: 46px; height: 46px;
+    bottom: 72px; right: 18px;
+    width: 50px; height: 50px;
     border-radius: 50%;
     background: var(--accent);
     color: #000;
-    font-size: 22px;
+    font-size: 24px;
     font-weight: 300;
     border: none;
     cursor: pointer;
@@ -780,7 +731,6 @@
     justify-content: center;
     box-shadow: 0 4px 16px rgba(79,255,176,0.35);
     transition: transform 0.15s, box-shadow 0.15s;
-    pointer-events: auto;
   }
   .fab:active { transform: scale(0.93); box-shadow: 0 2px 8px rgba(79,255,176,0.2); }
 
@@ -832,31 +782,13 @@
       grid-template-columns: 1fr !important;
       gap: 0.85rem;
       margin-bottom: 1rem;
-      width: 100%;
-      min-width: 0;
-      max-width: 100%;
-      box-sizing: border-box;
     }
-    .vp-section { width: 100%; min-width: 0; max-width: 100%; box-sizing: border-box; }
-    .vp-header:active { background: var(--surface2); }
-
-    .vp-cards { width: 100%; min-width: 0; max-width: 100%; box-sizing: border-box; padding: 0 10px 10px; }
-    .vp-section.collapsed .vp-cards { padding-bottom: 0; }
-    .vp-card {
-      width: 100%;
-      min-width: 0;
-      max-width: 100%;
-      box-sizing: border-box;
-    }
+    .vp-cards { max-height: 240px; }
 
     /* Toolbar: solo search + filtro temp */
     .toolbar {
       gap: 7px;
       margin-bottom: 0.75rem;
-      width: 100%;
-      min-width: 0;
-      max-width: 100%;
-      box-sizing: border-box;
     }
     .toolbar input[type="text"] { width: 100%; box-sizing: border-box; }
     .toolbar select { flex: 1; min-width: 0; font-size: 11px; box-sizing: border-box; }
@@ -867,12 +799,10 @@
     /* Tabla → ocultar, mostrar cards */
     .table-wrap { display: none; }
     #mobile-cards-wrap { display: flex; flex-direction: column; gap: 6px; width: 100%; box-sizing: border-box; padding: 0 2px; }
-    .mobile-sort-bar { padding-right: 60px; }
     #table-footer { display: none; }
 
     /* Content grid sin sidebar */
-    .content-grid { grid-template-columns: 1fr; gap: 0; width: 100%; min-width: 0; }
-    .content-grid > div { width: 100%; min-width: 0; max-width: 100%; box-sizing: border-box; }
+    .content-grid { grid-template-columns: 1fr; gap: 0; }
     .side-panel { display: none; } /* stats en panel lateral ocultos en móvil */
 
     /* Modal full-screen en móvil */
@@ -930,7 +860,7 @@
 <header>
   <div class="logo">
     <div class="logo-dot"></div>
-    Lead Scoring Dashboard - Asistente C21 Pedro Arias <span style="font-size:9px;color:var(--muted);font-family:var(--mono);font-weight:400;margin-left:6px;opacity:0.5">build-lucia-number</span>
+    Lead Scoring Dashboard - Asistente C21 Pedro Arias
   </div>
   <div class="header-right">
     <div class="sync-status">
@@ -955,10 +885,6 @@
   <button class="tab-btn" id="tab-btn-req" onclick="switchTab('req')">
     <span class="tab-icon">📋</span> Requerimientos
     <span class="tab-badge" id="tab-badge-req" style="display:none">0</span>
-  </button>
-  <button class="tab-btn" id="tab-btn-scoring" onclick="switchTab('scoring')">
-    🤖 Asistente Scoring
-    <span class="tab-badge" id="tab-badge-scoring" style="display:none">0</span>
   </button>
   <button class="tab-btn" id="tab-btn-n8n" onclick="switchTab('n8n')">
     <span class="tab-icon" style="font-weight:700;font-size:12px">n8</span> Configuración n8n
@@ -994,7 +920,6 @@
           <option value="">Todas las fuentes</option>
         </select>
         <span style="font-size:12px;color:var(--muted);font-family:var(--mono);background:rgba(0,200,255,0.08);border:1px solid rgba(0,200,255,0.15);border-radius:6px;padding:5px 10px">📣 Facebook Ads</span>
-        <button class="btn btn-sm" id="btn-show-discarded" onclick="toggleShowDiscarded()" title="Ver leads descartados" style="border-color:var(--muted);color:var(--muted)">🗑 <span id="discarded-label">Descartados</span> <span id="discarded-count" style="display:none;background:rgba(255,179,64,0.2);padding:0 5px;border-radius:8px;font-size:10px">0</span></button>
         <div class="toolbar-right">
           <button class="btn btn-sm" onclick="exportJSON()">↓ JSON</button>
           <button class="btn btn-sm" onclick="exportCSV()">↓ CSV</button>
@@ -1010,7 +935,6 @@
               <th onclick="sortBy('Nivel_interaccion')">INTERACCIÓN <span id="sh-Nivel_interaccion"></span></th>
               <th>ESTADO</th>
               <th>ESTADO VISITA</th>
-              <th>ETIQUETAS</th>
               <th>FUENTE</th>
               <th onclick="sortBy('value')">VALOR EST. <span id="sh-value"></span></th>
               <th>ACCIONES</th>
@@ -1137,39 +1061,6 @@
           <label class="field-label">TIMEOUT (ms)</label>
           <input type="number" id="n8n-timeout" value="10000" min="1000" max="60000">
         </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- ASISTENTE SCORING IA -->
-  <div class="n8n-section">
-    <div class="n8n-section-header">
-      <div class="n8n-section-icon" style="background:rgba(201,145,26,0.15);color:#c9911a">🤖</div>
-      <div class="n8n-section-info">
-        <div class="n8n-section-title">Asistente Scoring IA</div>
-        <div class="n8n-section-desc">Webhook que devuelve el análisis IA de clientes potenciales</div>
-      </div>
-    </div>
-    <div class="n8n-section-body">
-      <div class="form-grid-2">
-        <div class="field-group">
-          <label class="field-label">WEBHOOK URL (GET) — Leer scoring</label>
-          <input type="text" id="scoring-cfg-url" placeholder="https://tu-n8n.com/webhook/scoring-get">
-        </div>
-        <div class="field-group">
-          <label class="field-label">WEBHOOK URL (POST) — Actualizar leads</label>
-          <input type="text" id="scoring-cfg-post-url" placeholder="https://tu-n8n.com/webhook/scoring-update">
-        </div>
-      </div>
-      <div class="form-grid-2" style="margin-top:8px">
-        <div class="field-group">
-          <label class="field-label">AUTO-SYNC (segundos, 0 = desactivado)</label>
-          <input type="number" id="scoring-cfg-interval" value="0" min="0" max="3600">
-        </div>
-      </div>
-      <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap">
-        <button class="btn btn-sm" onclick="testScoringWebhook()" style="border-color:var(--accent2);color:var(--accent2)">▶ Probar GET</button>
-        <button class="btn btn-sm btn-primary" onclick="saveScoringConfig()">✓ Guardar Scoring</button>
       </div>
     </div>
   </div>
@@ -1359,136 +1250,6 @@
 <!-- ══════════════════════════════════════════════════
      TAB 3 — CHATS KOMMO
 ══════════════════════════════════════════════════ -->
-<!-- ── ASISTENTE SCORING TAB ── -->
-<div class="tab-panel" id="tab-scoring">
-  <div class="n8n-page">
-    <div style="display:flex;align-items:center;gap:12px;margin-bottom:1.5rem;flex-wrap:wrap">
-      <div>
-        <h2 style="font-size:17px;font-weight:600;margin:0">🤖 Asistente Scoring IA</h2>
-        <div style="font-size:11px;color:var(--muted);font-family:var(--mono);margin-top:3px">Análisis de clientes potenciales generado por IA</div>
-      </div>
-      <div style="margin-left:auto;display:flex;gap:8px;align-items:center;flex-wrap:wrap">
-        <button class="btn btn-sm btn-primary" onclick="fetchScoringData()">↻ Sincronizar</button>
-        <button class="btn btn-sm" onclick="pushScoringUpdate()" style="border-color:var(--warn);color:var(--warn)">⬆ Actualizar BD</button>
-        <button class="btn btn-sm" id="btn-scoring-discarded" onclick="toggleScoringDiscarded()" style="border-color:var(--muted);color:var(--muted)">🗑 <span id="scoring-discarded-label">Descartados</span> <span id="scoring-discarded-count" style="display:none;background:rgba(255,179,64,0.2);padding:0 5px;border-radius:8px;font-size:10px">0</span></button>
-      </div>
-    </div>
-
-    <!-- FILTROS -->
-    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:1rem;padding:10px 12px;background:var(--surface);border:1px solid var(--border);border-radius:10px;align-items:flex-end">
-      <div style="display:flex;flex-direction:column;gap:3px">
-        <label style="font-size:10px;color:var(--muted);font-family:var(--mono)">BUSCAR</label>
-        <input type="text" id="scoring-search" placeholder="Nombre, resumen..." style="font-size:12px;width:160px" oninput="renderScoringCards()">
-      </div>
-      <div style="display:flex;flex-direction:column;gap:3px">
-        <label style="font-size:10px;color:var(--muted);font-family:var(--mono)">PRIORIDAD</label>
-        <select id="scoring-filter-prio" onchange="renderScoringCards()" style="font-size:12px;width:150px">
-          <option value="">Toda</option>
-          <option value="HOY">📞 Hoy</option>
-          <option value="ESTA_SEMANA">📅 Esta semana</option>
-          <option value="ESTE_MES">🗓 Este mes</option>
-          <option value="BAJA_PRIORIDAD">⬇ Baja prioridad</option>
-        </select>
-      </div>
-      <div style="display:flex;flex-direction:column;gap:3px">
-        <label style="font-size:10px;color:var(--muted);font-family:var(--mono)">CLASIFICACIÓN</label>
-        <select id="scoring-filter-clas" onchange="renderScoringCards()" style="font-size:12px;width:140px">
-          <option value="">Toda</option>
-          <option value="CALIENTE">🔴 Caliente</option>
-          <option value="TIBIO">🟡 Tibio</option>
-          <option value="FRIO">🔵 Frío</option>
-          <option value="NO_CALIFICADO">⚫ No calificado</option>
-        </select>
-      </div>
-      <div style="display:flex;flex-direction:column;gap:3px">
-        <label style="font-size:10px;color:var(--muted);font-family:var(--mono)">INTENCIÓN COMPRA</label>
-        <select id="scoring-filter-intencion" onchange="renderScoringCards()" style="font-size:12px;width:130px">
-          <option value="">Toda</option>
-          <option value="ALTA">🔥 Alta</option>
-          <option value="MEDIA">➡ Media</option>
-          <option value="BAJA">❄ Baja</option>
-          <option value="DESCONOCIDA">❓ Desconocida</option>
-        </select>
-      </div>
-      <div style="display:flex;flex-direction:column;gap:3px">
-        <label style="font-size:10px;color:var(--muted);font-family:var(--mono)">ETAPA EMBUDO</label>
-        <select id="scoring-filter-etapa" onchange="renderScoringCards()" style="font-size:12px;width:160px">
-          <option value="">Toda</option>
-          <option value="LISTO_VISITA">✅ Listo para visita</option>
-          <option value="CERCA_VISITA">📅 Cerca de visita</option>
-          <option value="NECESITA_NURTURING">💬 Necesita nurturing</option>
-          <option value="INICIO">🆕 Inicio</option>
-          <option value="PERDIDO">❌ Perdido</option>
-        </select>
-      </div>
-      <div style="display:flex;flex-direction:column;gap:3px">
-        <label style="font-size:10px;color:var(--muted);font-family:var(--mono)">OBJECIÓN</label>
-        <select id="scoring-filter-razon" onchange="renderScoringCards()" style="font-size:12px;width:150px">
-          <option value="">Toda</option>
-          <option value="PRECIO">💰 Precio</option>
-          <option value="TIEMPO">⏰ Tiempo</option>
-          <option value="PAREJA">👫 Pareja</option>
-          <option value="FINANCIAMIENTO">🏦 Financiamiento</option>
-          <option value="COMPARANDO">🔍 Comparando</option>
-          <option value="NINGUNA">✅ Ninguna</option>
-          <option value="DESCONOCIDA">❓ Desconocida</option>
-        </select>
-      </div>
-      <div style="display:flex;flex-direction:column;gap:3px">
-        <label style="font-size:10px;color:var(--muted);font-family:var(--mono)">URGENCIA</label>
-        <select id="scoring-filter-urgencia" onchange="renderScoringCards()" style="font-size:12px;width:150px">
-          <option value="">Toda</option>
-          <option value="INMEDIATA">🔴 Inmediata</option>
-          <option value="3_MESES">🟡 3 meses</option>
-          <option value="6_MESES">🟠 6 meses</option>
-          <option value="MAS_DE_6_MESES">⚪ Más de 6 meses</option>
-          <option value="SIN_DEFINIR">❓ Sin definir</option>
-        </select>
-      </div>
-      <div style="display:flex;flex-direction:column;gap:3px">
-        <label style="font-size:10px;color:var(--muted);font-family:var(--mono)">CAP. FINANCIERA</label>
-        <select id="scoring-filter-finanzas" onchange="renderScoringCards()" style="font-size:12px;width:130px">
-          <option value="">Toda</option>
-          <option value="CONFIRMADA">✅ Confirmada</option>
-          <option value="PROBABLE">🟡 Probable</option>
-          <option value="DUDOSA">⚠ Dudosa</option>
-          <option value="DESCONOCIDA">❓ Desconocida</option>
-        </select>
-      </div>
-      <div style="display:flex;flex-direction:column;gap:3px">
-        <label style="font-size:10px;color:var(--muted);font-family:var(--mono)">QUIERE AGENDAR</label>
-        <select id="scoring-filter-agendar" onchange="renderScoringCards()" style="font-size:12px;width:120px">
-          <option value="">Todos</option>
-          <option value="SI">✅ Sí</option>
-          <option value="NO">❌ No</option>
-        </select>
-      </div>
-      <div style="display:flex;flex-direction:column;gap:3px">
-        <label style="font-size:10px;color:var(--muted);font-family:var(--mono)">ALERTA INMEDIATA</label>
-        <select id="scoring-filter-alerta" onchange="renderScoringCards()" style="font-size:12px;width:120px">
-          <option value="">Todos</option>
-          <option value="SI">🚨 Con alerta</option>
-          <option value="NO">— Sin alerta</option>
-        </select>
-      </div>
-      <div style="display:flex;flex-direction:column;gap:3px">
-        <label style="font-size:10px;color:var(--muted);font-family:var(--mono)">INACTIVO ≥ (días)</label>
-        <input type="number" id="scoring-filter-dias" placeholder="ej. 3" min="0" style="font-size:12px;width:80px" oninput="renderScoringCards()">
-      </div>
-      <div style="display:flex;flex-direction:column;gap:3px">
-        <label style="font-size:10px;color:var(--muted);font-family:var(--mono)">PIPELINE</label>
-        <select id="scoring-filter-pipeline" onchange="renderScoringCards()" style="font-size:12px;width:160px">
-          <option value="">Todos</option>
-        </select>
-      </div>
-      <button class="btn btn-sm" onclick="resetScoringFilters()" style="align-self:flex-end;color:var(--muted);border-color:var(--border)">✕ Limpiar</button>
-    </div>
-
-    <div id="scoring-stats" style="display:flex;gap:8px;margin-bottom:1rem;flex-wrap:wrap"></div>
-    <div id="scoring-cards-wrap" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:1rem"></div>
-  </div>
-</div>
-
 <div class="tab-panel" id="tab-chats">
 
   <!-- Layout -->
@@ -1690,24 +1451,6 @@
         </select>
       </div>
       <div class="field-group full"><label class="field-label">NOTAS</label><input type="text" id="f-notes" placeholder="Notas adicionales..."></div>
-      <div class="field-group full">
-        <label class="field-label">ESTADO DE VISITA</label>
-        <select id="f-status-visita">
-          <option value="">Ninguno</option>
-          <option value="agendada">📅 Visita agendada</option>
-          <option value="intencion">👁 Intención de visita</option>
-          <option value="otras">🔍 Buscan más/otras opciones</option>
-        </select>
-      </div>
-    </div>
-    <div class="field-group full" style="margin-top:8px">
-      <label class="field-label">ETIQUETAS</label>
-      <div id="tag-picker-wrap"></div>
-      <div style="display:flex;gap:6px;margin-top:8px;align-items:center">
-        <input type="text" id="f-new-tag-name" placeholder="Nueva etiqueta..." style="flex:1;font-size:12px">
-        <input type="color" id="f-new-tag-color" value="#4fffb0" style="width:36px;height:32px;border-radius:6px;border:1px solid var(--border-bright);cursor:pointer;padding:2px;background:var(--surface)">
-        <button class="btn btn-sm" onclick="addTagFromModal()" style="flex-shrink:0">+ Agregar</button>
-      </div>
     </div>
     <div class="form-actions">
       <button class="btn" onclick="closeModal()">Cancelar</button>
@@ -1732,11 +1475,6 @@
     <span class="nav-icon">📋</span>
     <span>Req.</span>
     <span class="bottom-nav-badge" id="bnav-badge-req" style="display:none">0</span>
-  </button>
-  <button class="bottom-nav-btn" id="bnav-scoring" onclick="switchTab('scoring')">
-    <span class="nav-icon">🤖</span>
-    <span>IA</span>
-    <span class="bottom-nav-badge" id="bnav-badge-scoring" style="display:none">0</span>
   </button>
   <button class="bottom-nav-btn" id="bnav-n8n" onclick="switchTab('n8n')">
     <span class="nav-icon" style="font-size:14px;font-weight:700">n8n</span>
@@ -1768,24 +1506,8 @@ function waGreeting() {
 const WA_DEFAULT_TEMPLATE =
   'Sr {nombre}, {saludo}. ' +
   'Soy Pedro Arias Asesor inmobiliario de Century 21. ' +
-  'Se contactó con mi asistente Lucía al número de WhatsApp {numero_lucia} por nuestro anuncio de Facebook recientemente_______. ' +
+  'Se contactó con mi asistente Lucía al número de WhatsApp _______ por nuestro anuncio de Facebook recientemente_______. ' +
   'Tengo entendido que____';
-
-// Pipeline → número de WhatsApp de Lucía
-const LUCIA_NUMBERS = {
-  '76656596': '76656596',  // Embudo Leads B04-05
-  '76658858': '76658858',  // Embudo Leads Campañas
-  '75952084': '75952084',  // Leads Campañas
-};
-
-function getLuciaNumber(pipelineNombre) {
-  if (!pipelineNombre) return '________';
-  const str = String(pipelineNombre);
-  for (const [pipeId, num] of Object.entries(LUCIA_NUMBERS)) {
-    if (str.includes(pipeId)) return num;
-  }
-  return '________';
-}
 
 function loadWaTemplate() {
   try { return localStorage.getItem('wa_msg_template') || WA_DEFAULT_TEMPLATE; }
@@ -1809,7 +1531,7 @@ function resetWaTemplate() {
 
 function previewWaTemplate() {
   const tpl = (document.getElementById('wa-msg-template').value || '').trim();
-  const preview = applyWaTemplate(tpl, 'Juan Pérez', 'LEAD CAMPAÑAS (75952084)');
+  const preview = applyWaTemplate(tpl, 'Juan Pérez');
   const box = document.getElementById('wa-template-preview');
   box.textContent = preview;
   box.style.display = box.style.display === 'none' ? 'block' : 'none';
@@ -1827,16 +1549,15 @@ function showWaToast(msg, type) {
   el._t = setTimeout(() => { el.style.display = 'none'; }, 3000);
 }
 
-function applyWaTemplate(tpl, leadName, pipelineNombre) {
+function applyWaTemplate(tpl, leadName) {
   return (tpl || WA_DEFAULT_TEMPLATE)
-    .replace(/\{nombre\}/gi, leadName || '')
-    .replace(/\{saludo\}/gi, waGreeting())
-    .replace(/\{numero_lucia\}/gi, getLuciaNumber(pipelineNombre));
+    .replace(/\{nombre\}/gi, leadName)
+    .replace(/\{saludo\}/gi, waGreeting());
 }
 
 // Override waMessage to use template
-function waMessage(leadName, pipelineNombre) {
-  return encodeURIComponent(applyWaTemplate(loadWaTemplate(), leadName, pipelineNombre));
+function waMessage(leadName) {
+  return encodeURIComponent(applyWaTemplate(loadWaTemplate(), leadName));
 }
 
 // Init: load saved template into textarea when tab is shown
@@ -1881,7 +1602,6 @@ let cfg = { getUrl:'', postUrl:'', authType:'none', apiKey:'', authHeader:'X-API
 let sortCol = 'Lead_score', sortDir = -1;
 let editingId = null;
 let autoTimer = null;
-let scoringTimer = null;
 let logEntries = [];
 let lastSync = null;
 
@@ -1898,18 +1618,8 @@ function switchTab(name) {
   const fab = document.getElementById('fab-new');
   if (fab) fab.style.display = name === 'dashboard' ? 'flex' : 'none';
   if (name === 'chats') renderChatsList();
-  if (name === 'n8n') {
-    initWaTemplateEditor();
-    const sc = loadScoringCfg();
-    const su = document.getElementById('scoring-cfg-url');
-    const sp = document.getElementById('scoring-cfg-post-url');
-    const si = document.getElementById('scoring-cfg-interval');
-    if (su && sc.url) su.value = sc.url;
-    if (sp && sc.postUrl) sp.value = sc.postUrl;
-    if (si) si.value = sc.interval || 0;
-  }
+  if (name === 'n8n')   initWaTemplateEditor();
   if (name === 'req')   { loadReqs(); renderReqs(); }
-  if (name === 'scoring') renderScoringCards();
 }
 
 // ── HELPERS ────────────────────────────────────────────────────────────────
@@ -1943,9 +1653,6 @@ function getFiltered() {
   const fs = document.getElementById('f-src').value;
   const fp = document.getElementById('f-pipeline').value;
   return leads.filter(l => {
-    // Show/hide discarded leads based on toggle
-    if (l.discarded && !_showDiscarded) return false;
-    if (!l.discarded && _showDiscarded) return false;
     if (q && !l.name.toLowerCase().includes(q) && !(l.Telefono||'').toLowerCase().includes(q) && !(l.email||'').toLowerCase().includes(q) && !(l.Pipeline_nombre||'').toLowerCase().includes(q)) return false;
     if (ft && getTemp(l.Lead_score, l.Lead_categoria) !== ft) return false;
     if (fs && l.etiqueta_fuente !== fs) return false;
@@ -1959,10 +1666,9 @@ function getFiltered() {
       if (sortCol === 'Status_id') {
         const sid = String(l.Status_id != null ? l.Status_id : (l.status_id||'')).trim();
         if (!sid || sid === 'null') return 0;
-        if (typeof AGENDADA_SET     !== 'undefined' && AGENDADA_SET.has(sid))     return 4;
-        if (typeof INTENCION_SET    !== 'undefined' && INTENCION_SET.has(sid))    return 3;
-        if (typeof POTENCIALES_SET  !== 'undefined' && POTENCIALES_SET.has(sid))  return 2;
-        if (typeof OTRAS_SET        !== 'undefined' && OTRAS_SET.has(sid))        return 1;
+        if (typeof AGENDADA_SET  !== 'undefined' && AGENDADA_SET.has(sid))  return 4;
+        if (typeof INTENCION_SET !== 'undefined' && INTENCION_SET.has(sid)) return 3;
+        if (typeof OTRAS_SET     !== 'undefined' && OTRAS_SET.has(sid))     return 2;
         return 1;
       }
       return l[sortCol];
@@ -1980,21 +1686,19 @@ let _vsRendered   = 0;    // how many rows currently in DOM
 
 const INTENCION_SET = new Set(['106888064','105257100','89413287','81405567']);
 const AGENDADA_SET  = new Set(['106888152','105257104','81074171','79521939']);
-const OTRAS_SET     = new Set(['106888144','105257084','81074167','79521935']);
-const POTENCIALES_SET = new Set(['84628707','91779347','106888068','105257096']);
+const OTRAS_SET     = new Set(['106888144','105257084','82099375','79521935']);
 
 function visitaBadge(statusId) {
   const sid = statusId != null && statusId !== '' ? String(statusId).trim() : '';
-  if (!sid || sid === 'null') return '<span style="color:var(--muted);font-size:11px;display:inline-block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:100%">&#8212;</span>';
-  if (AGENDADA_SET.has(sid))  return '<span style="font-size:11px;font-weight:500;padding:2px 8px;border-radius:20px;color:#27500A;background:#EAF3DE;border:1px solid #C0DD97;white-space:nowrap;display:inline-block;overflow:hidden;text-overflow:ellipsis;max-width:100%;box-sizing:border-box">&#128197; Agendada</span>';
-  if (INTENCION_SET.has(sid)) return '<span style="font-size:11px;font-weight:500;padding:2px 8px;border-radius:20px;color:#7a5300;background:#FDF3D0;border:1px solid #e0b84a;white-space:nowrap;display:inline-block;overflow:hidden;text-overflow:ellipsis;max-width:100%;box-sizing:border-box">&#128065; Intenci&#243;n</span>';
-  if (OTRAS_SET.has(sid))       return '<span style="font-size:11px;font-weight:500;padding:2px 8px;border-radius:20px;color:#0c4a6e;background:#e0f2fe;border:1px solid #7dd3fc;white-space:nowrap;display:inline-block;overflow:hidden;text-overflow:ellipsis;max-width:100%;box-sizing:border-box">&#128269; Otras</span>';
-  if (POTENCIALES_SET.has(sid)) return '<span style="font-size:11px;font-weight:500;padding:2px 8px;border-radius:20px;color:#7a5c00;background:#fff8dc;border:1px solid #d4a017;white-space:nowrap;display:inline-block;overflow:hidden;text-overflow:ellipsis;max-width:100%;box-sizing:border-box">&#11088; Potencial</span>';
+  if (!sid || sid === 'null') return '<span style="color:var(--muted);font-size:11px">&#8212;</span>';
+  if (AGENDADA_SET.has(sid))  return '<span style="font-size:11px;font-weight:500;padding:2px 8px;border-radius:20px;color:#27500A;background:#EAF3DE;border:1px solid #C0DD97;white-space:nowrap">&#128197; Agendada</span>';
+  if (INTENCION_SET.has(sid)) return '<span style="font-size:11px;font-weight:500;padding:2px 8px;border-radius:20px;color:#7a5300;background:#FDF3D0;border:1px solid #e0b84a;white-space:nowrap">&#128065; Intenci&#243;n</span>';
+  if (OTRAS_SET.has(sid))     return '<span style="font-size:11px;font-weight:500;padding:2px 8px;border-radius:20px;color:#0c4a6e;background:#e0f2fe;border:1px solid #7dd3fc;white-space:nowrap">&#128269; Otras opciones</span>';
   return '<span style="color:var(--muted);font-size:11px">&#8212;</span>';
 }
 
 function nivelBadge(nivel) {
-  if (!nivel) return '<span style="color:var(--muted);font-size:11px;display:inline-block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:100%">—</span>';
+  if (!nivel) return '<span style="color:var(--muted);font-size:11px">—</span>';
   const n = String(nivel).toLowerCase();
   const cfg = {
     'alta':  { color:'var(--accent)',  bg:'rgba(79,255,176,0.08)',  border:'rgba(79,255,176,0.25)'  },
@@ -2002,7 +1706,7 @@ function nivelBadge(nivel) {
     'baja':  { color:'var(--cold)',    bg:'rgba(0,200,255,0.08)',   border:'rgba(0,200,255,0.25)'   },
   };
   const s = cfg[n] || { color:'var(--muted)', bg:'transparent', border:'var(--border)' };
-  return '<span style="font-size:11px;font-weight:500;padding:2px 8px;border-radius:20px;color:'+s.color+';background:'+s.bg+';border:1px solid '+s.border+';display:inline-block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:100%;box-sizing:border-box">' + nivel + '</span>';
+  return '<span style="font-size:11px;font-weight:500;padding:2px 8px;border-radius:20px;color:'+s.color+';background:'+s.bg+';border:1px solid '+s.border+'">' + nivel + '</span>';
 }
 
 function buildRow(l) {
@@ -2017,12 +1721,10 @@ function buildRow(l) {
     <td>${nivelBadge(l.Nivel_interaccion)}</td>
     <td><span class="badge badge-${tCat}">${tempLabel[tCat]||tCat}</span></td>
     <td>${visitaBadge(l.Status_id)}</td>
-    <td style="line-height:1.8">${renderTagPills(l.tags||[])}</td>
     <td style="font-size:11px;color:var(--muted)">${esc(l.etiqueta_fuente||'—')}</td>
     <td style="font-family:var(--mono);font-size:12px">$${Number(l.Valor_lead||l.value||0).toLocaleString()}</td>
-    <td onclick="event.stopPropagation()" style="white-space:nowrap">
+    <td onclick="event.stopPropagation()">
       <button class="btn btn-sm" onclick="pushToN8N(leads.find(x=>x.id===${l.id}))">↑</button>
-      <button class="btn btn-sm" onclick="discardLead(${l.id})" title="${l.discarded ? 'Recuperar' : 'Descartar'}" style="border-color:${l.discarded ? 'var(--accent)' : 'var(--warn)'};color:${l.discarded ? 'var(--accent)' : 'var(--warn)'}">${l.discarded ? '↩' : '🚫'}</button>
       <button class="btn btn-sm btn-danger" onclick="deleteLead(${l.id})">✕</button>
     </td>
   </tr>`;
@@ -2112,7 +1814,7 @@ function renderMobileCards() {
     const ini      = (l.name||'').split(' ').map(w=>w[0]||'').join('').substring(0,2).toUpperCase();
     const bgMap    = {hot:'rgba(255,91,107,0.15)',warm:'rgba(255,179,64,0.15)',cold:'rgba(0,200,255,0.15)'};
     const phone    = (l.Telefono||'').replace(/[^\d+]/g,'');
-    const waLink   = phone ? 'whatsapp://send?phone=' + phone + '&text=' + waMessage(l.name, l.Pipeline_nombre) : '';
+    const waLink   = phone ? 'whatsapp://send?phone=' + phone + '&text=' + waMessage(l.name) : '';
     return '<div class="mobile-lead-card">' +
       '<div class="mobile-card-top">' +
         '<div class="mobile-card-avatar" style="background:'+bgMap[tCat]+';color:'+cScore+'">'+ini+'</div>' +
@@ -2120,7 +1822,7 @@ function renderMobileCards() {
           '<div class="mobile-card-name" style="color:var(--accent)">'+esc(l.name)+'</div>' +
           '<div class="mobile-card-tel">'+esc(l.Telefono||'—')+'</div>' +
         '</div>' +
-        '<span class="badge badge-'+tCat+'" style="flex-shrink:0;white-space:nowrap">'+tempLabel[tCat]+'</span>' +
+        '<span class="badge badge-'+tCat+'">'+tempLabel[tCat]+'</span>' +
       '</div>' +
       '<div class="mobile-card-row">' +
         '<div class="mobile-card-score-wrap">' +
@@ -2131,11 +1833,9 @@ function renderMobileCards() {
         (visitaBadge(l.Status_id)) +
       '</div>' +
       '<div class="mobile-card-pipe" title="'+esc(l.Pipeline_nombre||'')+'">'+esc(l.Pipeline_nombre||'—')+'</div>' +
-      (l.tags && l.tags.length ? '<div style="display:flex;flex-wrap:wrap;gap:4px;margin-top:4px">' + renderTagPills(l.tags) + '</div>' : '') +
       '<div class="mobile-card-actions">' +
-        (waLink ? '<a href="'+waLink+'" class="btn-wa" style="flex:1;min-width:0;display:flex;align-items:center;justify-content:center;gap:6px;padding:7px;border-radius:7px;background:rgba(37,211,102,0.1);border:1px solid rgba(37,211,102,0.3);color:#25D366;text-decoration:none;font-size:12px;font-weight:500;box-sizing:border-box">📲 WhatsApp</a>' : '') +
-        '<button class="btn btn-sm btn-edit" onclick="openModal(\'edit\','+l.id+')">✏ Editar</button>' +
-        '<button class="btn btn-sm" onclick="discardLead('+l.id+')" style="flex:0 0 auto;padding:6px 8px;border-color:'+(l.discarded?'var(--accent)':'var(--warn)')+';color:'+(l.discarded?'var(--accent)':'var(--warn)')+'">'+( l.discarded?'↩':'🚫')+'</button>' +
+        (waLink ? '<a href="'+waLink+'" style="flex:1;display:flex;align-items:center;justify-content:center;gap:6px;padding:7px;border-radius:7px;background:rgba(37,211,102,0.1);border:1px solid rgba(37,211,102,0.3);color:#25D366;text-decoration:none;font-size:12px;font-weight:500">📲 WhatsApp</a>' : '') +
+        '<button class="btn btn-sm" style="flex:1" onclick="openModal(\'edit\','+l.id+')">✏ Editar</button>' +
         '<button class="btn btn-sm btn-danger" onclick="deleteLead('+l.id+')">✕</button>' +
       '</div>' +
     '</div>';
@@ -2176,7 +1876,6 @@ function renderTable() {
   renderMetrics();
   renderSide();
   renderVisitPanels();
-  collapseAllVpPanels();
   updateSourceFilter();
   updatePipelineFilter();
   updateStatusPanel();
@@ -2190,85 +1889,37 @@ window.addEventListener('resize', () => renderTable());
 const INTENCION_VISITA_IDS  = INTENCION_SET;
 const VISITA_AGENDADA_IDS   = AGENDADA_SET;
 
-// ── VISIT PANEL ACCORDION (mobile) ────────────────────────────────────────
-function toggleVpPanel(id) {
-  const section = document.getElementById(id);
-  if (!section) return;
-  section.classList.toggle('collapsed');
-}
-
-let _vpPanelsInitialized = false;
-
-function collapseAllVpPanels() {
-  // Start all panels collapsed on mobile — only on first render
-  if (!isMobile() || _vpPanelsInitialized) return;
-  _vpPanelsInitialized = true;
-  ['vp-agendada','vp-intencion','vp-potenciales','vp-otras'].forEach(id => {
-    const el = document.getElementById(id);
-    if (el) el.classList.add('collapsed');
-  });
-}
-
-// ── DAYS SINCE CREATED ────────────────────────────────────────────────────
-// Calculates days since the lead's createdAt date (first contact)
-function daysSinceEntry(leadId, group) {
-  const l = leads.find(x => String(x.Lead_id) === String(leadId) || String(x.id) === String(leadId));
-  if (!l || !l.createdAt) return null;
-  const diffMs = Date.now() - new Date(l.createdAt).getTime();
-  return Math.floor(diffMs / 86400000);
-}
-
 function renderVisitPanels() {
   const toSid = l => { const v = l.Status_id != null ? l.Status_id : l.status_id; return v != null && v !== '' ? String(v).trim() : ''; };
-  const intencion   = leads.filter(l => INTENCION_VISITA_IDS.has(toSid(l)));
-  const agendada    = leads.filter(l => VISITA_AGENDADA_IDS.has(toSid(l)));
-  const potenciales = leads.filter(l => POTENCIALES_SET.has(toSid(l)));
-  const otras       = leads.filter(l => OTRAS_SET.has(toSid(l)));
-
-
+  const intencion = leads.filter(l => INTENCION_VISITA_IDS.has(toSid(l)));
+  const agendada  = leads.filter(l => VISITA_AGENDADA_IDS.has(toSid(l)));
+  const otras     = leads.filter(l => OTRAS_SET.has(toSid(l)));
 
   function initials(name) {
     return (name||'').split(' ').map(w=>w[0]||'').join('').substring(0,2).toUpperCase();
   }
 
-  function buildPanel(title, icon, accentColor, bgColor, borderColor, data, group) {
+  function buildPanel(title, icon, accentColor, bgColor, borderColor, data) {
     const cards = data.length ? data.map(l => {
-      // Days counter badge
-      const days = (group != null) ? daysSinceEntry(l.Lead_id, group) : null;
-      const daysBadge = (days === null || days === 0)
-        ? '<span style="font-size:10px;color:var(--muted);font-family:var(--mono);flex-shrink:0;white-space:nowrap">hoy</span>'
-        : '<span style="font-size:10px;font-family:var(--mono);font-weight:600;padding:1px 6px;border-radius:10px;flex-shrink:0;white-space:nowrap;background:' +
-            (days > 7 ? 'rgba(255,80,80,0.12)' : days > 3 ? 'rgba(255,179,64,0.12)' : 'rgba(79,255,176,0.08)') +
-          ';color:' + (days > 7 ? 'var(--danger)' : days > 3 ? 'var(--warn)' : 'var(--accent)') + '">' + days + ' d</span>';
+      const ini = initials(l.name);
       const tel = l.Telefono || '—';
       const pipe = l.Pipeline_nombre || '—';
-      // Fallback: if name is empty, whitespace-only, dot, or has invisible unicode chars, show phone instead
-      let cleanName = String(l.name || '')
-        .replace(/[\u200B-\u200D\uFEFF\u00A0]/g, '')
-        .trim()
-        .replace(/[.\-_,;:]+$/, '')
-        .trim();
-      const letterCount = (cleanName.match(/[a-zA-Z\u00C0-\u017F]/g) || []).length;
-      const displayName = letterCount >= 2 ? cleanName : ('Lead ' + (tel !== '—' ? tel : ('#' + (l.Lead_id || l.id || '?'))));
-      const ini = initials(displayName);
       // Normalize phone — handle null, 'null', empty, dashes
       const rawTel   = (l.Telefono != null && l.Telefono !== undefined) ? String(l.Telefono).trim() : '';
       const rawPhone = (rawTel && rawTel !== 'null' && rawTel !== '—' && rawTel !== '-')
         ? rawTel.replace(/[^\d+]/g, '') : '';
       const phone    = rawPhone.length >= 7 ? rawPhone : '';
-      const msg      = waMessage(l.name, l.Pipeline_nombre);
+      const msg      = waMessage(l.name);
       const waLink   = phone ? ('whatsapp://send?phone=' + phone + '&text=' + msg) : '';
 
       if (waLink) {
         return '<a class="vp-card" href="' + waLink + '" target="_blank" rel="noopener" style="text-decoration:none;display:flex;align-items:center;gap:10px;cursor:pointer" title="Clic en nombre → Chat, Clic en card → WhatsApp">' +
           '<div class="vp-avatar" style="background:' + bgColor + ';color:' + accentColor + '">' + ini + '</div>' +
           '<div class="vp-info">' +
-            '<div class="vp-name" style="color:var(--accent);cursor:pointer;font-weight:600" title="' + esc(displayName) + '" onclick="event.preventDefault();event.stopPropagation();goToChat(' + l.Lead_id + ')">' + esc(displayName) + '</div>' +
+            '<div class="vp-name" style="color:var(--accent);cursor:pointer;font-weight:600" title="' + esc(l.name) + '" onclick="event.preventDefault();event.stopPropagation();goToChat(' + l.Lead_id + ')">' + esc(l.name) + '</div>' +
             '<div class="vp-tel">&#9990; ' + esc(tel) + '</div>' +
             '<span class="vp-pipe" style="background:' + bgColor + ';color:' + accentColor + ';border:1px solid ' + borderColor + '" title="' + esc(pipe) + '">' + esc(pipe) + '</span>' +
-            (l.tags && l.tags.length ? '<div style="display:flex;flex-wrap:wrap;gap:3px;margin-top:4px">' + renderTagPills(l.tags) + '</div>' : '') +
           '</div>' +
-          daysBadge +
           '<span style="font-size:18px;flex-shrink:0">&#128242;</span>' +
         '</a>';
       }
@@ -2276,36 +1927,29 @@ function renderVisitPanels() {
       return '<div class="vp-card" onclick="goToChat(' + l.Lead_id + ')" title="Sin tel\u00e9fono · Ver chat">' +
         '<div class="vp-avatar" style="background:' + bgColor + ';color:' + accentColor + ';opacity:0.7">' + ini + '</div>' +
         '<div class="vp-info">' +
-          '<div class="vp-name" style="color:var(--accent);cursor:pointer;font-weight:600" title="' + esc(displayName) + '" onclick="goToChat(' + l.Lead_id + ')">' + esc(displayName) + '</div>' +
+          '<div class="vp-name" style="color:var(--accent);cursor:pointer;font-weight:600" title="' + esc(l.name) + '" onclick="goToChat(' + l.Lead_id + ')">' + esc(l.name) + '</div>' +
           '<div class="vp-tel" style="color:var(--danger);font-size:10px">&#9888; Sin tel\u00e9fono registrado</div>' +
           '<span class="vp-pipe" style="background:' + bgColor + ';color:' + accentColor + ';border:1px solid ' + borderColor + ';opacity:0.7">' + esc(pipe) + '</span>' +
-          (l.tags && l.tags.length ? '<div style="display:flex;flex-wrap:wrap;gap:3px;margin-top:4px">' + renderTagPills(l.tags) + '</div>' : '') +
         '</div>' +
-        daysBadge +
         '<span style="font-size:13px;color:var(--muted);flex-shrink:0">&#128172;</span>' +
       '</div>';
     }).join('')
     : `<div class="vp-empty">Sin leads en esta etapa</div>`;
 
-    const panelId = 'vp-' + group;
-    const existingEl = document.getElementById(panelId);
-    const isCollapsed = existingEl ? existingEl.classList.contains('collapsed') : isMobile();
-    return `<div class="vp-section${isCollapsed ? ' collapsed' : ''}" id="${panelId}">
-      <div class="vp-header" onclick="toggleVpPanel('${panelId}')" role="button" aria-expanded="${!isCollapsed}">
+    return `<div class="vp-section">
+      <div class="vp-header">
         <div class="vp-icon" style="background:${bgColor};color:${accentColor}">${icon}</div>
         <span class="vp-title" style="color:${accentColor}">${title}</span>
         <span class="vp-badge" style="background:${bgColor};color:${accentColor}">${data.length}</span>
-        <span class="vp-chevron">▾</span>
       </div>
       <div class="vp-cards">${cards}</div>
     </div>`;
   }
 
   document.getElementById('visit-panels').innerHTML =
-    buildPanel('Leads con visita agendada',        '📅',         'var(--accent)',  'rgba(79,255,176,0.1)',   'rgba(79,255,176,0.3)',   agendada,    'agendada')    +
-    buildPanel('Leads con intención de visita',  '&#128065;',  '#c9911a',       'rgba(201,145,26,0.1)',   'rgba(201,145,26,0.35)',  intencion,   'intencion')   +
-    buildPanel('Leads Clientes potenciales',     '&#11088;',   '#d4a017',       'rgba(212,160,23,0.1)',   'rgba(212,160,23,0.35)',  potenciales, 'potenciales') +
-    buildPanel('Buscan más/otras opciones',       '&#128269;',  '#0ea5e9',       'rgba(14,165,233,0.1)',   'rgba(14,165,233,0.35)',  otras,       'otras');
+    buildPanel('Leads con visita agendada',        '📅',         'var(--accent)',  'rgba(79,255,176,0.1)',   'rgba(79,255,176,0.3)',   agendada)  +
+    buildPanel('Leads con intención de visita',  '&#128065;',  '#c9911a',       'rgba(201,145,26,0.1)',   'rgba(201,145,26,0.35)',  intencion) +
+    buildPanel('Buscan más/otras opciones',       '&#128269;',  '#0ea5e9',       'rgba(14,165,233,0.1)',   'rgba(14,165,233,0.35)',  otras);
 }
 
 // ── SCORE DETALLE POPUP ────────────────────────────────────────────────────
@@ -2436,13 +2080,6 @@ function saveConfig() {
   cfg.timeout    = parseInt(document.getElementById('n8n-timeout').value) || 10000;
   cfg.extra      = document.getElementById('n8n-extra').value.trim();
 
-  // Scoring IA config
-  const scoringCfg = loadScoringCfg();
-  scoringCfg.url      = (document.getElementById('scoring-cfg-url')?.value || '').trim();
-  scoringCfg.interval = parseInt(document.getElementById('scoring-cfg-interval')?.value || '0') || 0;
-  localStorage.setItem('ls_scoring_cfg', JSON.stringify(scoringCfg));
-  startScoringAutoSync(scoringCfg);
-
   localStorage.setItem('ls_cfg', JSON.stringify(cfg));
   startAutoSync();
   updateSyncStatus(cfg.getUrl ? 'configured' : 'none');
@@ -2547,11 +2184,6 @@ async function fetchFromN8N() {
         return (v !== null && v !== undefined && String(v).trim() !== '' && String(v).trim() !== 'null') ? String(v).trim() : '';
       })(),
       lead_score_detalle:  Array.isArray(l.lead_score_detalle) ? l.lead_score_detalle : (Array.isArray(l.Lead_score_detalle) ? l.Lead_score_detalle : []),
-      // Preserve local tags — find existing lead by Lead_id and keep its tags
-      tags: (function(){
-        const existing = leads.find(x => String(x.Lead_id) === String(l.Lead_id || l.lead_id || l.id || i+1));
-        return (existing && existing.tags && existing.tags.length) ? existing.tags : (l.tags || []);
-      })(),
       stage:               l.stage              || l.etapa               || 'prospecto',
       createdAt:           l.createdAt          || new Date().toISOString(),
       updatedAt:           l.updatedAt          || new Date().toISOString()
@@ -2649,14 +2281,6 @@ function startAutoSync() {
   }
 }
 
-function startScoringAutoSync(scoringCfg) {
-  if (scoringTimer) clearInterval(scoringTimer);
-  if (scoringCfg && scoringCfg.url && scoringCfg.interval > 0) {
-    scoringTimer = setInterval(fetchScoringData, scoringCfg.interval * 1000);
-    addLog('Scoring auto-sync activado cada ' + scoringCfg.interval + 's', 'ok');
-  }
-}
-
 // ── MODAL ─────────────────────────────────────────────────────────────────
 function openModal(mode, id) {
   editingId = null;
@@ -2674,12 +2298,6 @@ function openModal(mode, id) {
     document.getElementById('f-etiqueta-fuente').value = l.etiqueta_fuente||'Facebook Ads';
     document.getElementById('f-stage').value           = l.stage||'prospecto';
     document.getElementById('f-notes').value           = l.notes||'';
-    const sid = String(l.Status_id || '').trim();
-    document.getElementById('f-status-visita').value =
-      AGENDADA_SET.has(sid)  ? 'agendada'  :
-      INTENCION_SET.has(sid) ? 'intencion' :
-      OTRAS_SET.has(sid)     ? 'otras'     : '';
-    renderTagPicker(l.tags || []);
   } else {
     document.getElementById('f-name').value            = '';
     document.getElementById('f-telefono').value        = '';
@@ -2690,8 +2308,6 @@ function openModal(mode, id) {
     document.getElementById('f-etiqueta-fuente').value = 'Facebook Ads';
     document.getElementById('f-stage').value           = 'prospecto';
     document.getElementById('f-notes').value           = '';
-    document.getElementById('f-status-visita').value   = '';
-    renderTagPicker([]);
   }
   document.getElementById('modal-overlay').classList.add('open');
 }
@@ -2706,16 +2322,9 @@ function closeModalOnBg(e) {
 }
 
 async function saveLead() {
-  const statusVisita = document.getElementById('f-status-visita').value;
-  const statusMap = {
-    agendada:  [...AGENDADA_SET][0]   || '',
-    intencion: [...INTENCION_SET][0]  || '',
-    otras:     [...OTRAS_SET][0]      || '',
-    '':        ''
-  };
   const lead = {
     id:               editingId || Date.now(),
-    Lead_id:          editingId ? (leads.find(l=>Number(l.id)===Number(editingId))?.Lead_id || Date.now()) : Date.now(),
+    Lead_id:          Date.now(),
     name:             document.getElementById('f-name').value.trim(),
     Telefono:         document.getElementById('f-telefono').value.trim(),
     Pipeline_id:      parseInt(document.getElementById('f-pipeline-id').value)||0,
@@ -2726,8 +2335,6 @@ async function saveLead() {
     etiqueta_fuente:  document.getElementById('f-etiqueta-fuente').value.trim()||'Facebook Ads',
     Lead_categoria:   '',
     Nivel_interaccion: '',
-    tags:             getSelectedTagsFromModal(),
-    Status_id:        statusMap[statusVisita] || '',
     stage:            document.getElementById('f-stage').value,
     notes:            document.getElementById('f-notes').value.trim(),
     createdAt:        new Date().toISOString(),
@@ -2747,99 +2354,6 @@ async function saveLead() {
   renderTable();
   if (cfg.postUrl) await pushToN8N(lead);
   else toast('Lead guardado localmente (sin webhook POST configurado)', 'info');
-}
-
-// ── DISCARD SYSTEM ────────────────────────────────────────────────────────
-let _showDiscarded = false;
-
-function discardLead(id) {
-  const l = leads.find(x => String(x.id) === String(id));
-  if (!l) return;
-  if (l.discarded) {
-    // Recover
-    l.discarded = false;
-    toast('Lead ' + (l.name || 'sin nombre') + ' recuperado', 'ok');
-    addLog('Lead recuperado: ' + (l.name || '#'+id), 'ok');
-  } else {
-    // Discard
-    l.discarded = true;
-    toast('Lead ' + (l.name || 'sin nombre') + ' descartado', 'warn');
-    addLog('Lead descartado: ' + (l.name || '#'+id), 'warn');
-  }
-  saveLeads();
-  renderTable();
-  updateDiscardedCount();
-}
-
-function updateDiscardedCount() {
-  const count = leads.filter(l => l.discarded).length;
-  const badge = document.getElementById('discarded-count');
-  const label = document.getElementById('discarded-label');
-  const btn   = document.getElementById('btn-show-discarded');
-  if (badge) {
-    badge.textContent = count;
-    badge.style.display = count > 0 ? '' : 'none';
-  }
-  if (btn) {
-    btn.style.borderColor = _showDiscarded ? 'var(--danger)' : (count > 0 ? 'var(--warn)' : 'var(--muted)');
-    btn.style.color       = _showDiscarded ? 'var(--danger)' : (count > 0 ? 'var(--warn)' : 'var(--muted)');
-    btn.title = _showDiscarded ? 'Ver activos' : ('Ver descartados (' + count + ')');
-  }
-  if (label) label.textContent = _showDiscarded ? '← Activos' : 'Descartados';
-}
-
-function toggleShowDiscarded() {
-  _showDiscarded = !_showDiscarded;
-  updateDiscardedCount();
-  renderTable();
-}
-
-// Discard from scoring IA tab (keeps in dashboard, removes from scoring view)
-let _scoringDiscarded = new Set(JSON.parse(localStorage.getItem('ls_scoring_discarded') || '[]'));
-
-let _showScoringDiscarded = false;
-
-function discardScoringLead(leadId, btn) {
-  _scoringDiscarded.add(String(leadId));
-  localStorage.setItem('ls_scoring_discarded', JSON.stringify([..._scoringDiscarded]));
-  const card = btn.closest('.scoring-card');
-  if (card) {
-    card.style.transition = 'opacity 0.3s, transform 0.3s';
-    card.style.opacity = '0';
-    card.style.transform = 'scale(0.95)';
-    setTimeout(() => renderScoringCards(), 300);
-  }
-  updateScoringDiscardedBtn();
-  toast('Lead descartado de Scoring IA', 'warn');
-  addLog('Scoring: lead ' + leadId + ' descartado', 'warn');
-}
-
-function recoverScoringLead(leadId) {
-  _scoringDiscarded.delete(String(leadId));
-  localStorage.setItem('ls_scoring_discarded', JSON.stringify([..._scoringDiscarded]));
-  updateScoringDiscardedBtn();
-  renderScoringCards();
-  toast('Lead recuperado en Scoring IA', 'ok');
-  addLog('Scoring: lead ' + leadId + ' recuperado', 'ok');
-}
-
-function toggleScoringDiscarded() {
-  _showScoringDiscarded = !_showScoringDiscarded;
-  updateScoringDiscardedBtn();
-  renderScoringCards();
-}
-
-function updateScoringDiscardedBtn() {
-  const count = _scoringDiscarded.size;
-  const badge = document.getElementById('scoring-discarded-count');
-  const label = document.getElementById('scoring-discarded-label');
-  const btn   = document.getElementById('btn-scoring-discarded');
-  if (badge) { badge.textContent = count; badge.style.display = count > 0 ? '' : 'none'; }
-  if (label) label.textContent = _showScoringDiscarded ? '← Activos' : 'Descartados';
-  if (btn) {
-    btn.style.borderColor = _showScoringDiscarded ? 'var(--danger)' : (count > 0 ? 'var(--warn)' : 'var(--muted)');
-    btn.style.color       = _showScoringDiscarded ? 'var(--danger)' : (count > 0 ? 'var(--warn)' : 'var(--muted)');
-  }
 }
 
 function deleteLead(id) {
@@ -2908,22 +2422,16 @@ function toast(msg, type='info') {
 }
 
 // ── GO TO CHAT (from dashboard) ─────────────────────────────────────────
-let _previousTab = 'dashboard'; // tab to return to when closing chat panel
-
 function closeChatPanel() {
   const panel = document.getElementById('chat-panel');
   panel.classList.remove('mobile-open');
-  switchTab(_previousTab || 'dashboard');
+  // On desktop, go to dashboard; on mobile just close the slide panel
+  if (!isMobile()) switchTab('dashboard');
 }
 
 function goToChat(leadId) {
-  // Remember which tab we're coming from
-  const active = document.querySelector('.tab-panel.active');
-  if (active && active.id !== 'tab-chats') {
-    _previousTab = active.id.replace('tab-', '');
-  }
   switchTab('chats');
-  setTimeout(() => selectChatLead(leadId, true), 50);
+  setTimeout(() => selectChatLead(leadId, true), 50); // true = force refresh
 }
 
 // ── CHATS TAB ────────────────────────────────────────────────────────────
@@ -3080,7 +2588,7 @@ async function selectChatLead(leadId, forceRefresh) {
   if (chatWaBtn) {
     const p = (lead.Telefono||'').replace(/[^\d+]/g,'');
     if (p) {
-      chatWaBtn.href = 'whatsapp://send?phone=' + p + '&text=' + waMessage(lead.name, lead.Pipeline_nombre);
+      chatWaBtn.href = 'whatsapp://send?phone=' + p + '&text=' + waMessage(lead.name);
       chatWaBtn.style.display = 'inline-flex';
     } else {
       chatWaBtn.style.display = 'none';
@@ -3212,29 +2720,23 @@ function fmtDate(iso) {
 // ── PERSISTENCIA localStorage ────────────────────────────────────────────
 function saveLeads() {
   try {
-    // Cap cache at 2000 most recent leads to avoid localStorage quota errors
-    const toSave = leads.length > 2000
-      ? leads.slice(0, 2000)
+    // Cap cache at 3000 most recent leads to avoid localStorage quota errors
+    const toSave = leads.length > 3000
+      ? leads.slice(0, 3000)
       : leads;
     localStorage.setItem('ls_leads', JSON.stringify(toSave));
     localStorage.setItem('ls_leads_ts', new Date().toISOString());
     localStorage.setItem('ls_leads_total', String(leads.length));
-    if (leads.length > 2000) {
-      addLog('Cache local limitado a 2000 leads (total: ' + leads.length + ')', 'warn');
+    if (leads.length > 3000) {
+      addLog('Cache local limitado a 3000 leads (total: ' + leads.length + ')', 'warn');
     }
   } catch(e) {
-    // If quota error, try saving only first 1000
+    // If still quota error, try saving only first 200
     try {
-      localStorage.setItem('ls_leads', JSON.stringify(leads.slice(0, 1000)));
+      localStorage.setItem('ls_leads', JSON.stringify(leads.slice(0, 3000)));
       localStorage.setItem('ls_leads_ts', new Date().toISOString());
-      addLog('Cache reducido a 1000 leads por limite de almacenamiento', 'warn');
-    } catch(e2) {
-      // Last resort: try 200
-      try {
-        localStorage.setItem('ls_leads', JSON.stringify(leads.slice(0, 200)));
-        addLog('Cache reducido a 200 leads por limite de almacenamiento', 'warn');
-      } catch(e3) { console.warn('No se pudo guardar leads:', e3); }
-    }
+      addLog('Cache reducido a 200 leads por limite de almacenamiento', 'warn');
+    } catch(e2) { console.warn('No se pudo guardar leads:', e2); }
   }
 }
 
@@ -3270,530 +2772,29 @@ function clearLeadsCache() {
 
 // ── DEBUG ────────────────────────────────────────────────────────────────
 function debugStatusIds() {
-  const uniqueSids = [...new Set(leads.map(l => l.Status_id).filter(Boolean))].sort();
+  const sample = leads.slice(0, 5);
+  let msg = 'Total leads: ' + leads.length + '\n\n';
+  sample.forEach((l, i) => {
+    msg += 'Lead ' + (i+1) + ': ' + (l.name||'?') + '\n';
+    msg += '  Status_id: ' + JSON.stringify(l.Status_id) + ' (tipo: ' + typeof l.Status_id + ')\n';
+    msg += '  status_id: ' + JSON.stringify(l.status_id) + '\n';
+    msg += '  Keys: ' + Object.keys(l).join(', ') + '\n\n';
+  });
 
-  const rows = leads.map(l => {
-    const sid = String(l.Status_id || '').trim();
-    const panel = AGENDADA_SET.has(sid)     ? '📅 Agendada'
-                : INTENCION_SET.has(sid)    ? '👁 Intención'
-                : POTENCIALES_SET.has(sid)  ? '⭐ Potencial'
-                : OTRAS_SET.has(sid)        ? '🔍 Otras'
-                : '—';
-    return '<tr style="border-bottom:1px solid var(--border)">' +
-      '<td style="padding:5px 8px;color:var(--accent)">' + esc(l.name||'?') + '</td>' +
-      '<td style="padding:5px 8px;font-family:var(--mono);font-size:11px;color:var(--warn)">' + (sid || '<em style="color:var(--muted)">vacío</em>') + '</td>' +
-      '<td style="padding:5px 8px;font-size:11px">' + panel + '</td>' +
-    '</tr>';
-  }).join('');
+  const withStatus = leads.filter(l => l.Status_id && l.Status_id !== '');
+  msg += 'Leads con Status_id no vacío: ' + withStatus.length + '\n';
+  msg += 'Valores únicos: ' + [...new Set(leads.map(l=>l.Status_id))].join(', ');
 
+  // Show in a modal-style overlay
   const pop = document.createElement('div');
-  pop.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:999;display:flex;align-items:center;justify-content:center';
-  pop.innerHTML = '<div style="background:var(--surface);border:1px solid var(--border-bright);border-radius:12px;padding:1.5rem;max-width:680px;width:95%;max-height:85vh;overflow-y:auto">' +
-    '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem">' +
-      '<strong>🔍 Debug Status_id — ' + leads.length + ' leads</strong>' +
-      '<button onclick="this.closest(\'div[style]\').remove()" style="background:none;border:none;color:var(--muted);font-size:18px;cursor:pointer">✕</button>' +
-    '</div>' +
-    '<div style="font-size:11px;color:var(--muted);font-family:var(--mono);margin-bottom:0.75rem">IDs únicos: <span style="color:var(--accent)">' + uniqueSids.join(' | ') + '</span></div>' +
-    '<input type="text" placeholder="Filtrar por nombre..." oninput="this.nextSibling.querySelectorAll(\'tr\').forEach(r=>{r.style.display=r.textContent.toLowerCase().includes(this.value.toLowerCase())?\'\':\' none\'})" style="width:100%;margin-bottom:8px;font-size:12px">' +
-    '<table style="width:100%;border-collapse:collapse">' +
-      '<thead><tr style="border-bottom:1px solid var(--border-bright)">' +
-        '<th style="padding:5px 8px;text-align:left;font-size:11px;color:var(--muted)">NOMBRE</th>' +
-        '<th style="padding:5px 8px;text-align:left;font-size:11px;color:var(--muted)">STATUS_ID</th>' +
-        '<th style="padding:5px 8px;text-align:left;font-size:11px;color:var(--muted)">PANEL</th>' +
-      '</tr></thead>' +
-      '<tbody>' + rows + '</tbody>' +
-    '</table>' +
-  '</div>';
-  pop.onclick = e => { if (e.target === pop) pop.remove(); };
+  pop.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.8);z-index:999;display:flex;align-items:center;justify-content:center';
+  pop.innerHTML = '<div style="background:var(--surface);border:1px solid var(--border-bright);border-radius:12px;padding:1.5rem;max-width:600px;width:90%;max-height:80vh;overflow-y:auto">' +
+    '<div style="display:flex;justify-content:space-between;margin-bottom:1rem"><strong>🔍 Debug Status_id</strong>' +
+    '<button onclick="this.parentElement.parentElement.remove()" style="background:none;border:none;color:var(--muted);font-size:18px;cursor:pointer">✕</button></div>' +
+    '<pre style="font-family:var(--mono);font-size:11px;color:var(--accent);white-space:pre-wrap;line-height:1.6">' + msg + '</pre>' +
+    '</div>';
+  pop.onclick = e => { if(e.target === pop) pop.remove(); };
   document.body.appendChild(pop);
-}
-
-// ── ASISTENTE SCORING IA ──────────────────────────────────────────────────
-let scoringLeads = [];
-
-function loadScoringCfg() {
-  try { return JSON.parse(localStorage.getItem('ls_scoring_cfg') || '{}'); } catch(e) { return {}; }
-}
-function saveScoringCfg() {
-  // Kept for backward compatibility — delegates to saveScoringConfig
-  saveScoringConfig();
-}
-
-function initScoringCfg() {
-  const cfg = loadScoringCfg();
-  const el = document.getElementById('scoring-webhook-url');
-  if (el && cfg.url) el.value = cfg.url;
-  // Also populate the n8n config tab fields
-  const cfgUrl = document.getElementById('scoring-cfg-url');
-  const cfgPost = document.getElementById('scoring-cfg-post-url');
-  const cfgInt = document.getElementById('scoring-cfg-interval');
-  if (cfgUrl && cfg.url) cfgUrl.value = cfg.url;
-  if (cfgPost && cfg.postUrl) cfgPost.value = cfg.postUrl;
-  if (cfgInt) cfgInt.value = cfg.interval || 0;
-  if (cfg.interval > 0) startScoringAutoSync(cfg);
-  const saved = localStorage.getItem('ls_scoring_leads');
-  if (saved) { try { scoringLeads = JSON.parse(saved); } catch(e) {} }
-  renderScoringCards();
-}
-
-function saveScoringConfig() {
-  const url      = (document.getElementById('scoring-cfg-url')?.value || '').trim();
-  const postUrl  = (document.getElementById('scoring-cfg-post-url')?.value || '').trim();
-  const interval = parseInt(document.getElementById('scoring-cfg-interval')?.value || '0') || 0;
-  const updated  = { ...loadScoringCfg(), url, postUrl, interval };
-  localStorage.setItem('ls_scoring_cfg', JSON.stringify(updated));
-  startScoringAutoSync(updated);
-  toast('Configuración de Scoring guardada' + (interval > 0 ? ' — Auto-sync cada ' + interval + 's' : ''), 'ok');
-  addLog('Scoring configurado: GET ' + (url ? url.substring(0,35)+'...' : 'sin URL') + (postUrl ? ' | POST OK' : '') + (interval > 0 ? ' | cada '+interval+'s' : ''), 'ok');
-}
-
-async function pushScoringUpdate() {
-  const cfg = loadScoringCfg();
-  if (!cfg.postUrl) {
-    toast('Configura el Webhook POST en la tab Configuración n8n', 'error');
-    switchTab('n8n');
-    return;
-  }
-  if (!scoringLeads.length) {
-    toast('No hay datos de Scoring para enviar. Sincroniza primero.', 'error');
-    return;
-  }
-  try {
-    toast('Enviando ' + scoringLeads.length + ' leads a n8n...', 'ok');
-    const res = await fetch(cfg.postUrl, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ leads: scoringLeads, total: scoringLeads.length, timestamp: new Date().toISOString() })
-    });
-    if (!res.ok) throw new Error('HTTP ' + res.status);
-    const resp = await res.json().catch(() => ({}));
-    toast('✓ Base de datos actualizada correctamente', 'ok');
-    addLog('Scoring POST enviado: ' + scoringLeads.length + ' leads → ' + cfg.postUrl.substring(0,40), 'ok');
-  } catch(e) {
-    toast('Error al actualizar BD: ' + e.message, 'error');
-    addLog('Error Scoring POST: ' + e.message, 'error');
-  }
-}
-
-async function testScoringWebhook() {
-  const url = (document.getElementById('scoring-cfg-url')?.value || '').trim();
-  if (!url) { toast('Ingresa la URL del webhook primero', 'error'); return; }
-  try {
-    toast('Probando webhook Scoring...', 'ok');
-    const res = await fetch(url);
-    if (!res.ok) throw new Error('HTTP ' + res.status);
-    const data = await res.json();
-    const count = Array.isArray(data) ? data.length : (data.leads || data.data || []).length;
-    toast('✓ Webhook OK — ' + count + ' leads recibidos', 'ok');
-  } catch(e) {
-    toast('Error: ' + e.message, 'error');
-  }
-}
-
-async function fetchScoringData() {
-  const cfg = loadScoringCfg();
-  if (!cfg.url) { toast('Configura la URL del webhook en la tab Configuración n8n', 'error'); switchTab('n8n'); return; }
-  try {
-    toast('Sincronizando Scoring IA...', 'ok');
-    const res = await fetch(cfg.url);
-    if (!res.ok) throw new Error('HTTP ' + res.status);
-    const data = await res.json();
-    scoringLeads = Array.isArray(data) ? data : (data.leads || data.data || []);
-    localStorage.setItem('ls_scoring_leads', JSON.stringify(scoringLeads));
-    renderScoringCards();
-    // Update tab badge
-    const badge = document.getElementById('tab-badge-scoring');
-    if (badge) { badge.textContent = scoringLeads.length; badge.style.display = scoringLeads.length ? '' : 'none'; }
-    toast(scoringLeads.length + ' leads cargados en Scoring IA', 'ok');
-  } catch(e) {
-    toast('Error al sincronizar Scoring: ' + e.message, 'error');
-  }
-}
-
-function scoringColor(clas) {
-  const c = String(clas || '').toUpperCase();
-  if (c === 'CALIENTE') return { text:'var(--danger)', bg:'rgba(255,80,80,0.12)', bdr:'rgba(255,80,80,0.3)' };
-  if (c === 'TIBIO')    return { text:'var(--warn)',   bg:'rgba(255,179,64,0.12)', bdr:'rgba(255,179,64,0.3)' };
-  return                       { text:'var(--cold)',   bg:'rgba(0,200,255,0.12)', bdr:'rgba(0,200,255,0.3)' };
-}
-function prioColor(prio) {
-  const p = String(prio || '').toUpperCase();
-  if (p.includes('ALTA'))  return { text:'var(--danger)', bg:'rgba(255,80,80,0.10)',  bdr:'rgba(255,80,80,0.25)' };
-  if (p.includes('MEDIA')) return { text:'var(--warn)',   bg:'rgba(255,179,64,0.10)', bdr:'rgba(255,179,64,0.25)' };
-  return                          { text:'var(--cold)',   bg:'rgba(0,200,255,0.10)',  bdr:'rgba(0,200,255,0.25)' };
-}
-function scoreColor(s) {
-  const n = Number(s) || 0;
-  if (n >= 70) return 'var(--danger)';
-  if (n >= 45) return 'var(--warn)';
-  return 'var(--cold)';
-}
-function ini2(name) {
-  return (name||'').split(' ').map(w=>w[0]||'').join('').substring(0,2).toUpperCase() || '?';
-}
-function labelPrio(p) {
-  const s = String(p||'').replace(/_/g,' ');
-  return s.charAt(0)+s.slice(1).toLowerCase();
-}
-function labelClas(c) {
-  const map = { CALIENTE:'🔴 Caliente', TIBIO:'🟡 Tibio', FRIO:'🔵 Frío' };
-  return map[String(c||'').toUpperCase()] || c;
-}
-
-function renderScoringStats(data) {
-  const wrap = document.getElementById('scoring-stats');
-  if (!wrap) return;
-  const total     = data.length;
-  const caliente  = data.filter(l => String(l.clasificacion||'').toUpperCase() === 'CALIENTE').length;
-  const tibio     = data.filter(l => String(l.clasificacion||'').toUpperCase() === 'TIBIO').length;
-  const frio      = data.filter(l => String(l.clasificacion||'').toUpperCase() === 'FRIO').length;
-  const contactar = data.filter(l => l.contactar_hoy).length;
-  const avgScore  = total ? Math.round(data.reduce((a,l) => a + (Number(l.score)||0), 0) / total) : 0;
-  wrap.innerHTML = [
-    ['Total', total, 'var(--text)'],
-    ['🔴 Caliente', caliente, 'var(--danger)'],
-    ['🟡 Tibio', tibio, 'var(--warn)'],
-    ['🔵 Frío', frio, 'var(--cold)'],
-    ['📞 Contactar hoy', contactar, 'var(--accent)'],
-    ['Score prom.', avgScore, 'var(--accent2)']
-  ].map(([label, num, color]) =>
-    '<div class="scoring-stat-card">' +
-      '<div class="scoring-stat-num" style="color:' + color + '">' + num + '</div>' +
-      '<div class="scoring-stat-label">' + label + '</div>' +
-    '</div>'
-  ).join('');
-}
-
-function renderScoringCards() {
-  const wrap = document.getElementById('scoring-cards-wrap');
-  if (!wrap) return;
-  const q        = (document.getElementById('scoring-search')?.value || '').toLowerCase();
-  const fPrio    = (document.getElementById('scoring-filter-prio')?.value || '').toUpperCase();
-  const fClas    = (document.getElementById('scoring-filter-clas')?.value || '').toUpperCase();
-  const fInten   = (document.getElementById('scoring-filter-intencion')?.value || '').toUpperCase();
-  const fEtapa   = (document.getElementById('scoring-filter-etapa')?.value || '').toUpperCase();
-  const fRazon   = (document.getElementById('scoring-filter-razon')?.value || '').toUpperCase();
-  const fUrgencia = (document.getElementById('scoring-filter-urgencia')?.value || '').toUpperCase();
-  const fFinanzas = (document.getElementById('scoring-filter-finanzas')?.value || '').toUpperCase();
-  const fAgendar  = (document.getElementById('scoring-filter-agendar')?.value || '').toUpperCase();
-  const fAlerta    = (document.getElementById('scoring-filter-alerta')?.value || '').toUpperCase();
-  const fPipeline  = (document.getElementById('scoring-filter-pipeline')?.value || '');
-  const fDias    = parseInt(document.getElementById('scoring-filter-dias')?.value || '0') || 0;
-
-  // Priority weight: contactar_hoy=5, es_prioritario=4, ALTA=3, MEDIA=2, BAJA=1
-  function prioWeight(p, lead) {
-    if (lead && lead.alerta_inmediata)  return 6;
-    if (lead && lead.contactar_hoy)     return 5;
-    if (lead && lead.es_prioritario)    return 4;
-    const s = String(p||'').toUpperCase();
-    if (s === 'HOY')             return 5;
-    if (s === 'ESTA_SEMANA')     return 4;
-    if (s === 'ESTE_MES')        return 3;
-    if (s === 'BAJA_PRIORIDAD')  return 1;
-    return 0;
-  }
-
-  let data = [...scoringLeads]
-    .filter(l => _showScoringDiscarded ? _scoringDiscarded.has(String(l.lead_id)) : !_scoringDiscarded.has(String(l.lead_id)))
-    .sort((a,b) => {
-      const pd = prioWeight(b.prioridad_contacto, b) - prioWeight(a.prioridad_contacto, a);
-      return pd !== 0 ? pd : (Number(b.score)||0) - (Number(a.score)||0);
-    });
-
-  if (q)       data = data.filter(l => (l.nombre_cliente||'').toLowerCase().includes(q) || (l.resumen||'').toLowerCase().includes(q) || (l.tipo_propiedad_buscada||'').toLowerCase().includes(q) || (l.caracteristicas_buscadas||'').toLowerCase().includes(q));
-  if (fPrio)   {
-    data = data.filter(l => {
-      const p = String(l.prioridad_contacto||'').toUpperCase();
-      if (fPrio === 'HOY')           return l.contactar_hoy === true || p === 'HOY';
-      if (fPrio === 'ESTA_SEMANA')   return p === 'ESTA_SEMANA';
-      if (fPrio === 'ESTE_MES')      return p === 'ESTE_MES';
-      if (fPrio === 'BAJA_PRIORIDAD') return p === 'BAJA_PRIORIDAD';
-      return p.includes(fPrio);
-    });
-  }
-  if (fClas)   data = data.filter(l => String(l.clasificacion||'').toUpperCase() === fClas);
-  if (fInten)  data = data.filter(l => String(l.intencion_compra||l.intencion_visita||'').toUpperCase() === fInten);
-  if (fEtapa)  data = data.filter(l => String(l.etapa_embudo||'').toUpperCase().includes(fEtapa));
-  if (fRazon)  data = data.filter(l => String(l.objecion_principal||l.razon_no_visita||'').toUpperCase().includes(fRazon));
-  if (fUrgencia) data = data.filter(l => String(l.urgencia||'').toUpperCase() === fUrgencia);
-  if (fFinanzas) data = data.filter(l => String(l.capacidad_financiera||'').toUpperCase() === fFinanzas);
-  if (fAgendar === 'SI') data = data.filter(l => l.quiere_agendar_visita === true);
-  if (fAgendar === 'NO') data = data.filter(l => !l.quiere_agendar_visita);
-  if (fAlerta === 'SI')  data = data.filter(l => l.alerta_inmediata === true);
-  if (fAlerta === 'NO')  data = data.filter(l => !l.alerta_inmediata);
-  if (fPipeline) {
-    data = data.filter(l => {
-      const dashLead = leads.find(x => String(x.Lead_id) === String(l.lead_id) || String(x.id) === String(l.lead_id));
-      return (dashLead?.Pipeline_nombre || '') === fPipeline;
-    });
-  }
-  if (fDias)   data = data.filter(l => (Number(l.dias_inactivo)||0) >= fDias);
-
-  renderScoringStats(data);
-  updateScoringPipelineFilter();
-  updateScoringDiscardedBtn();
-
-  if (!data.length) {
-    wrap.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:3rem;color:var(--muted);font-family:var(--mono);font-size:13px">' +
-      (_showScoringDiscarded ? '📭 No hay leads descartados en Scoring IA' : (scoringLeads.length ? '🔍 Sin resultados para el filtro aplicado' : '🤖 Sin datos. Configura el webhook y sincroniza.')) +
-    '</div>';
-    return;
-  }
-
-  wrap.innerHTML = data.map(l => {
-    const sc    = Number(l.score) || 0;
-    const cls   = scoringColor(l.clasificacion);
-    const prio  = prioColor(l.prioridad_contacto);
-    const scCol = scoreColor(sc);
-    const ini   = ini2(l.nombre_cliente);
-    const prioClass = String(l.prioridad_contacto||'').includes('ALTA') ? 'prio-alta'
-                    : String(l.prioridad_contacto||'').includes('MEDIA') ? 'prio-media' : 'prio-baja';
-
-    const sePos = (l.senales_positivas || []).map(s =>
-      '<span class="sc-signal pos">✅ ' + esc(s) + '</span>').join('');
-    const seNeg = (l.senales_negativas || []).map(s =>
-      '<span class="sc-signal neg">⚠️ ' + esc(s) + '</span>').join('');
-
-    // WhatsApp link for suggested message
-    // Cross-reference with dashboard leads using lead_id
-    const dashLead = leads.find(x =>
-      String(x.Lead_id) === String(l.lead_id) ||
-      String(x.id)      === String(l.lead_id)
-    );
-    const rawTel = String(
-      l.telefono || l.Telefono ||
-      dashLead?.Telefono || ''
-    ).replace(/[^\d+]/g,'');
-    const pipelineNombre = dashLead?.Pipeline_nombre || l.pipeline_nombre || '';
-    const dashTags = dashLead?.tags || [];
-    const waMsg  = l.mensaje_sugerido ? encodeURIComponent(l.mensaje_sugerido) : '';
-    const waMsgFallback = waMessage(l.nombre_cliente, pipelineNombre);
-    const waLink = rawTel.length >= 7 ? 'whatsapp://send?phone=' + rawTel + (waMsg ? '&text=' + waMsg : '&text=' + waMsgFallback) : '';
-
-    // Pipeline pill
-    const pipelinePill = pipelineNombre
-      ? '<span style="font-size:10px;font-family:var(--mono);padding:2px 7px;border-radius:4px;background:rgba(0,200,255,0.08);border:1px solid rgba(0,200,255,0.2);color:var(--accent2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;display:inline-block">' + esc(pipelineNombre) + '</span>'
-      : '';
-    // Tags from dashboard
-    const tagsPills = dashTags.length ? renderTagPills(dashTags) : '';
-
-    return '<div class="scoring-card ' + prioClass + '">' +
-
-      // Header: avatar + name + meta
-      '<div class="sc-header">' +
-        '<div class="sc-avatar" style="background:' + cls.bg + ';color:' + cls.text + '">' + ini + '</div>' +
-        '<div style="flex:1;min-width:0">' +
-          '<div class="sc-name" ' +
-            (dashLead ? 'style="color:var(--accent);cursor:pointer" onclick="goToChat(' + dashLead.Lead_id + ')" title="Ver chat de ' + esc(l.nombre_cliente || '') + '"' : 'style="color:var(--text)"') +
-          '>' + esc(l.nombre_cliente || '—') + (dashLead ? ' &#128172;' : '') + '</div>' +
-          '<div class="sc-meta">' +
-            (rawTel ? '<span>📞 +' + rawTel + '</span>' : '') +
-            '<span>💬 ' + (l.msgs_cliente || 0) + ' msgs</span>' +
-            '<span>⏱ ' + (l.dias_inactivo || 0) + 'd inactivo</span>' +
-            (l.contactar_hoy ? '<span style="color:var(--accent);font-weight:600">📞 CONTACTAR HOY</span>' : '') +
-          '</div>' +
-          (pipelinePill ? '<div style="margin-top:4px">' + pipelinePill + '</div>' : '') +
-          (tagsPills ? '<div style="display:flex;flex-wrap:wrap;gap:4px;margin-top:4px">' + tagsPills + '</div>' : '') +
-        '</div>' +
-        (l.es_prioritario ? '<span style="font-size:16px" title="Lead prioritario">⭐</span>' : '') +
-      '</div>' +
-
-      // Score bar
-      '<div class="sc-score-row">' +
-        '<span style="font-size:10px;color:var(--muted);font-family:var(--mono);min-width:36px">Score</span>' +
-        '<div class="sc-score-bar"><div class="sc-score-fill" style="width:' + sc + '%;background:' + scCol + '"></div></div>' +
-        '<span class="sc-score-num" style="color:' + scCol + '">' + sc + '</span>' +
-      '</div>' +
-
-      // Badges row
-      '<div class="sc-badges">' +
-        '<span class="sc-badge" style="color:' + cls.text + ';background:' + cls.bg + ';border-color:' + cls.bdr + '">' + labelClas(l.clasificacion) + '</span>' +
-        '<span class="sc-badge" style="color:' + prio.text + ';background:' + prio.bg + ';border-color:' + prio.bdr + '">' + labelPrio(l.prioridad_contacto) + '</span>' +
-        (l.intencion_visita||l.intencion_compra ? '<span class="sc-badge" style="color:var(--muted);background:var(--surface2);border-color:var(--border)">Visita: ' + esc(l.intencion_visita||l.intencion_compra) + '</span>' : '') +
-        (l.urgencia && l.urgencia !== 'SIN_DEFINIR' ? '<span class="sc-badge" style="color:var(--muted);background:var(--surface2);border-color:var(--border)">Urgencia: ' + esc(l.urgencia) + '</span>' : '') +
-        (l.capacidad_financiera && l.capacidad_financiera !== 'DESCONOCIDA' ? '<span class="sc-badge" style="color:var(--accent);background:rgba(79,255,176,0.08);border-color:rgba(79,255,176,0.25)">💰 ' + esc(l.capacidad_financiera) + '</span>' : '') +
-        (l.etapa_embudo ? '<span class="sc-badge" style="color:var(--accent2);background:rgba(0,200,255,0.08);border-color:rgba(0,200,255,0.2)">🔄 ' + esc(l.etapa_embudo) + '</span>' : '') +
-        (l.objecion_principal && l.objecion_principal !== 'DESCONOCIDA' ? '<span class="sc-badge" style="color:var(--danger);background:rgba(255,80,80,0.08);border-color:rgba(255,80,80,0.25)">⛔ ' + esc(l.objecion_principal) + '</span>' : '') +
-        (l.alerta_inmediata ? '<span class="sc-badge" style="color:#fff;background:rgba(255,80,80,0.7);border-color:var(--danger)">🚨 ALERTA</span>' : '') +
-        (l.quiere_agendar_visita ? '<span class="sc-badge" style="color:var(--accent);background:rgba(79,255,176,0.1);border-color:rgba(79,255,176,0.3)">📅 Quiere agendar</span>' : '') +
-      '</div>' +
-
-      // Property info
-      (l.tipo_propiedad_buscada ? '<div style="font-size:11px;color:var(--accent2);font-family:var(--mono)">🏠 ' + esc(l.tipo_propiedad_buscada) + '</div>' : '') +
-      (l.presupuesto_detectado && !l.presupuesto_detectado.toLowerCase().includes('no se menciona') ? '<div style="font-size:11px;color:var(--accent);font-family:var(--mono)">💰 ' + esc(l.presupuesto_detectado) + '</div>' : '') +
-
-      // Signals
-      ((sePos || seNeg) ? '<div class="sc-signals">' + sePos + seNeg + '</div>' : '') +
-
-      // Resumen
-      (l.resumen ? '<div class="sc-resumen">' + esc(l.resumen) + '</div>' : '') +
-
-      // Siguiente acción
-      (l.siguiente_accion ? '<div class="sc-accion">➡️ ' + esc(l.siguiente_accion) + '</div>' : '') +
-
-      // Mensaje sugerido
-      (l.mensaje_sugerido ? '<div class="sc-msg">💬 "' + esc(l.mensaje_sugerido) + '"</div>' : '') +
-
-      // Action buttons
-      '<div class="sc-actions">' +
-        (_showScoringDiscarded
-          ? '<button class="btn btn-sm" onclick="recoverScoringLead(\'' + l.lead_id + '\')" style="flex:0 0 auto;border-color:var(--accent);color:var(--accent)">↩ Recuperar</button>'
-          : '<button class="btn btn-sm" onclick="discardScoringLead(\'' + l.lead_id + '\', this)" style="flex:0 0 auto;border-color:var(--warn);color:var(--warn)">🚫 Descartar</button>'
-        ) +
-        (waLink ? '<a href="' + waLink + '" target="_blank" rel="noopener" style="flex:1;display:flex;align-items:center;justify-content:center;gap:5px;padding:7px;border-radius:7px;background:rgba(37,211,102,0.1);border:1px solid rgba(37,211,102,0.3);color:#25D366;text-decoration:none;font-size:12px;font-weight:500">📲 WhatsApp</a>' : '') +
-        '<button class="btn btn-sm" style="flex:1" onclick="copyScoringMsg(' + JSON.stringify(l.mensaje_sugerido || '') + ', this)">📋 Copiar mensaje</button>' +
-      '</div>' +
-
-    '</div>';
-  }).join('');
-}
-
-function updateScoringPipelineFilter() {
-  const sel = document.getElementById('scoring-filter-pipeline');
-  if (!sel) return;
-  const current = sel.value;
-  // Get unique pipelines from dashboard leads that match scoring leads
-  const scoringIds = new Set(scoringLeads.map(l => String(l.lead_id)));
-  const pipelines = [...new Set(
-    leads
-      .filter(l => scoringIds.has(String(l.Lead_id)) && l.Pipeline_nombre)
-      .map(l => l.Pipeline_nombre)
-  )].sort();
-  sel.innerHTML = '<option value="">Todos</option>' +
-    pipelines.map(p => `<option value="${esc(p)}"${p === current ? ' selected' : ''}>${esc(p)}</option>`).join('');
-}
-
-function resetScoringFilters() {
-  ['scoring-search','scoring-filter-dias'].forEach(id => {
-    const el = document.getElementById(id);
-    if (el) el.value = '';
-  });
-  ['scoring-filter-prio','scoring-filter-clas','scoring-filter-intencion',
-   'scoring-filter-etapa','scoring-filter-razon','scoring-filter-urgencia',
-   'scoring-filter-finanzas','scoring-filter-agendar','scoring-filter-alerta','scoring-filter-pipeline'].forEach(id => {
-    const el = document.getElementById(id);
-    if (el) el.value = '';
-  });
-  renderScoringCards();
-}
-
-function copyScoringMsg(text, btn) {
-  if (!text) { toast('Sin mensaje sugerido', 'warn'); return; }
-  navigator.clipboard.writeText(text).then(() => {
-    const orig = btn.innerHTML;
-    btn.innerHTML = '✓ Copiado';
-    btn.style.color = 'var(--accent)';
-    setTimeout(() => { btn.innerHTML = orig; btn.style.color = ''; }, 1500);
-  }).catch(() => {
-    const ta = document.createElement('textarea');
-    ta.value = text; ta.style.cssText = 'position:fixed;opacity:0';
-    document.body.appendChild(ta); ta.select(); document.execCommand('copy');
-    document.body.removeChild(ta);
-    const orig = btn.innerHTML;
-    btn.innerHTML = '✓ Copiado';
-    setTimeout(() => { btn.innerHTML = orig; }, 1500);
-  });
-}
-
-// ── ETIQUETAS / TAGS SYSTEM ───────────────────────────────────────────────
-let _allTags = [];       // { id, name, color } — global tag library
-let _selectedTags = [];  // ids selected in current modal
-
-function loadTags() {
-  try { _allTags = JSON.parse(localStorage.getItem('ls_tags') || '[]'); }
-  catch(e) { _allTags = []; }
-}
-function saveTags() {
-  localStorage.setItem('ls_tags', JSON.stringify(_allTags));
-}
-
-// Returns HTML pill string for a tag or array of tag ids
-function renderTagPills(tagIds) {
-  if (!tagIds || !tagIds.length) return '';
-  loadTags();
-  return (Array.isArray(tagIds) ? tagIds : [tagIds]).map(id => {
-    const t = _allTags.find(x => x.id === id);
-    if (!t) return '';
-    const txt = hexToRgb(t.color);
-    const bg  = 'rgba(' + txt + ',0.15)';
-    const bdr = 'rgba(' + txt + ',0.4)';
-    return '<span class="tag-pill" style="background:' + bg + ';border-color:' + bdr + ';color:' + t.color + '">' + esc(t.name) + '</span>';
-  }).join('');
-}
-
-function hexToRgb(hex) {
-  const h = hex.replace('#','');
-  const r = parseInt(h.substring(0,2),16);
-  const g = parseInt(h.substring(2,4),16);
-  const b = parseInt(h.substring(4,6),16);
-  return r+','+g+','+b;
-}
-
-// Render tag picker inside modal
-function renderTagPicker(selectedIds) {
-  loadTags();
-  _selectedTags = selectedIds ? [...selectedIds] : [];
-  const wrap = document.getElementById('tag-picker-wrap');
-  if (!wrap) return;
-  if (!_allTags.length) {
-    wrap.innerHTML = '<span style="font-size:11px;color:var(--muted);font-family:var(--mono)">Sin etiquetas creadas aún</span>';
-    return;
-  }
-  wrap.innerHTML = _allTags.map(t => {
-    const sel = _selectedTags.includes(t.id);
-    const txt = hexToRgb(t.color);
-    const bg  = sel ? 'rgba(' + txt + ',0.25)' : 'rgba(' + txt + ',0.08)';
-    const bdr = 'rgba(' + txt + ',0.5)';
-    return '<span class="tag-option-chip' + (sel ? ' selected' : '') + '"' +
-      ' style="background:' + bg + ';border-color:' + bdr + ';color:' + t.color + '"' +
-      ' onclick="toggleTagInModal(\'' + t.id + '\')" title="Clic para seleccionar/deseleccionar">' +
-      esc(t.name) +
-      '<span class="tag-del" onclick="event.stopPropagation();deleteTagFromLibrary(\'' + t.id + '\')" title="Eliminar etiqueta">✕</span>' +
-    '</span>';
-  }).join('');
-}
-
-function toggleTagInModal(tagId) {
-  const idx = _selectedTags.indexOf(tagId);
-  if (idx > -1) _selectedTags.splice(idx, 1);
-  else _selectedTags.push(tagId);
-  renderTagPicker(_selectedTags);
-}
-
-function addTagFromModal() {
-  const nameEl  = document.getElementById('f-new-tag-name');
-  const colorEl = document.getElementById('f-new-tag-color');
-  const name = (nameEl.value || '').trim();
-  if (!name) { toast('Escribe un nombre para la etiqueta', 'warn'); return; }
-  loadTags();
-  if (_allTags.find(t => t.name.toLowerCase() === name.toLowerCase())) {
-    toast('Ya existe una etiqueta con ese nombre', 'warn'); return;
-  }
-  const newTag = { id: 'tag_' + Date.now(), name, color: colorEl.value || '#4fffb0' };
-  _allTags.push(newTag);
-  saveTags();
-  _selectedTags.push(newTag.id);
-  nameEl.value = '';
-  colorEl.value = '#4fffb0';
-  renderTagPicker(_selectedTags);
-  toast('Etiqueta "' + name + '" creada', 'ok');
-}
-
-function deleteTagFromLibrary(tagId) {
-  loadTags();
-  _allTags = _allTags.filter(t => t.id !== tagId);
-  saveTags();
-  // Remove from all leads
-  leads.forEach(l => { if (l.tags) l.tags = l.tags.filter(id => id !== tagId); });
-  saveLeads();
-  _selectedTags = _selectedTags.filter(id => id !== tagId);
-  renderTagPicker(_selectedTags);
-  renderTable();
-  toast('Etiqueta eliminada', 'ok');
-}
-
-function getSelectedTagsFromModal() {
-  return [..._selectedTags];
 }
 
 // ── INIT ─────────────────────────────────────────────────────────────────
@@ -3804,9 +2805,6 @@ loadReqs();
 updateReqBadge();
 renderTable();
 updateStatusPanel();
-initScoringCfg();
-updateDiscardedCount();
-updateScoringDiscardedBtn();
 if (fromCache) {
   updateSyncStatus('ok');
   addLog('leads cargados desde cache local (' + leads.length + ')', 'ok');
@@ -3910,7 +2908,7 @@ function renderReqs() {
       '<div class="req-card-top">' +
         '<div class="req-avatar" style="background:' + color + '22;color:' + color + '">' + ini + '</div>' +
         '<div style="flex:1;min-width:0">' +
-          '<div class="req-card-name" style="cursor:pointer;color:var(--accent)" title="Enviar resumen por WhatsApp" onclick="sendReqWhatsApp(this)">' + esc(r.cliente) + ' &#128242;</div>' +
+          '<div class="req-card-name">' + esc(r.cliente) + '</div>' +
           '<div class="req-card-pipe">' + esc(r.pipeline||'—') + (date ? ' &nbsp;·&nbsp; ' + date : '') + '</div>' +
         '</div>' +
         '<span class="req-chip ' + reqEstadoClass(r.estado) + '">' + reqEstadoLabel(r.estado) + '</span>' +
@@ -3992,21 +2990,6 @@ function closeReqModal() {
 
 function closeReqModalOnBg(e) {
   if (e.target === document.getElementById('req-modal-overlay')) closeReqModal();
-}
-
-const REQ_WHATSAPP_NUMBER = '59160344979';
-
-function sendReqWhatsApp(nameEl) {
-  const card = nameEl.closest('.req-card');
-  if (!card) { toast('Error al enviar', 'error'); return; }
-
-  const resumenDiv = card.querySelector('.req-obs');
-  const text = resumenDiv ? resumenDiv.textContent.trim() : '';
-
-  if (!text) { toast('Sin resumen para enviar', 'error'); return; }
-
-  const url = 'https://wa.me/' + REQ_WHATSAPP_NUMBER + '?text=' + encodeURIComponent(text);
-  window.open(url, '_blank', 'noopener');
 }
 
 function copyReqResumen(btn) {
